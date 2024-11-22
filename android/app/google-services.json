@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "934488907844",
+    "project_id": "timetailor-dd0aa",
+    "storage_bucket": "timetailor-dd0aa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:934488907844:android:abe0475b04c4e5d95e1c11",
+        "android_client_info": {
+          "package_name": "com.example.timetailor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKcGh29C0uTQLF9l5IDvckME-Q31SVdd4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
