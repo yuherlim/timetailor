@@ -17,6 +17,9 @@ ThemeData primaryTheme = ThemeData(
     seedColor: AppColors.primaryColor,
   ),
 
+  //enable material 3
+  useMaterial3: true,
+
   //scaffold background color
   scaffoldBackgroundColor: AppColors.secondaryAccent,
 
