@@ -18,7 +18,9 @@ class _MainLayoutState extends State<MainLayout> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: widget.navigationShell.currentIndex,
         onDestinationSelected: (index) {
-          widget.navigationShell.goBranch(index);
+          index == widget.navigationShell.currentIndex
+              ? widget.navigationShell.goBranch(index, initialLocation: true)
+              : widget.navigationShell.goBranch(index);
         },
         destinations: const [
           NavigationDestination(
@@ -41,4 +43,3 @@ class _MainLayoutState extends State<MainLayout> {
     );
   }
 }
-

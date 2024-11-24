@@ -17,7 +17,9 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          context.go(taskCreationPath);
+        },
         child: const Icon(Icons.add),
       ),
       appBar: AppBar(
