@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static Color primaryColor = const Color.fromRGBO(13, 71, 161, 1); // Deep Vibrant Blue
-  static Color primaryAccent = const Color.fromRGBO(21, 101, 192, 1); // Brighter, contrasting Blue
+  static Color primaryColor =
+      const Color.fromRGBO(13, 71, 161, 1); // Deep Vibrant Blue
+  static Color primaryAccent =
+      const Color.fromRGBO(21, 101, 192, 1); // Brighter, contrasting Blue
   static Color secondaryColor = const Color.fromRGBO(45, 45, 45, 1);
   static Color secondaryAccent = const Color.fromRGBO(35, 35, 35, 1);
   static Color titleColor = const Color.fromRGBO(200, 200, 200, 1);
@@ -73,5 +75,36 @@ ThemeData primaryTheme = ThemeData(
   dialogTheme: DialogTheme(
     backgroundColor: AppColors.secondaryColor,
     surfaceTintColor: Colors.transparent,
+  ),
+
+  // NavigationBar theme
+  navigationBarTheme: NavigationBarThemeData(
+    backgroundColor: AppColors.secondaryAccent, // Matches scaffold background
+    indicatorColor: AppColors.primaryAccent.withOpacity(0.2), // Pill highlight
+    surfaceTintColor: Colors.transparent, // Remove additional tint
+    elevation: 0, // Flat navigation bar
+    labelBehavior:
+        NavigationDestinationLabelBehavior.alwaysShow, // Always show labels
+    iconTheme: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return IconThemeData(
+            color: AppColors.primaryAccent); // Selected icon color
+      }
+      return IconThemeData(
+          color: AppColors.textColor.withOpacity(0.7)); // Unselected icon color
+    }),
+    labelTextStyle: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return TextStyle(
+          color: AppColors.primaryAccent,
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+        ); // Selected label style
+      }
+      return TextStyle(
+        color: AppColors.textColor.withOpacity(0.7),
+        fontSize: 12,
+      ); // Unselected label style
+    }),
   ),
 );
