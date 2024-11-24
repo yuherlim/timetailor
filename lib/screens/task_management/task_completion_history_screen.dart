@@ -17,7 +17,7 @@ class _TaskCompletionHistoryScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const StyledHeading("Task Completion History"),        
+        title: const StyledHeading("Task Completion History"),
       ),
       body: Center(
         child: Column(
@@ -32,11 +32,9 @@ class _TaskCompletionHistoryScreenState
             StyledButton(
               onPressed: () {
                 // Navigate back to the previous screen
-                if (GoRouter.of(context).canPop()) {
-                  context.pop();
-                } else {
-                  context.go('/tasks'); // Fallback to Tasks
-                }
+                GoRouter.of(context).canPop()
+                    ? {context.pop()}
+                    : context.go('/tasks'); // Fallback to Tasks
               },
               child: const StyledHeading("Back"),
             ),
