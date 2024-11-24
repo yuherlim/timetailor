@@ -83,5 +83,4 @@ class DefaultFirebaseOptions {
     authDomain: 'timetailor-dd0aa.firebaseapp.com',
     storageBucket: 'timetailor-dd0aa.firebasestorage.app',
   );
-
 }
