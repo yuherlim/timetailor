@@ -140,10 +140,10 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                     return Card(
                       margin: const EdgeInsets.symmetric(vertical: 8),
                       child: ListTile(
-                        title: Text("Task ${index + 1}"),
-                        subtitle: Text("9:00 AM - 10:00 AM"),
+                        title: StyledText("Task ${index + 1}"),
+                        subtitle: const StyledText("9:00 AM - 10:00 AM"),
                         trailing: IconButton(
-                          icon: const Icon(Icons.check_circle_outline),
+                          icon: Icon(Icons.check_circle_outline, color: AppColors.textColor,),
                           onPressed: () {
                             // Mark task as completed
                           },
