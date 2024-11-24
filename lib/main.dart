@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 //firebase
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:timetailor/core/config/routes.dart';
 import 'package:timetailor/core/theme/theme.dart';
-import 'package:timetailor/screens/task_management/task_management_screen.dart';
 import 'core/config/firebase_options.dart';
 
 void main() async {
@@ -22,10 +22,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: appRouter,
       title: 'TimeTailor',
       theme: primaryTheme,
-      home: const TaskManagementScreen(),
     );
   }
 }
