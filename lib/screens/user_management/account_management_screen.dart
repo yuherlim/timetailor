@@ -8,7 +8,7 @@ class AccountManagementScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const StyledHeading("Account Management"),
+        title: const StyledTitle("Account Management"),
         centerTitle: true,
       ),
       body: const Placeholder(),

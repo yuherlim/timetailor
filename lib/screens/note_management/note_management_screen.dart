@@ -17,7 +17,7 @@ class _NoteManagementScreenState extends State<NoteManagementScreen> {
         child: const Icon(Icons.add),
       ),
       appBar: AppBar(
-        title: const StyledHeading("Notes"),
+        title: const StyledTitle("Notes"),
         centerTitle: true,
       ),
       body: const Placeholder(),

@@ -13,11 +13,13 @@ class TaskCompletionHistoryScreen extends StatefulWidget {
 
 class _TaskCompletionHistoryScreenState
     extends State<TaskCompletionHistoryScreen> {
+  // need the date passed in from TaskManagement
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const StyledHeading("Task Completion History"),
+        title: const StyledTitle("History"),
       ),
       body: Center(
         child: Column(
