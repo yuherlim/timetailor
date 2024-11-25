@@ -107,4 +107,52 @@ ThemeData primaryTheme = ThemeData(
       ); // Unselected label style
     }),
   ),
+
+  // DatePicker theme
+  datePickerTheme: DatePickerThemeData(
+    backgroundColor: AppColors.secondaryAccent, // Main background color
+    headerBackgroundColor: AppColors.secondaryColor, // Header background
+    headerForegroundColor: AppColors.titleColor, // Header text color
+    surfaceTintColor: Colors.transparent, // Remove tint
+    dayForegroundColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return AppColors.titleColor; // Selected day text
+      } else if (states.contains(WidgetState.disabled)) {
+        return AppColors.textColor.withOpacity(0.4); // Disabled day text
+      }
+      return AppColors.textColor; // Default day text
+    }),
+    todayForegroundColor:
+        WidgetStateProperty.all(AppColors.primaryAccent), // Highlight today
+    todayBackgroundColor: WidgetStateProperty.all(
+      AppColors.primaryAccent.withOpacity(0.1),
+    ),
+    weekdayStyle: TextStyle(
+      color: AppColors.textColor,
+      fontWeight: FontWeight.w600,
+    ),
+    yearForegroundColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return AppColors.primaryAccent; // Selected year text
+      }
+      return AppColors.textColor; // Default year text
+    }),
+    yearBackgroundColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return AppColors.primaryColor.withOpacity(0.2)
+            .withOpacity(0.5); // Selected year background
+      }
+      return Colors.transparent; // Default background
+    }),
+    yearStyle: TextStyle(
+      color: AppColors.textColor,
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+    ),
+    headerHeadlineStyle: TextStyle(
+      color: AppColors.titleColor,
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+    ),
+  ),
 );
