@@ -28,7 +28,7 @@ class StyledHeading extends StatelessWidget {
       // text.toUpperCase(),
       text,
       style: GoogleFonts.kanit(
-        textStyle: Theme.of(context).textTheme.headlineMedium,
+        textStyle: Theme.of(context).textTheme.headlineSmall,
       ),
     );
   }
@@ -45,7 +45,51 @@ class StyledTitle extends StatelessWidget {
       // text.toUpperCase(),
       text,
       style: GoogleFonts.kanit(
-        textStyle: Theme.of(context).textTheme.titleMedium,
+        textStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+          letterSpacing: 2,
+        ),
+      ),
+    );
+  }
+}
+
+class AppBarText extends StatelessWidget {
+  final String text;
+
+  const AppBarText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      // text.toUpperCase(),
+      text,
+      style: GoogleFonts.kanit(
+        textStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+          letterSpacing: 2,
+        ),
+      ),
+    );
+  }
+}
+
+class DayBoxText extends StatelessWidget {
+  final String text;
+
+  const DayBoxText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      // text.toUpperCase(),
+      text,
+      style: GoogleFonts.kanit(
+        textStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1,
+        ),
       ),
     );
   }

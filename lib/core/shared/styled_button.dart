@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:timetailor/core/theme/theme.dart';
+import 'package:timetailor/core/theme/customTheme.dart';
 
 class StyledButton extends StatelessWidget {
   final void Function() onPressed;

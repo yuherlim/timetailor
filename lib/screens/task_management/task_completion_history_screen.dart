@@ -38,7 +38,7 @@ class _TaskCompletionHistoryScreenState
                     ? {context.pop()}
                     : context.go('/tasks'); // Fallback to Tasks
               },
-              child: const StyledHeading("Back"),
+              child: const StyledTitle("Back"),
             ),
           ],
         ),

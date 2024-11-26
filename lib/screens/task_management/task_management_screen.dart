@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:timetailor/core/constants/route_paths.dart';
 import 'package:timetailor/core/shared/styled_button.dart';
 import 'package:timetailor/core/shared/styled_text.dart';
-import 'package:timetailor/core/theme/theme.dart';
+import 'package:timetailor/core/theme/custom_theme.dart';
 
 class TaskManagementScreen extends ConsumerStatefulWidget {
   const TaskManagementScreen({super.key});
@@ -133,7 +133,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
             calendarButtonOnTap(date: currentSelectedDate);
           },
         ),
-        title: StyledTitle(currentMonth),
+        title: AppBarText(currentMonth),
         centerTitle: true,
         actions: [
           IconButton(
@@ -172,10 +172,10 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                     ),
                     child: Column(
                       children: [
-                        StyledHeading(
+                        DayBoxText(
                           DateFormat('EEE').format(date), // Day of the week
                         ),
-                        StyledHeading(
+                        DayBoxText(
                           date.day.toString(), // Date
                         ),
                       ],
