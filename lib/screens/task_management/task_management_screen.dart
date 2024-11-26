@@ -8,6 +8,7 @@ import 'package:timetailor/core/constants/route_paths.dart';
 import 'package:timetailor/core/shared/styled_button.dart';
 import 'package:timetailor/core/shared/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
+import 'package:timetailor/screens/task_management/calendar_header.dart';
 
 class TaskManagementScreen extends ConsumerStatefulWidget {
   const TaskManagementScreen({super.key});
@@ -74,27 +75,6 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
     });
   }
 
-  // void calendarButtonOnTap() {
-  //   showDialog(
-  //       context: context,
-  //       builder: (ctx) {
-  //         return AlertDialog(
-  //           title: const StyledHeading("Choose a date."),
-  //           content: const StyledText(
-  //               "Every good RPG character needs a great name..."),
-  //           actions: [
-  //             StyledButton(
-  //               onPressed: () {
-  //                 context.pop();
-  //               },
-  //               child: const StyledHeading("CLOSE"),
-  //             ),
-  //           ],
-  //           actionsAlignment: MainAxisAlignment.center,
-  //         );
-  //       });
-  // }
-
   void calendarButtonOnTap({required DateTime date}) async {
     final DateTime? selectedDate = await showDatePicker(
       context: context,
@@ -153,38 +133,14 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
       body: Column(
         children: [
           // Calendar Header
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: weekDates.map((date) {
-                return GestureDetector(
-                  onTap: () {
-                    updateCurrentSelectedDate(date: date);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: currentSelectedDate == date
-                          ? AppColors.primaryColor
-                          : AppColors.secondaryColor,
-                    ),
-                    child: Column(
-                      children: [
-                        DayBoxText(
-                          DateFormat('EEE').format(date), // Day of the week
-                        ),
-                        DayBoxText(
-                          date.day.toString(), // Date
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
+          CalendarHeader(
+            weekDates: weekDates,
+            currentSelectedDate: currentSelectedDate,
+            onDateSelected: (date) {
+              updateCurrentSelectedDate(date: date);
+            },
           ),
+
           // Task List with Time Indicator
           Expanded(
             child: Stack(
