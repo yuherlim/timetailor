@@ -36,10 +36,10 @@ class CalendarHeader extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  StyledText(
+                  DayBoxText(
                     DateFormat('EEE').format(date), // Day of the week
                   ),
-                  StyledText(
+                  DayBoxText(
                     date.day.toString(), // Date
                   ),
                 ],
