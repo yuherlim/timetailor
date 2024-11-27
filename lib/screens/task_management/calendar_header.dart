@@ -19,7 +19,7 @@ class CalendarHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     // Total horizontal padding of the parent container
     const double horizontalPadding = 16; // 8 (left) + 8 (right)
-    const double spacingBetweenContainers = 8; // Space between each container
+    const double spacingBetweenContainers = 6; // Space between each container
     final int numberOfDates = weekDates.length;
 
     // Calculate available width for the containers
@@ -35,28 +35,32 @@ class CalendarHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: weekDates.map((date) {
-          return GestureDetector(
-            onTap: () {
-              onDateSelected(date);
-            },
-            child: Container(
-              width: containerWidth,
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: currentSelectedDate == date
-                    ? AppColors.primaryColor
-                    : AppColors.secondaryColor,
-              ),
-              child: Column(
-                children: [
-                  DateBoxText(
-                    DateFormat('EEE').format(date), // Day of the week
-                  ),
-                  DateBoxText(
-                    date.day.toString(), // Date
-                  ),
-                ],
+          return Material(
+            borderRadius: BorderRadius.circular(8),
+            color: currentSelectedDate == date
+                ? AppColors.primaryColor
+                : AppColors.secondaryColor,
+            child: InkWell(
+              onTap: () {
+                onDateSelected(date);
+              },
+              borderRadius: BorderRadius.circular(
+                  8), // Matches the container's border radius
+              splashColor: Colors.blue.withOpacity(0.2), // Ripple color
+              highlightColor: Colors.white.withOpacity(0.1), // Highlight effect
+              child: Container(
+                width: containerWidth,
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  children: [
+                    DateDayText(
+                      DateFormat('EEE').format(date), // Day of the week
+                    ),
+                    DateNumberText(
+                      date.day.toString(), // Date
+                    ),
+                  ],
+                ),
               ),
             ),
           );
