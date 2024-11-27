@@ -75,10 +75,10 @@ class AppBarText extends StatelessWidget {
   }
 }
 
-class DateBoxText extends StatelessWidget {
+class DateDayText extends StatelessWidget {
   final String text;
 
-  const DateBoxText(this.text, {super.key});
+  const DateDayText(this.text, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +86,28 @@ class DateBoxText extends StatelessWidget {
       // text.toUpperCase(),
       text,
       style: GoogleFonts.kanit(
-        textStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+        textStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+          letterSpacing: 1,
+        ),
+      ),
+    );
+  }
+}
+
+class DateNumberText extends StatelessWidget {
+  final String text;
+
+  const DateNumberText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      // text.toUpperCase(),
+      text,
+      style: GoogleFonts.kanit(
+        textStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
           fontWeight: FontWeight.bold,
           letterSpacing: 1,
         ),
