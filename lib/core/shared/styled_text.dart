@@ -75,10 +75,10 @@ class AppBarText extends StatelessWidget {
   }
 }
 
-class DayBoxText extends StatelessWidget {
+class DateBoxText extends StatelessWidget {
   final String text;
 
-  const DayBoxText(this.text, {super.key});
+  const DateBoxText(this.text, {super.key});
 
   @override
   Widget build(BuildContext context) {
