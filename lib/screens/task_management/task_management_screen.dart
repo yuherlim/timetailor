@@ -19,11 +19,14 @@ class TaskManagementScreen extends ConsumerStatefulWidget {
 }
 
 class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
-  late String currentMonth;
   Timer? midnightTimer;
+  late String currentMonth;
   late List<DateTime> weekDates;
-  DateTime currentSelectedDate =
-      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  DateTime currentSelectedDate = todayDate();
+      
+  static DateTime todayDate() {
+    return DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  }
 
   @override
   void initState() {
@@ -97,12 +100,18 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
     });
   }
 
+  void updateUIToToday() {
+    updateWeekDates();
+    updateCurrentMonth();
+    updateCurrentSelectedDate(date: DateTime.now());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.go(taskCreationPath);
+          context.go(taskCreationPath); //need to change this
         },
         child: const Icon(Icons.add),
       ),
@@ -116,12 +125,13 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
         title: AppBarText(currentMonth),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.today),
-            onPressed: () {
-              updateUIToToday();
-            },
-          ),
+          if (currentSelectedDate != todayDate())
+            IconButton(
+              icon: const Icon(Icons.today),
+              onPressed: () {
+                updateUIToToday();
+              },
+            ),
           IconButton(
             icon: const Icon(Icons.history),
             onPressed: () {
@@ -196,11 +206,5 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
         ],
       ),
     );
-  }
-
-  void updateUIToToday() {
-    updateWeekDates();
-    updateCurrentMonth();
-    updateCurrentSelectedDate(date: DateTime.now());
   }
 }
