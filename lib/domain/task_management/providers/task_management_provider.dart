@@ -10,7 +10,6 @@ class CurrentDateNotifier extends _$CurrentDateNotifier {
   @override
   DateTime build() {
     // Initialize current date
-    print("Initializing CurrentDateNotifier...");
     return todayDate();
   }
 
@@ -38,7 +37,6 @@ class CurrentMonthNotifier extends _$CurrentMonthNotifier {
 
   @override
   String build() {
-    print("Initializing CurrentMonthNotifier...");
     // Initialize current month
     updateCurrentMonth();
     scheduleMidnightUpdate();
@@ -46,8 +44,6 @@ class CurrentMonthNotifier extends _$CurrentMonthNotifier {
     ref.onDispose(() {
       _midnightTimer?.cancel();
     });
-
-    print(state);
 
     return state;
   }
@@ -76,11 +72,8 @@ class CurrentMonthNotifier extends _$CurrentMonthNotifier {
 class CurrentWeekDatesNotifier extends _$CurrentWeekDatesNotifier {
   @override
   List<DateTime> build() {
-    print("Initializing CurrentWeekDatesNotifier...");
-
     // Initialize current week dates
     updateWeekDates();
-    print(state);
     return state;
   }
 
@@ -98,6 +91,5 @@ class CurrentWeekDatesNotifier extends _$CurrentWeekDatesNotifier {
       final date = startOfWeek.add(Duration(days: index));
       return DateTime(date.year, date.month, date.day);
     });
-    print("update weekdates success.");
   }
 }
