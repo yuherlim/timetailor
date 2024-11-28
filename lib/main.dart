@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/core/config/routes.dart';
-import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/core/theme/theme.dart';
 import 'package:timetailor/core/theme/util.dart';
 import 'package:timetailor/firebase_options.dart';

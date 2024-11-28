@@ -5,7 +5,7 @@ import 'package:timetailor/domain/task_management/providers/datebox_animation_pr
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/core/shared/styled_text.dart';
 
-class CalendarHeader extends ConsumerStatefulWidget {
+class CalendarHeader extends ConsumerWidget {
   final List<DateTime> weekDates;
   final DateTime currentSelectedDate;
   final Function(DateTime date) onDateSelected;
@@ -18,21 +18,11 @@ class CalendarHeader extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<CalendarHeader> createState() => _CalendarHeaderState();
-}
-
-class _CalendarHeaderState extends ConsumerState<CalendarHeader> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // Total horizontal padding of the parent container
     const double horizontalPadding = 16; // 8 (left) + 8 (right)
     const double spacingBetweenContainers = 6; // Space between each container
-    final int numberOfDates = widget.weekDates.length;
+    final int numberOfDates = weekDates.length;
 
     // Calculate available width for the containers
     final double availableWidth = MediaQuery.of(context).size.width -
@@ -42,20 +32,23 @@ class _CalendarHeaderState extends ConsumerState<CalendarHeader> {
     // Width for each container
     final double containerWidth = availableWidth / numberOfDates;
 
+    // Watch the state of the dateboxAnimationNotifierProvider
+    final dateBoxKeys = ref.watch(dateboxAnimationNotifierProvider);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: widget.weekDates.map((date) {
+        children: weekDates.map((date) {
           return Material(
             borderRadius: BorderRadius.circular(8),
-            color: widget.currentSelectedDate == date
+            color: currentSelectedDate == date
                 ? AppColors.primaryColor
                 : AppColors.secondaryColor,
             child: InkWell(
-              key: ref.watch(dateboxAnimationNotifierProvider)[date],
+              key: dateBoxKeys[date], // Use GlobalKey for this date
               onTap: () {
-                widget.onDateSelected(date);
+                onDateSelected(date);
               },
               borderRadius: BorderRadius.circular(8),
               splashColor: Colors.blue.withOpacity(0.2), // Ripple color

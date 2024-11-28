@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:timetailor/domain/task_management/providers/task_management_provider.dart';
 
 part 'datebox_animation_provider.g.dart'; // Generated file
 
@@ -35,6 +36,8 @@ class DateboxAnimationNotifier extends _$DateboxAnimationNotifier {
 
   // Trigger ripple effect programmatically
   void triggerRipple(DateTime date, BuildContext context) {
+    final date = ref.watch(currentDateNotifierProvider);
+
     final key = state[date];
 
     if (key == null) {
