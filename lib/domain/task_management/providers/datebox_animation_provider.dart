@@ -9,25 +9,17 @@ part 'datebox_animation_provider.g.dart'; // Generated file
 class DateboxAnimationNotifier extends _$DateboxAnimationNotifier {
   @override
   Map<DateTime, GlobalKey> build() {
-    print("Initializing DateboxAnimationNotifier...");
-
     // if not initialized before, initialize it.
     state = {};
 
     // Call initializeKeys to populate state
     initializeKeys();
-    print(state);
     return state;
   }
 
   // Initialize keys for week dates
   void initializeKeys() {
-    print("entered initializeKeys");
     final weekDates = ref.watch(currentWeekDatesNotifierProvider);
-
-    print("success fetch weekdates");
-    print(weekDates);
-
     // bool keysChanged = false;
 
     // // Only update keys if necessary
@@ -55,7 +47,6 @@ class DateboxAnimationNotifier extends _$DateboxAnimationNotifier {
       state[date] = GlobalKey();
     }
     state = Map.from(state);
-    print("Success state update.");
     // if (keysChanged) {
     //   // Update state to notify listeners
     //   state = Map.from(state!);
