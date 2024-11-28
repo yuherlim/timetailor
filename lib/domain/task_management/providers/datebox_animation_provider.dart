@@ -11,7 +11,7 @@ class DateboxAnimationNotifier extends _$DateboxAnimationNotifier {
   Map<DateTime, GlobalKey> build() {
     print("Initializing DateboxAnimationNotifier...");
 
-    // Ensure state is initialized as an empty map
+    // if not initialized before, initialize it.
     state = {};
 
     // Call initializeKeys to populate state
@@ -28,32 +28,38 @@ class DateboxAnimationNotifier extends _$DateboxAnimationNotifier {
     print("success fetch weekdates");
     print(weekDates);
 
-    bool keysChanged = false;
+    // bool keysChanged = false;
 
-    // Only update keys if necessary
-    print("Start checking state");
-    if (state.isEmpty || !setEquals(state.keys.toSet(), weekDates.toSet())) {
-      if (state.isEmpty) {
-        print("state is empty.");
-      }
+    // // Only update keys if necessary
+    // print("Start checking state");
+    // if (state!.isEmpty || !setEquals(state!.keys.toSet(), weekDates.toSet())) {
+    //   if (state!.isEmpty) {
+    //     print("state is empty.");
+    //   }
 
-      if (!setEquals(state.keys.toSet(), weekDates.toSet())) {
-        print("new week dates, reinitializing state.");
-      }
+    //   if (!setEquals(state!.keys.toSet(), weekDates.toSet())) {
+    //     print("new week dates, reinitializing state.");
+    //   }
 
-      state.clear();
+    //   state!.clear();
 
-      for (var date in weekDates) {
-        state[date] = GlobalKey();
-      }
+    //   for (var date in weekDates) {
+    //     state![date] = GlobalKey();
+    //   }
 
-      keysChanged = true;
+    //   keysChanged = true;
+    // }
+    state.clear();
+
+    for (var date in weekDates) {
+      state[date] = GlobalKey();
     }
-
-    if (keysChanged) {
-      // Update state to notify listeners
-      state = Map.from(state);
-      print("Success state update.");
-    }
+    state = Map.from(state);
+    print("Success state update.");
+    // if (keysChanged) {
+    //   // Update state to notify listeners
+    //   state = Map.from(state!);
+    //   print("Success state update.");
+    // }
   }
 }

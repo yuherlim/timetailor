@@ -83,7 +83,7 @@ class CalendarHeader extends ConsumerWidget {
     ref.listen<Map<DateTime, GlobalKey>>(dateboxAnimationNotifierProvider,
         (_, state) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _triggerRipple(state[currentSelectedDate], context);
+        _triggerRipple(state[ref.watch(currentDateNotifierProvider)], context);
       });
     });
 

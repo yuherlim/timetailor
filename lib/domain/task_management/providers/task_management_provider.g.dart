@@ -7,7 +7,7 @@ part of 'task_management_provider.dart';
 // **************************************************************************
 
 String _$currentDateNotifierHash() =>
-    r'24a8e6c9d294a1008032a0f9d4ff12f1f20b1550';
+    r'd1a4f2a13779d19fd7dc6648981d7520b073da39';
 
 /// See also [CurrentDateNotifier].
 @ProviderFor(CurrentDateNotifier)

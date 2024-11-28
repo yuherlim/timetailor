@@ -11,10 +11,7 @@ class CurrentDateNotifier extends _$CurrentDateNotifier {
   DateTime build() {
     // Initialize current date
     print("Initializing CurrentDateNotifier...");
-    state = todayDate();
-    print(state);
-    return state;
-    // return todayDate();
+    return todayDate();
   }
 
   DateTime todayDate() {
