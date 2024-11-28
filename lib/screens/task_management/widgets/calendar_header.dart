@@ -29,9 +29,6 @@ class _CalendarHeaderState extends ConsumerState<CalendarHeader> {
 
   @override
   Widget build(BuildContext context) {
-    print('Rebuilding CalendarHeader with weekDates: $widget.weekDates');
-
-
     // Total horizontal padding of the parent container
     const double horizontalPadding = 16; // 8 (left) + 8 (right)
     const double spacingBetweenContainers = 6; // Space between each container
@@ -50,8 +47,6 @@ class _CalendarHeaderState extends ConsumerState<CalendarHeader> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: widget.weekDates.map((date) {
-          final key = ref.read(dateboxAnimationNotifierProvider)[date];
-          print('Building widget for Date: $date with Key: $key');
           return Material(
             borderRadius: BorderRadius.circular(8),
             color: widget.currentSelectedDate == date

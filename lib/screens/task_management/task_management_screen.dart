@@ -8,7 +8,7 @@ import 'package:timetailor/core/constants/route_paths.dart';
 import 'package:timetailor/core/shared/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/datebox_animation_provider.dart';
-import 'package:timetailor/screens/task_management/calendar_header.dart';
+import 'package:timetailor/screens/task_management/widgets/calendar_header.dart';
 
 class TaskManagementScreen extends ConsumerStatefulWidget {
   const TaskManagementScreen({super.key});
@@ -88,12 +88,10 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
     );
 
     if (selectedDate != null) {
-      print('Selected date: $selectedDate');
       // Handle the selected date
       updateCurrentMonth(date: selectedDate);
       updateWeekDates(date: selectedDate);
       updateCurrentSelectedDate(date: selectedDate);
-      print('State updates complete, scheduling ripple...');
       triggerDateBoxRipple(date: selectedDate);
     }
   }
