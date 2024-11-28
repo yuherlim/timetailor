@@ -7,7 +7,7 @@ part of 'datebox_animation_provider.dart';
 // **************************************************************************
 
 String _$dateboxAnimationNotifierHash() =>
-    r'f6d086e5a9db3e352697ec5753aaee41ae41308c';
+    r'3837572e878c228a4fac623cb5787b49e8fc2649';
 
 /// See also [DateboxAnimationNotifier].
 @ProviderFor(DateboxAnimationNotifier)

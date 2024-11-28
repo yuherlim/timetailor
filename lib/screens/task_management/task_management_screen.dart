@@ -91,7 +91,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
     if (selectedDate != null) {
       // Handle the selected date
       ref.read(currentDateNotifierProvider.notifier).updateDate(date: selectedDate);
-      triggerDateBoxRipple(date: ref.watch(currentDateNotifierProvider));
+      // triggerDateBoxRipple(date: ref.watch(currentDateNotifierProvider));
     }
   }
 
@@ -110,20 +110,20 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
   //   updateCurrentSelectedDate(date: today);
   // }
 
-  void triggerDateBoxRipple({required DateTime date}) {
-    final weekDates = ref.watch(currentWeekDatesNotifierProvider);
+  // void triggerDateBoxRipple({required DateTime date}) {
+  //   final weekDates = ref.watch(currentWeekDatesNotifierProvider);
 
-    //initialize global keys for dateboxes.
-    ref
-        .read(dateboxAnimationNotifierProvider.notifier)
-        .initializeKeys(weekDates);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Trigger the ripple effect for today's date after widget rebuild.
-      ref
-          .read(dateboxAnimationNotifierProvider.notifier)
-          .triggerRipple(date, context);
-    });
-  }
+  //   //initialize global keys for dateboxes.
+  //   ref
+  //       .read(dateboxAnimationNotifierProvider.notifier)
+  //       .initializeKeys(weekDates);
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     // Trigger the ripple effect for today's date after widget rebuild.
+  //     ref
+  //         .read(dateboxAnimationNotifierProvider.notifier)
+  //         .triggerRipple(date, context);
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +141,7 @@ final currentMonth = ref.watch(currentMonthNotifierProvider);
         leading: IconButton(
           icon: const Icon(Icons.calendar_month),
           onPressed: () {
-            calendarButtonOnTap(date: );
+            calendarButtonOnTap(date: currentSelectedDate);
           },
         ),
         title: AppBarText(currentMonth),
@@ -151,8 +151,7 @@ final currentMonth = ref.watch(currentMonthNotifierProvider);
             IconButton(
               icon: const Icon(Icons.today),
               onPressed: () {
-                updateUIToToday();
-                triggerDateBoxRipple();
+                ref.read(currentDateNotifierProvider.notifier).updateToToday();
               },
             ),
           IconButton(
@@ -166,14 +165,7 @@ final currentMonth = ref.watch(currentMonthNotifierProvider);
       body: Column(
         children: [
           // Calendar Header
-          CalendarHeader(
-            weekDates: weekDates,
-            currentSelectedDate: currentSelectedDate,
-            onDateSelected: (date) {
-              // Update selected date and trigger ripple
-              updateCurrentSelectedDate(date: date);
-            },
-          ),
+          const CalendarHeader(),
 
           // Task List with Time Indicator
           Expanded(

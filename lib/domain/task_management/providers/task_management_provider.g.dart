@@ -7,7 +7,7 @@ part of 'task_management_provider.dart';
 // **************************************************************************
 
 String _$currentDateNotifierHash() =>
-    r'3cb3012d5c37fd91c7faee454d643779d51ed832';
+    r'24a8e6c9d294a1008032a0f9d4ff12f1f20b1550';
 
 /// See also [CurrentDateNotifier].
 @ProviderFor(CurrentDateNotifier)
@@ -24,7 +24,7 @@ final currentDateNotifierProvider =
 
 typedef _$CurrentDateNotifier = AutoDisposeNotifier<DateTime>;
 String _$currentMonthNotifierHash() =>
-    r'4c9ba6d1bdf6820a4b6ad7a19d822765d6fa3b50';
+    r'e930c48468dade54791cf0c39b85f84be8f097ff';
 
 /// See also [CurrentMonthNotifier].
 @ProviderFor(CurrentMonthNotifier)
@@ -41,7 +41,7 @@ final currentMonthNotifierProvider =
 
 typedef _$CurrentMonthNotifier = AutoDisposeNotifier<String>;
 String _$currentWeekDatesNotifierHash() =>
-    r'83c4e85308e8fc6fef2b751c997d20651b1b2855';
+    r'1ce151661ce9f43226fe81c1cbc6ab35b403f9a5';
 
 /// See also [CurrentWeekDatesNotifier].
 @ProviderFor(CurrentWeekDatesNotifier)

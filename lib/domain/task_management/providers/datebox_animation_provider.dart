@@ -9,16 +9,38 @@ part 'datebox_animation_provider.g.dart'; // Generated file
 class DateboxAnimationNotifier extends _$DateboxAnimationNotifier {
   @override
   Map<DateTime, GlobalKey> build() {
-    // Initial state is an empty map of dateBoxKeys
-    return {};
+    print("Initializing DateboxAnimationNotifier...");
+
+    // Ensure state is initialized as an empty map
+    state = {};
+
+    // Call initializeKeys to populate state
+    initializeKeys();
+    print(state);
+    return state;
   }
 
   // Initialize keys for week dates
-  void initializeKeys(List<DateTime> weekDates) {
+  void initializeKeys() {
+    print("entered initializeKeys");
+    final weekDates = ref.watch(currentWeekDatesNotifierProvider);
+
+    print("success fetch weekdates");
+    print(weekDates);
+
     bool keysChanged = false;
 
     // Only update keys if necessary
+    print("Start checking state");
     if (state.isEmpty || !setEquals(state.keys.toSet(), weekDates.toSet())) {
+      if (state.isEmpty) {
+        print("state is empty.");
+      }
+
+      if (!setEquals(state.keys.toSet(), weekDates.toSet())) {
+        print("new week dates, reinitializing state.");
+      }
+
       state.clear();
 
       for (var date in weekDates) {
@@ -31,49 +53,7 @@ class DateboxAnimationNotifier extends _$DateboxAnimationNotifier {
     if (keysChanged) {
       // Update state to notify listeners
       state = Map.from(state);
+      print("Success state update.");
     }
-  }
-
-  // Trigger ripple effect programmatically
-  void triggerRipple(DateTime date, BuildContext context) {
-    final date = ref.watch(currentDateNotifierProvider);
-
-    final key = state[date];
-
-    if (key == null) {
-      print("global key is null for this date: $date");
-      return;
-    }
-
-    final boxContext = key.currentContext;
-
-    if (boxContext == null) {
-      print("context is null for this date: $date");
-      return;
-    }
-
-    final renderBox = boxContext.findRenderObject() as RenderBox?;
-
-    if (renderBox == null) {
-      print("renderBox is null for this date: $date");
-      return;
-    }
-
-    final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
-
-    final position = renderBox.localToGlobal(
-      renderBox.size.center(Offset.zero),
-      ancestor: overlay,
-    );
-
-    final materialState = Material.of(boxContext);
-    InkRipple(
-      position: position,
-      color: Colors.blue.withOpacity(0.2),
-      borderRadius: BorderRadius.circular(8),
-      controller: materialState,
-      referenceBox: renderBox,
-      textDirection: TextDirection.ltr,
-    ).confirm();
   }
 }
