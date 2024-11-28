@@ -5,9 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:timetailor/core/constants/route_paths.dart';
-import 'package:timetailor/core/shared/styled_button.dart';
 import 'package:timetailor/core/shared/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
+import 'package:timetailor/domain/task_management/providers/datebox_animation_provider.dart';
 import 'package:timetailor/screens/task_management/calendar_header.dart';
 
 class TaskManagementScreen extends ConsumerStatefulWidget {
@@ -23,9 +23,10 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
   late String currentMonth;
   late List<DateTime> weekDates;
   DateTime currentSelectedDate = todayDate();
-      
+
   static DateTime todayDate() {
-    return DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    return DateTime(
+        DateTime.now().year, DateTime.now().month, DateTime.now().day);
   }
 
   @override
@@ -87,10 +88,13 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
     );
 
     if (selectedDate != null) {
+      print('Selected date: $selectedDate');
       // Handle the selected date
-      updateCurrentSelectedDate(date: selectedDate);
       updateCurrentMonth(date: selectedDate);
-      updateWeekDates(date: currentSelectedDate);
+      updateWeekDates(date: selectedDate);
+      updateCurrentSelectedDate(date: selectedDate);
+      print('State updates complete, scheduling ripple...');
+      triggerDateBoxRipple(date: selectedDate);
     }
   }
 
@@ -101,9 +105,27 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
   }
 
   void updateUIToToday() {
-    updateWeekDates();
+    final today = todayDate();
+
+    // Update UI to today
     updateCurrentMonth();
-    updateCurrentSelectedDate(date: DateTime.now());
+    updateWeekDates();
+    updateCurrentSelectedDate(date: today);
+  }
+
+  void triggerDateBoxRipple({DateTime? date}) {
+    final currentDate = date ?? todayDate();
+
+    //initialize global keys for dateboxes.
+    ref
+        .read(dateboxAnimationNotifierProvider.notifier)
+        .initializeKeys(weekDates);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Trigger the ripple effect for today's date after widget rebuild.
+      ref
+          .read(dateboxAnimationNotifierProvider.notifier)
+          .triggerRipple(currentDate, context);
+    });
   }
 
   @override
@@ -111,7 +133,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.go(taskCreationPath); //need to change this
+          context.go(taskCreationPath); // Navigate to task creation
         },
         child: const Icon(Icons.add),
       ),
@@ -130,6 +152,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
               icon: const Icon(Icons.today),
               onPressed: () {
                 updateUIToToday();
+                triggerDateBoxRipple();
               },
             ),
           IconButton(
@@ -147,6 +170,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
             weekDates: weekDates,
             currentSelectedDate: currentSelectedDate,
             onDateSelected: (date) {
+              // Update selected date and trigger ripple
               updateCurrentSelectedDate(date: date);
             },
           ),
