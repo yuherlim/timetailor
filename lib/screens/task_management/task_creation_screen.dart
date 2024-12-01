@@ -13,7 +13,7 @@ class _TaskCreationScreenState extends State<TaskCreationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const StyledHeading("Task Creation"),
+        title: const AppBarText("Task Creation"),
         centerTitle: true,
       ),
       body: const Scaffold(),

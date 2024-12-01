@@ -19,7 +19,7 @@ class _TaskCompletionHistoryScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const StyledTitle("History"),
+        title: const AppBarText("History"),
       ),
       body: Center(
         child: Column(

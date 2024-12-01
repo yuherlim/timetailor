@@ -79,51 +79,60 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
           Expanded(
             child: Stack(
               children: [
-                ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: 10, // Example number of tasks
-                  itemBuilder: (context, index) {
-                    return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      child: ListTile(
-                        title: StyledText("Task ${index + 1}"),
-                        subtitle: const StyledText("9:00 AM - 10:00 AM"),
-                        trailing: IconButton(
-                          icon: Icon(
-                            Icons.check_circle_outline,
-                            color: AppColors.textColor,
-                          ),
-                          onPressed: () {
-                            // Mark task as completed
-                          },
-                        ),
-                        onTap: () {
-                          // Navigate to Task Details Screen
-                          Navigator.pushNamed(context, '/details');
-                        },
-                      ),
-                    );
+                GestureDetector(
+                  onTapDown: (details) {
+                    final tapPosition = details.localPosition;
+                    print(tapPosition);
                   },
-                ),
-                // Current Time Indicator
-                const Positioned(
-                  top: 100, // Dynamically calculate this position
-                  left: 0,
-                  right: 0,
-                  child: Row(
-                    children: [
-                      SizedBox(width: 10),
-                      Icon(Icons.access_time, color: Colors.red),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: Divider(
-                          color: Colors.red,
-                          thickness: 1.5,
-                        ),
-                      ),
-                    ],
+                  child: Container(
+                    color: Colors.red,
                   ),
-                ),
+                )
+                // ListView.builder(
+                //   padding: const EdgeInsets.all(16),
+                //   itemCount: 10, // Example number of tasks
+                //   itemBuilder: (context, index) {
+                //     return Card(
+                //       margin: const EdgeInsets.symmetric(vertical: 8),
+                //       child: ListTile(
+                //         title: StyledText("Task ${index + 1}"),
+                //         subtitle: const StyledText("9:00 AM - 10:00 AM"),
+                //         trailing: IconButton(
+                //           icon: Icon(
+                //             Icons.check_circle_outline,
+                //             color: AppColors.textColor,
+                //           ),
+                //           onPressed: () {
+                //             // Mark task as completed
+                //           },
+                //         ),
+                //         onTap: () {
+                //           // Navigate to Task Details Screen
+                //           // context.go(taskCreationPath);
+                //         },
+                //       ),
+                //     );
+                //   },
+                // ),
+                // Current Time Indicator
+                // const Positioned(
+                //   top: 100, // Dynamically calculate this position
+                //   left: 0,
+                //   right: 0,
+                //   child: Row(
+                //     children: [
+                //       SizedBox(width: 10),
+                //       Icon(Icons.access_time, color: Colors.red),
+                //       SizedBox(width: 10),
+                //       Expanded(
+                //         child: Divider(
+                //           color: Colors.red,
+                //           thickness: 1.5,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
               ],
             ),
           ),
