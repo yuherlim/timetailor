@@ -29,6 +29,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
   static const double calendarWidgetTopBoundaryY = 16;
   double calendarWidgetBottomBoundaryY = 0;
   late ScrollController _scrollController;
+  List<double> timeSlotBoundaries = [];
 
   @override
   void initState() {
@@ -44,13 +45,21 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
       setState(() {
         defaultTimeSlotHeight =
             screenHeight <= 800 ? 80 : 100; // Initialize time slot height
-        TimeSlotInfo.slotWidth = CalendarPainter.slotWidth; //Need wait for calendar painter to finish building first.
+        TimeSlotInfo.slotWidth = CalendarPainter
+            .slotWidth; //Need wait for calendar painter to finish building first.
+        TimeSlotInfo.slotStartX = CalendarPainter.slotStartX;
         TimeSlotInfo.pixelsPerMinute = defaultTimeSlotHeight / 60;
         TimeSlotInfo.snapInterval =
             5 * TimeSlotInfo.pixelsPerMinute; // Snap every 5 minutes
         final calendarHeight = defaultTimeSlotHeight * 24;
         calendarWidgetBottomBoundaryY =
             calendarWidgetTopBoundaryY + calendarHeight;
+
+        // Generate time slot boundaries
+        timeSlotBoundaries = List.generate(
+          24,
+          (i) => calendarWidgetTopBoundaryY + (defaultTimeSlotHeight * i),
+        );
       });
       super.didChangeDependencies();
     });
@@ -146,6 +155,24 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                     print(
                         "DraggableBox: dx = ${draggableBox.dx} dy = ${draggableBox.dy}");
                     print("showDraggableBox: $showDraggableBox");
+                  },
+                  onTapUp: (details) {
+                    final tapPosition = details.localPosition.dy;
+
+                    // Find the nearest time slot boundary
+                    double closestBoundary = timeSlotBoundaries.reduce((a, b) =>
+                        (tapPosition - a).abs() < (tapPosition - b).abs()
+                            ? a
+                            : b);
+
+                    // Snap the draggable box to the nearest boundary
+                    draggableBox = DraggableBox(
+                      dx: TimeSlotInfo.slotStartX,
+                      dy: closestBoundary,
+                    );
+                    currentTimeSlotHeight =
+                        defaultTimeSlotHeight; // Reset to default height
+                    showDraggableBox = true;
                   },
                   child: SingleChildScrollView(
                     controller:

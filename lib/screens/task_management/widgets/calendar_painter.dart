@@ -7,6 +7,7 @@ class CalendarPainter extends CustomPainter {
   
 
   static double slotWidth = 0;
+  static double slotStartX = 0;
 
   CalendarPainter({
     required this.timePeriods,
@@ -51,6 +52,9 @@ class CalendarPainter extends CustomPainter {
       
       // Update slot width with line width
       slotWidth = size.width - (maxTextWidth + 16);
+
+      // update slot start x coordinate with sum of text and padding lencth
+      slotStartX = maxTextWidth + 24;
     }
   }
 
