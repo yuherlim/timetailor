@@ -115,3 +115,17 @@ class DateNumberText extends StatelessWidget {
     );
   }
 }
+
+// class TimeperiodTextStyle extends StatelessWidget {
+
+//   const TimeperiodTextStyle({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Theme.of(context).textTheme.bodyLarge?.copyWith(
+//           fontWeight: FontWeight.bold,
+//           letterSpacing: 1,
+//         ) ?? TextStyle();
+//   }
+// }
+

@@ -3,15 +3,25 @@ import 'package:flutter/material.dart';
 class CalendarPainter extends CustomPainter {
   final List<String> timePeriods;
   final double slotHeight;
+  final BuildContext context; // Add BuildContext
+  
+
+  static double slotWidth = 0;
 
   CalendarPainter({
     required this.timePeriods,
     required this.slotHeight,
+    required this.context,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    final maxTextWidth = calculateMaxTextWidth(timePeriods, const TextStyle());
+    final timePeriodTextStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1,
+        );
+    final maxTextWidth = calculateMaxTextWidth(timePeriods, timePeriodTextStyle!);
 
     final paint = Paint()
       ..color = Colors.grey
@@ -28,7 +38,7 @@ class CalendarPainter extends CustomPainter {
       // Draw the time label
       textPainter.text = TextSpan(
         text: timePeriods[i],
-        // style: TextStyle(color: Colors.black, fontSize: 14),
+        style: timePeriodTextStyle,
       );
       textPainter.layout();
 
@@ -38,6 +48,9 @@ class CalendarPainter extends CustomPainter {
       // Draw the horizontal line
       canvas.drawLine(
           Offset(maxTextWidth + 16, y), Offset(size.width, y), paint);
+      
+      // Update slot width with line width
+      slotWidth = size.width - (maxTextWidth + 16);
     }
   }
 

@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_painter.dart';
 
 class CalendarWidget extends StatelessWidget {
-  const CalendarWidget({super.key});
+  final BuildContext context; // Add BuildContext
+  final double slotHeight;
+
+  const CalendarWidget({
+    super.key,
+    required this.context,
+    required this.slotHeight,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,18 +39,6 @@ class CalendarWidget extends StatelessWidget {
       '10 PM',
       '11 PM'
     ];
-    // Get the screen height
-    double screenHeight = MediaQuery.of(context).size.height;
-
-    // Define slot height based on screen size
-    double slotHeight;
-    if (screenHeight <= 800) {
-      // Small screens (e.g., mobile)
-      slotHeight = 40; // 40px per timeslot
-    } else {
-      // Large screens (e.g., tablets, desktops)
-      slotHeight = 50; // 50px per timeslot
-    }
 
     // Calculate the total height for 24 slots
     double calendarHeight = timePeriods.length * slotHeight;
@@ -53,6 +48,7 @@ class CalendarWidget extends StatelessWidget {
       painter: CalendarPainter(
         timePeriods: timePeriods,
         slotHeight: slotHeight,
+        context: context,
       ),
     );
   }
