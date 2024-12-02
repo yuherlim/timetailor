@@ -130,7 +130,10 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                       print("showDraggableBox: $showDraggableBox");
                     },
                     child: const SingleChildScrollView(
-                      child: CalendarWidget(),
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: CalendarWidget(),
+                      ),
                     ),
                   ),
                   if (showDraggableBox)
@@ -150,8 +153,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                           width: slotWidth, // Fixed width
                           height:
                               draggableBoxSize, // Dynamically adjusted height.
-                          color: Colors.black.withOpacity(
-                              0.5), // Semi-transparent for visibility.
+                          color: AppColors.primaryAccent, // Semi-transparent for visibility.
                         ),
                       ),
                     ),
