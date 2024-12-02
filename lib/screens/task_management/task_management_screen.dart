@@ -38,20 +38,22 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
 
   @override
   void didChangeDependencies() {
-    final screenHeight = MediaQuery.of(context).size.height;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final screenHeight = MediaQuery.of(context).size.height;
 
-    setState(() {
-      defaultTimeSlotHeight =
-          screenHeight <= 800 ? 80 : 100; // Initialize time slot height
-      TimeSlotInfo.slotWidth = CalendarPainter.slotWidth;
-      TimeSlotInfo.pixelsPerMinute = defaultTimeSlotHeight / 60;
-      TimeSlotInfo.snapInterval =
-          5 * TimeSlotInfo.pixelsPerMinute; // Snap every 5 minutes
-      final calendarHeight = defaultTimeSlotHeight * 24;
-      calendarWidgetBottomBoundaryY =
-          calendarWidgetTopBoundaryY + calendarHeight;
+      setState(() {
+        defaultTimeSlotHeight =
+            screenHeight <= 800 ? 80 : 100; // Initialize time slot height
+        TimeSlotInfo.slotWidth = CalendarPainter.slotWidth; //Need wait for calendar painter to finish building first.
+        TimeSlotInfo.pixelsPerMinute = defaultTimeSlotHeight / 60;
+        TimeSlotInfo.snapInterval =
+            5 * TimeSlotInfo.pixelsPerMinute; // Snap every 5 minutes
+        final calendarHeight = defaultTimeSlotHeight * 24;
+        calendarWidgetBottomBoundaryY =
+            calendarWidgetTopBoundaryY + calendarHeight;
+      });
+      super.didChangeDependencies();
     });
-    super.didChangeDependencies();
   }
 
   @override
