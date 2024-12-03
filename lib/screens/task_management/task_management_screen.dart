@@ -91,11 +91,6 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
     final currentSelectedDate = ref.watch(currentDateNotifierProvider);
     final currentMonth = ref.watch(currentMonthNotifierProvider);
 
-    // if (timeSlotInfo == null) {
-    //   // Return a loading spinner or placeholder until the dimensions are initialized
-    //   return const Center(child: CircularProgressIndicator());
-    // }
-
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -137,46 +132,80 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
 
           // Task List with Time Indicator
           Expanded(
-            child: Stack(
-              children: [
-                GestureDetector(
-                  onTapDown: (details) {
-                    final tapPosition = details.localPosition;
-                    print(tapPosition);
-                    if (tapPosition.dy >= calendarWidgetTopBoundaryY) {
-                      setState(() {
-                        draggableBox = DraggableBox(
-                            dx: tapPosition.dx, dy: tapPosition.dy);
-                        currentTimeSlotHeight = defaultTimeSlotHeight;
-                        showDraggableBox = true;
-                      });
-                    }
-
-                    print(
-                        "DraggableBox: dx = ${draggableBox.dx} dy = ${draggableBox.dy}");
-                    print("showDraggableBox: $showDraggableBox");
-                  },
-                  onTapUp: (details) {
-                    final tapPosition = details.localPosition.dy;
-
-                    // Find the nearest time slot boundary
-                    double closestBoundary = timeSlotBoundaries.reduce((a, b) =>
-                        (tapPosition - a).abs() < (tapPosition - b).abs()
-                            ? a
-                            : b);
-
-                    // Snap the draggable box to the nearest boundary
-                    draggableBox = DraggableBox(
-                      dx: TimeSlotInfo.slotStartX,
-                      dy: closestBoundary,
-                    );
-                    currentTimeSlotHeight =
-                        defaultTimeSlotHeight; // Reset to default height
-                    showDraggableBox = true;
-                  },
-                  child: SingleChildScrollView(
-                    controller:
-                        _scrollController, // Attach the scroll controller here
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: Stack(
+                children: [
+                  GestureDetector(
+                    onTapUp: (details) {
+                      // if draggable box already created, do nothing
+                      if (showDraggableBox) {
+                        setState(() {
+                          showDraggableBox = false;
+                        });
+                        return;
+                      }
+                      // Get the scroll offset of the calendar
+                      final scrollOffset = _scrollController.offset;
+              
+                      final tapPosition = scrollOffset + details.localPosition.dy;
+              
+                      // Binary search to find the correct time slot
+                      int low = 0;
+                      int high = timeSlotBoundaries.length - 1;
+                      int slotIndex = -1;
+              
+                      while (low <= high) {
+                        int mid = (low + high) ~/ 2;
+              
+                        print("low: $low");
+                        print("mid: $mid");
+                        print("high: $high");
+              
+                        if (mid < timeSlotBoundaries.length - 1 &&
+                            tapPosition >= timeSlotBoundaries[mid] &&
+                            tapPosition < timeSlotBoundaries[mid + 1]) {
+                          slotIndex = mid; // Found the slot
+                          break;
+                        } else if (tapPosition < timeSlotBoundaries[mid]) {
+                          high = mid - 1; // Search in the left half
+                        } else {
+                          low = mid + 1; // Search in the right half
+                        }
+                      }
+              
+                      print("slotIndex before handling: $slotIndex");
+              
+                      // Handle case where the tap is after the last slot
+                      if (slotIndex == -1 &&
+                          tapPosition >= timeSlotBoundaries.last) {
+                        slotIndex = timeSlotBoundaries.length - 1;
+                      }
+              
+                      print(
+                          "timeSlotBoundaries: ${timeSlotBoundaries.toString()}");
+                      print("relative calendar tap position: $tapPosition");
+                      print("local tap position: ${details.localPosition.dy}");
+                      print("slotIndex: $slotIndex");
+                      print(
+                          "timeSlotStartingY: ${timeSlotBoundaries[slotIndex]}");
+                      print("scrollOffset: $scrollOffset");
+              
+                      // Snap to the correct time slot
+                      if (slotIndex != -1) {
+                        print("slot index != 1");
+                        setState(() {
+                          draggableBox = DraggableBox(
+                            dx: TimeSlotInfo.slotStartX,
+                            dy: timeSlotBoundaries[slotIndex],
+                          );
+                          currentTimeSlotHeight =
+                              defaultTimeSlotHeight; // Reset height
+                          showDraggableBox = true;
+                          print("set state ran.");
+                        });
+                      }
+                    },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: calendarWidgetTopBoundaryY, horizontal: 8),
@@ -186,207 +215,207 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                       ),
                     ),
                   ),
-                ),
-                if (showDraggableBox)
-                  Positioned(
-                    left: draggableBox.dx,
-                    top: draggableBox.dy,
-                    child: Container(
-                      width: TimeSlotInfo.slotWidth, // Fixed width
-                      height:
-                          currentTimeSlotHeight, // Dynamically adjusted height.
-                      decoration: BoxDecoration(
-                        color: Colors.transparent, // Transparent background
-                        border: Border.all(
-                          color: AppColors.primaryAccent, // Border color
-                          width: 2.0, // Border thickness
-                        ),
-                      ),
-                    ),
-                  ),
-                // Top Indicator
-                if (showDraggableBox)
-                  Positioned(
-                    left: draggableBox.dx +
-                        TimeSlotInfo.slotWidth / 2 -
-                        40, // Center horizontally
-                    top: draggableBox.dy - 15, // Above the top edge
-                    child: GestureDetector(
-                      onPanUpdate: (details) {
-                        setState(() {
-                          // Adjust height and position for top resizing
-                          final newDy = draggableBox.dy + details.delta.dy;
-                          final newSize =
-                              (currentTimeSlotHeight - details.delta.dy).clamp(
-                                  TimeSlotInfo.snapInterval, double.infinity);
-
-                          if (newDy >= calendarWidgetTopBoundaryY &&
-                              newSize >= TimeSlotInfo.snapInterval) {
-                            draggableBox.dy = newDy;
-                            currentTimeSlotHeight = newSize;
-                          }
-                        });
-                      },
-                      onPanEnd: (_) {
-                        setState(() {
-                          // Snap height and position to the nearest interval after dragging
-                          draggableBox.dy =
-                              (draggableBox.dy / TimeSlotInfo.snapInterval)
-                                      .round() *
-                                  TimeSlotInfo.snapInterval;
-                          currentTimeSlotHeight = (currentTimeSlotHeight /
-                                      TimeSlotInfo.snapInterval)
-                                  .round() *
-                              TimeSlotInfo.snapInterval;
-                        });
-                      },
+                  if (showDraggableBox)
+                    Positioned(
+                      left: draggableBox.dx,
+                      top: draggableBox.dy,
                       child: Container(
-                        width: 80,
-                        height: 30,
+                        width: TimeSlotInfo.slotWidth, // Fixed width
+                        height:
+                            currentTimeSlotHeight, // Dynamically adjusted height.
                         decoration: BoxDecoration(
-                          color: AppColors.primaryAccent,
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.arrow_upward,
-                            size: 16,
-                            color: Colors.white,
+                          color: Colors.transparent, // Transparent background
+                          border: Border.all(
+                            color: AppColors.primaryAccent, // Border color
+                            width: 2.0, // Border thickness
                           ),
                         ),
                       ),
                     ),
-                  ),
-                // Bottom Indicator
-                if (showDraggableBox)
-                  Positioned(
-                    left: draggableBox.dx +
-                        TimeSlotInfo.slotWidth / 2 -
-                        40, // Center horizontally
-                    top: draggableBox.dy +
-                        currentTimeSlotHeight -
-                        15, // Below the bottom edge
-                    child: GestureDetector(
-                      onPanUpdate: (details) {
-                        setState(() {
-                          // Get the scroll offset of the calendar
-                          final scrollOffset = _scrollController.offset;
-                          final remainingScrollableContentInView =
-                              _scrollController.position.viewportDimension;
-
-                          print("scrollOffset: $scrollOffset");
-
-                          // Calculate the true position of the draggable box within the calendar
-                          final relativeDy = draggableBox.dy + scrollOffset;
-
-                          print("relativeDy: $relativeDy");
-
-                          // Calculate the maximum height for the task to prevent exceeding the calendar boundary
-                          final maxTaskHeight =
-                              calendarWidgetBottomBoundaryY - relativeDy;
-
-                          print("maxTaskHeight: $maxTaskHeight");
-                          // Adjust height for bottom resizing
-                          final newSize = (currentTimeSlotHeight +
-                                  details.delta.dy)
-                              .clamp(TimeSlotInfo.snapInterval, maxTaskHeight);
-                          if (newSize >= TimeSlotInfo.snapInterval) {
-                            currentTimeSlotHeight = newSize;
-                          }
-
-                          // Calculate the bottom position of the draggable box
-                          final boxBottomPosition =
-                              relativeDy + currentTimeSlotHeight;
-
-                          // Calculate the visible bottom boundary of the viewport
-                          final viewportBottom =
-                              scrollOffset + remainingScrollableContentInView;
-
-                          // Scroll if the bottom of the box goes beyond the viewport
-                          if (boxBottomPosition > viewportBottom) {
-                            _scrollController.animateTo(
-                              scrollOffset +
-                                  (boxBottomPosition - viewportBottom),
-                              duration: const Duration(milliseconds: 200),
-                              curve: Curves.easeOut,
-                            );
-                          }
-                        });
-                      },
-                      onPanEnd: (_) {
-                        setState(() {
-                          // Snap height to the nearest interval after dragging
-                          currentTimeSlotHeight = (currentTimeSlotHeight /
-                                      TimeSlotInfo.snapInterval)
-                                  .round() *
-                              TimeSlotInfo.snapInterval;
-                        });
-                      },
-                      child: Container(
-                        width: 80,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryAccent,
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.arrow_downward,
-                            size: 16,
-                            color: Colors.white,
+                  // Top Indicator
+                  if (showDraggableBox)
+                    Positioned(
+                      left: draggableBox.dx +
+                          TimeSlotInfo.slotWidth / 2 -
+                          40, // Center horizontally
+                      top: draggableBox.dy - 15, // Above the top edge
+                      child: GestureDetector(
+                        onPanUpdate: (details) {
+                          setState(() {
+                            // Adjust height and position for top resizing
+                            final newDy = draggableBox.dy + details.delta.dy;
+                            final newSize =
+                                (currentTimeSlotHeight - details.delta.dy).clamp(
+                                    TimeSlotInfo.snapInterval, double.infinity);
+              
+                            if (newDy >= calendarWidgetTopBoundaryY &&
+                                newSize >= TimeSlotInfo.snapInterval) {
+                              draggableBox.dy = newDy;
+                              currentTimeSlotHeight = newSize;
+                            }
+                          });
+                        },
+                        onPanEnd: (_) {
+                          setState(() {
+                            // Snap height and position to the nearest interval after dragging
+                            draggableBox.dy =
+                                (draggableBox.dy / TimeSlotInfo.snapInterval)
+                                        .round() *
+                                    TimeSlotInfo.snapInterval;
+                            currentTimeSlotHeight = (currentTimeSlotHeight /
+                                        TimeSlotInfo.snapInterval)
+                                    .round() *
+                                TimeSlotInfo.snapInterval;
+                          });
+                        },
+                        child: Container(
+                          width: 80,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryAccent,
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: const Center(
+                            child: Icon(
+                              Icons.arrow_upward,
+                              size: 16,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                // ListView.builder(
-                //   padding: const EdgeInsets.all(16),
-                //   itemCount: 10, // Example number of tasks
-                //   itemBuilder: (context, index) {
-                //     return Card(
-                //       margin: const EdgeInsets.symmetric(vertical: 8),
-                //       child: ListTile(
-                //         title: StyledText("Task ${index + 1}"),
-                //         subtitle: const StyledText("9:00 AM - 10:00 AM"),
-                //         trailing: IconButton(
-                //           icon: Icon(
-                //             Icons.check_circle_outline,
-                //             color: AppColors.textColor,
-                //           ),
-                //           onPressed: () {
-                //             // Mark task as completed
-                //           },
-                //         ),
-                //         onTap: () {
-                //           // Navigate to Task Details Screen
-                //           // context.go(taskCreationPath);
-                //         },
-                //       ),
-                //     );
-                //   },
-                // ),
-                // Current Time Indicator
-                // const Positioned(
-                //   top: 100, // Dynamically calculate this position
-                //   left: 0,
-                //   right: 0,
-                //   child: Row(
-                //     children: [
-                //       SizedBox(width: 10),
-                //       Icon(Icons.access_time, color: Colors.red),
-                //       SizedBox(width: 10),
-                //       Expanded(
-                //         child: Divider(
-                //           color: Colors.red,
-                //           thickness: 1.5,
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-              ],
+                  // Bottom Indicator
+                  if (showDraggableBox)
+                    Positioned(
+                      left: draggableBox.dx +
+                          TimeSlotInfo.slotWidth / 2 -
+                          40, // Center horizontally
+                      top: draggableBox.dy +
+                          currentTimeSlotHeight -
+                          15, // Below the bottom edge
+                      child: GestureDetector(
+                        onPanUpdate: (details) {
+                          setState(() {
+                            // Get the scroll offset of the calendar
+                            final scrollOffset = _scrollController.offset;
+                            final remainingScrollableContentInView =
+                                _scrollController.position.viewportDimension;
+              
+                            print("scrollOffset: $scrollOffset");
+              
+                            // Calculate the true position of the draggable box within the calendar
+                            final relativeDy = draggableBox.dy + scrollOffset;
+              
+                            print("relativeDy: $relativeDy");
+              
+                            // Calculate the maximum height for the task to prevent exceeding the calendar boundary
+                            final maxTaskHeight =
+                                calendarWidgetBottomBoundaryY - relativeDy;
+              
+                            print("maxTaskHeight: $maxTaskHeight");
+                            // Adjust height for bottom resizing
+                            final newSize = (currentTimeSlotHeight +
+                                    details.delta.dy)
+                                .clamp(TimeSlotInfo.snapInterval, maxTaskHeight);
+                            if (newSize >= TimeSlotInfo.snapInterval) {
+                              currentTimeSlotHeight = newSize;
+                            }
+              
+                            // Calculate the bottom position of the draggable box
+                            final boxBottomPosition =
+                                relativeDy + currentTimeSlotHeight;
+              
+                            // Calculate the visible bottom boundary of the viewport
+                            final viewportBottom =
+                                scrollOffset + remainingScrollableContentInView;
+              
+                            // Scroll if the bottom of the box goes beyond the viewport
+                            if (boxBottomPosition > viewportBottom) {
+                              _scrollController.animateTo(
+                                scrollOffset +
+                                    (boxBottomPosition - viewportBottom),
+                                duration: const Duration(milliseconds: 200),
+                                curve: Curves.easeOut,
+                              );
+                            }
+                          });
+                        },
+                        onPanEnd: (_) {
+                          setState(() {
+                            // Snap height to the nearest interval after dragging
+                            currentTimeSlotHeight = (currentTimeSlotHeight /
+                                        TimeSlotInfo.snapInterval)
+                                    .round() *
+                                TimeSlotInfo.snapInterval;
+                          });
+                        },
+                        child: Container(
+                          width: 80,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryAccent,
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: const Center(
+                            child: Icon(
+                              Icons.arrow_downward,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  // ListView.builder(
+                  //   padding: const EdgeInsets.all(16),
+                  //   itemCount: 10, // Example number of tasks
+                  //   itemBuilder: (context, index) {
+                  //     return Card(
+                  //       margin: const EdgeInsets.symmetric(vertical: 8),
+                  //       child: ListTile(
+                  //         title: StyledText("Task ${index + 1}"),
+                  //         subtitle: const StyledText("9:00 AM - 10:00 AM"),
+                  //         trailing: IconButton(
+                  //           icon: Icon(
+                  //             Icons.check_circle_outline,
+                  //             color: AppColors.textColor,
+                  //           ),
+                  //           onPressed: () {
+                  //             // Mark task as completed
+                  //           },
+                  //         ),
+                  //         onTap: () {
+                  //           // Navigate to Task Details Screen
+                  //           // context.go(taskCreationPath);
+                  //         },
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
+                  // Current Time Indicator
+                  // const Positioned(
+                  //   top: 100, // Dynamically calculate this position
+                  //   left: 0,
+                  //   right: 0,
+                  //   child: Row(
+                  //     children: [
+                  //       SizedBox(width: 10),
+                  //       Icon(Icons.access_time, color: Colors.red),
+                  //       SizedBox(width: 10),
+                  //       Expanded(
+                  //         child: Divider(
+                  //           color: Colors.red,
+                  //           thickness: 1.5,
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
+                ],
+              ),
             ),
           ),
         ],
