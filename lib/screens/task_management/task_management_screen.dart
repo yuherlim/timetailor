@@ -137,6 +137,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
               child: Stack(
                 children: [
                   GestureDetector(
+                    behavior: HitTestBehavior.translucent, // Allow gestures to propagate
                     onTapUp: (details) {
                       // if draggable box already created, do nothing
                       if (showDraggableBox) {
@@ -145,43 +146,20 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                         });
                         return;
                       }
-                      // Get the scroll offset of the calendar
-                      final scrollOffset = _scrollController.offset;
-              
-                      final tapPosition = scrollOffset + details.localPosition.dy;
-              
+
+                      final tapPosition = details.localPosition.dy;
+
                       // Binary search to find the correct time slot
-                      int low = 0;
-                      int high = timeSlotBoundaries.length - 1;
-                      int slotIndex = -1;
-              
-                      while (low <= high) {
-                        int mid = (low + high) ~/ 2;
-              
-                        print("low: $low");
-                        print("mid: $mid");
-                        print("high: $high");
-              
-                        if (mid < timeSlotBoundaries.length - 1 &&
-                            tapPosition >= timeSlotBoundaries[mid] &&
-                            tapPosition < timeSlotBoundaries[mid + 1]) {
-                          slotIndex = mid; // Found the slot
-                          break;
-                        } else if (tapPosition < timeSlotBoundaries[mid]) {
-                          high = mid - 1; // Search in the left half
-                        } else {
-                          low = mid + 1; // Search in the right half
-                        }
-                      }
-              
+                      int slotIndex = binarySearchSlotIndex(tapPosition);
+
                       print("slotIndex before handling: $slotIndex");
-              
+
                       // Handle case where the tap is after the last slot
                       if (slotIndex == -1 &&
                           tapPosition >= timeSlotBoundaries.last) {
                         slotIndex = timeSlotBoundaries.length - 1;
                       }
-              
+
                       print(
                           "timeSlotBoundaries: ${timeSlotBoundaries.toString()}");
                       print("relative calendar tap position: $tapPosition");
@@ -189,11 +167,9 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                       print("slotIndex: $slotIndex");
                       print(
                           "timeSlotStartingY: ${timeSlotBoundaries[slotIndex]}");
-                      print("scrollOffset: $scrollOffset");
-              
+
                       // Snap to the correct time slot
                       if (slotIndex != -1) {
-                        print("slot index != 1");
                         setState(() {
                           draggableBox = DraggableBox(
                             dx: TimeSlotInfo.slotStartX,
@@ -202,7 +178,6 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                           currentTimeSlotHeight =
                               defaultTimeSlotHeight; // Reset height
                           showDraggableBox = true;
-                          print("set state ran.");
                         });
                       }
                     },
@@ -233,21 +208,28 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                       ),
                     ),
                   // Top Indicator
-                  if (showDraggableBox)
                     Positioned(
                       left: draggableBox.dx +
                           TimeSlotInfo.slotWidth / 2 -
                           40, // Center horizontally
                       top: draggableBox.dy - 15, // Above the top edge
                       child: GestureDetector(
+                        behavior: HitTestBehavior.opaque, // Ensure gestures are detected
                         onPanUpdate: (details) {
+                          print("onPanUpdate triggered");
                           setState(() {
                             // Adjust height and position for top resizing
                             final newDy = draggableBox.dy + details.delta.dy;
-                            final newSize =
-                                (currentTimeSlotHeight - details.delta.dy).clamp(
+                            final newSize = (currentTimeSlotHeight -
+                                    details.delta.dy)
+                                .clamp(
                                     TimeSlotInfo.snapInterval, double.infinity);
-              
+
+                            print("current position: ${draggableBox.dy}");
+                            print("moved by: ${details.delta.dy}");
+                            print("new position: ${newDy}");
+                            print("new size: $newSize");
+
                             if (newDy >= calendarWidgetTopBoundaryY &&
                                 newSize >= TimeSlotInfo.snapInterval) {
                               draggableBox.dy = newDy;
@@ -287,7 +269,6 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                       ),
                     ),
                   // Bottom Indicator
-                  if (showDraggableBox)
                     Positioned(
                       left: draggableBox.dx +
                           TimeSlotInfo.slotWidth / 2 -
@@ -302,35 +283,36 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                             final scrollOffset = _scrollController.offset;
                             final remainingScrollableContentInView =
                                 _scrollController.position.viewportDimension;
-              
+
                             print("scrollOffset: $scrollOffset");
-              
+
                             // Calculate the true position of the draggable box within the calendar
                             final relativeDy = draggableBox.dy + scrollOffset;
-              
+
                             print("relativeDy: $relativeDy");
-              
+
                             // Calculate the maximum height for the task to prevent exceeding the calendar boundary
                             final maxTaskHeight =
                                 calendarWidgetBottomBoundaryY - relativeDy;
-              
+
                             print("maxTaskHeight: $maxTaskHeight");
                             // Adjust height for bottom resizing
                             final newSize = (currentTimeSlotHeight +
                                     details.delta.dy)
-                                .clamp(TimeSlotInfo.snapInterval, maxTaskHeight);
+                                .clamp(
+                                    TimeSlotInfo.snapInterval, maxTaskHeight);
                             if (newSize >= TimeSlotInfo.snapInterval) {
                               currentTimeSlotHeight = newSize;
                             }
-              
+
                             // Calculate the bottom position of the draggable box
                             final boxBottomPosition =
                                 relativeDy + currentTimeSlotHeight;
-              
+
                             // Calculate the visible bottom boundary of the viewport
                             final viewportBottom =
                                 scrollOffset + remainingScrollableContentInView;
-              
+
                             // Scroll if the bottom of the box goes beyond the viewport
                             if (boxBottomPosition > viewportBottom) {
                               _scrollController.animateTo(
@@ -421,5 +403,31 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
         ],
       ),
     );
+  }
+
+  int binarySearchSlotIndex(double tapPosition) {
+    int low = 0;
+    int high = timeSlotBoundaries.length - 1;
+    int slotIndex = -1;
+
+    while (low <= high) {
+      int mid = (low + high) ~/ 2;
+
+      print("low: $low");
+      print("mid: $mid");
+      print("high: $high");
+
+      if (mid < timeSlotBoundaries.length - 1 &&
+          tapPosition >= timeSlotBoundaries[mid] &&
+          tapPosition < timeSlotBoundaries[mid + 1]) {
+        slotIndex = mid; // Found the slot
+        break;
+      } else if (tapPosition < timeSlotBoundaries[mid]) {
+        high = mid - 1; // Search in the left half
+      } else {
+        low = mid + 1; // Search in the right half
+      }
+    }
+    return slotIndex;
   }
 }
