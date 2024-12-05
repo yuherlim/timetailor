@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,6 +34,9 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
   double calendarWidgetBottomBoundaryY = 0;
   late ScrollController _scrollController;
   List<double> timeSlotBoundaries = [];
+  Timer? _scrollTimer;
+  double maxTaskHeight = 0;
+  bool isScrolled = false;
 
   @override
   void initState() {
@@ -69,24 +75,73 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
     });
   }
 
+  void _startDownwardsAutoScroll() {
+    const double scrollAmount = 5;
+
+    _stopAutoScroll(); // Stop any ongoing scroll
+    _scrollTimer = Timer.periodic(const Duration(milliseconds: 16), (_) {
+      final currentOffset = _scrollController.offset;
+      final maxScrollExtent = _scrollController.position.maxScrollExtent;
+
+      if (currentOffset < maxScrollExtent) {
+        _scrollController.jumpTo(
+          (currentOffset + scrollAmount)
+              .clamp(0, maxScrollExtent), // Scroll down
+        );
+        setState(() {
+          final newSize = (currentTimeSlotHeight + scrollAmount)
+              .clamp(TimeSlotInfo.snapInterval, maxTaskHeight);
+          currentTimeSlotHeight = newSize;
+        });
+      } else {
+        _stopAutoScroll(); // Stop scrolling if we reach the end
+      }
+    });
+  }
+
+  void _startUpwardsAutoScroll() {
+    const double scrollAmount = 5;
+
+    _stopAutoScroll(); // Stop any ongoing scroll
+    _scrollTimer = Timer.periodic(const Duration(milliseconds: 16), (_) {
+      final currentOffset = _scrollController.offset;
+
+      if (currentOffset > 0.0) {
+        _scrollController.jumpTo(
+          max(0.0, (currentOffset - scrollAmount)), // Scroll up
+        );
+        setState(() {
+          final newSize = (currentTimeSlotHeight - scrollAmount)
+              .clamp(TimeSlotInfo.snapInterval, maxTaskHeight);
+          currentTimeSlotHeight = newSize;
+        });
+      } else {
+        _stopAutoScroll(); // Stop scrolling if we reach the end
+      }
+    });
+  }
+
+  void _stopAutoScroll() {
+    _scrollTimer?.cancel();
+    _scrollTimer = null;
+  }
+
   @override
   void dispose() {
     // Clean up
+    _stopAutoScroll();
     _scrollController.dispose();
     BackButtonInterceptor.remove(_backButtonInterceptor);
     super.dispose();
   }
 
   bool _backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    
-
     final location = GoRouter.of(context).state!.path;
     // print(location);
     // print(location == RoutePath.taskManagementPath);
 
     // only intercept back gesture when the current nav branch is task management
-    if (location == RoutePath.taskManagementPath &&
-        showDraggableBox) {
+    if (location == RoutePath.taskManagementPath && showDraggableBox) {
       setState(() {
         showDraggableBox = false;
       });
@@ -344,15 +399,29 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                                   _scrollController.position.viewportDimension;
 
                               // Calculate the maximum height for the task to prevent exceeding the calendar boundary
-                              final maxTaskHeight =
-                                  calendarWidgetBottomBoundaryY -
-                                      draggableBox.dy;
+                              maxTaskHeight = max(
+                                  (calendarWidgetBottomBoundaryY -
+                                      draggableBox.dy),
+                                  TimeSlotInfo.snapInterval);
+                              print(
+                                  "calendarWidgetBottomBoundaryY: $calendarWidgetBottomBoundaryY");
+                              print("scrollOffset: $scrollOffset");
+                              print(
+                                  "remainingScrollableContentInView: $remainingScrollableContentInView");
+                              print("maxTaskHeight: $maxTaskHeight");
+                              print(
+                                  "currentTimeSlotHeight: $currentTimeSlotHeight");
+                              print("current position: ${draggableBox.dy}");
+                              print("moved by: ${details.delta.dy}");
+                              print(
+                                  "TimeSlotInfo.snapInterval: ${TimeSlotInfo.snapInterval}");
 
                               // Adjust height for bottom resizing
                               final newSize = (currentTimeSlotHeight +
                                       details.delta.dy)
                                   .clamp(
                                       TimeSlotInfo.snapInterval, maxTaskHeight);
+                              print("ran clamp");
                               if (newSize >= TimeSlotInfo.snapInterval) {
                                 currentTimeSlotHeight = newSize;
                               }
@@ -365,18 +434,20 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                               final viewportBottom = scrollOffset +
                                   remainingScrollableContentInView;
 
-                              print("");
-                              print("current position: ${draggableBox.dy}");
-                              print("moved by: ${details.delta.dy}");
-                              print("scrollOffset: $scrollOffset");
-                              print("maxTaskHeight: $maxTaskHeight");
-                              print("new size: $newSize");
-                              print(
-                                  "draggableBoxBottomBoundary: $draggableBoxBottomBoundary");
-                              print("viewportBottom: $viewportBottom");
+                              // print("");
+                              // print("current position: ${draggableBox.dy}");
+                              // print("moved by: ${details.delta.dy}");
+                              // print("scrollOffset: $scrollOffset");
+                              // print("maxTaskHeight: $maxTaskHeight");
+                              // print("new size: $newSize");
+                              // print(
+                              //     "draggableBoxBottomBoundary: $draggableBoxBottomBoundary");
+                              // print("viewportBottom: $viewportBottom");
 
                               // Scroll if the bottom of the box goes beyond the viewport
                               if (draggableBoxBottomBoundary > viewportBottom) {
+                                _startDownwardsAutoScroll();
+                                isScrolled = true;
                                 _scrollController.animateTo(
                                   scrollOffset +
                                       (draggableBoxBottomBoundary -
@@ -384,10 +455,19 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                                   duration: const Duration(milliseconds: 200),
                                   curve: Curves.easeOut,
                                 );
+                              } else {
+                                _stopAutoScroll();
                               }
                             });
                           },
                           onVerticalDragEnd: (_) {
+                            _stopAutoScroll();
+
+                            // scroll extra if timeslot drag caused scrolling.
+                            if (isScrolled) {
+                              scrollDown(scrollAmount: defaultTimeSlotHeight);
+                            }
+
                             setState(() {
                               // Snap height to the nearest interval after dragging
                               currentTimeSlotHeight = (currentTimeSlotHeight /
@@ -467,6 +547,43 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
         ),
       ),
     );
+  }
+
+  void scrollDown({required double scrollAmount}) {
+    // reset isScrolled state
+    setState(() {
+      isScrolled = false;
+    });
+
+    // perform extra scrolling
+    final scrollOffset = _scrollController.offset;
+    final maxScrollExtent = _scrollController.position.maxScrollExtent;
+    if (scrollOffset < maxScrollExtent) {
+      _scrollController.animateTo(
+        (scrollOffset + scrollAmount).clamp(0.0, maxScrollExtent),
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  void scrollUp({required double scrollAmount}) {
+    // reset isScrolled state
+    setState(() {
+      isScrolled = false;
+    });
+
+    // perform extra scrolling
+    final scrollOffset = _scrollController.offset;
+    final maxScrollExtent = _scrollController.position.maxScrollExtent;
+    if (scrollOffset < maxScrollExtent) {
+      _scrollController.animateTo(
+        (scrollOffset - scrollAmount)
+            .clamp(calendarWidgetTopBoundaryY, double.infinity),
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   int binarySearchSlotIndex(double tapPosition) {
