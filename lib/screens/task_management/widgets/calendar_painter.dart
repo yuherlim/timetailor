@@ -36,6 +36,12 @@ class CalendarPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     );
 
+    const double verticalPadding = 16;
+    const double horizontalPadding = 16;
+    const double textPadding = 16;
+    const double intervalLineWidthSmall = 16;
+    const double intervalLineWidthLarge = 32;
+
     numberOfIntervals = (slotHeight > 0 && snapInterval > 0)
         ? (slotHeight / snapInterval).toInt()
         : 0;
@@ -43,7 +49,7 @@ class CalendarPainter extends CustomPainter {
     print("numberOfIntervals: $numberOfIntervals");
 
     for (int i = 0; i < timePeriods.length; i++) {
-      final y = i * slotHeight;
+      final y = i * slotHeight + verticalPadding;
 
       // Draw the time label
       textPainter.text = TextSpan(
@@ -53,11 +59,11 @@ class CalendarPainter extends CustomPainter {
       textPainter.layout();
 
       // Position the text to the left of the line
-      textPainter.paint(canvas, Offset(8, y - textPainter.height / 2));
+      textPainter.paint(canvas, Offset(horizontalPadding, y - textPainter.height * 0.5));
 
       // Draw the horizontal line
       canvas.drawLine(
-          Offset(maxTextWidth + 16, y), Offset(size.width, y), paint);
+          Offset(horizontalPadding + maxTextWidth + textPadding, y), Offset(size.width - horizontalPadding, y), paint);
 
       // Draw the 5 min interval lines
       for (int j = 0; j < numberOfIntervals; j++) {
@@ -66,24 +72,26 @@ class CalendarPainter extends CustomPainter {
           // 30 minute mark, draw a longer line.
           if (j == 6) {
             canvas.drawLine(
-              Offset(maxTextWidth + 16, yToDraw),
-              Offset(maxTextWidth + 48, yToDraw),
+              Offset(horizontalPadding + maxTextWidth + textPadding, yToDraw),
+              Offset(horizontalPadding + maxTextWidth + textPadding + intervalLineWidthLarge, yToDraw),
               paint,
             );
           }
           canvas.drawLine(
-            Offset(maxTextWidth + 16, yToDraw),
-            Offset(maxTextWidth + 32, yToDraw),
+            Offset(horizontalPadding + maxTextWidth + textPadding, yToDraw),
+            Offset(horizontalPadding + maxTextWidth + textPadding + intervalLineWidthSmall, yToDraw),
             paint,
           );
         }
       }
 
+
+
       // Update slot width with line width
-      slotWidth = size.width - (maxTextWidth + 16);
+      slotWidth = size.width - horizontalPadding - (horizontalPadding + maxTextWidth + textPadding);
 
       // update slot start x coordinate with sum of text and padding lencth
-      slotStartX = maxTextWidth + 24;
+      slotStartX = horizontalPadding + maxTextWidth + textPadding;
     }
   }
 

@@ -289,15 +289,10 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                           });
                         }
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: calendarWidgetTopBoundaryY,
-                            horizontal: 8),
-                        child: CalendarWidget(
-                          context: this.context,
-                          slotHeight: defaultTimeSlotHeight,
-                          snapInterval: TimeSlotInfo.snapInterval,
-                        ),
+                      child: CalendarWidget(
+                        context: this.context,
+                        slotHeight: defaultTimeSlotHeight,
+                        snapInterval: TimeSlotInfo.snapInterval,
                       ),
                     ),
                     if (showDraggableBox)
