@@ -54,7 +54,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
 
       setState(() {
         defaultTimeSlotHeight =
-            screenHeight <= 800 ? 80 : 100; // Initialize time slot height
+            screenHeight <= 800 ? 120 : 144; // Initialize time slot height
         TimeSlotInfo.slotWidth = CalendarPainter
             .slotWidth; //Need wait for calendar painter to finish building first.
         TimeSlotInfo.slotStartX = CalendarPainter.slotStartX;
@@ -76,7 +76,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
   }
 
   void _startDownwardsAutoScroll() {
-    const double scrollAmount = 5;
+    const double scrollAmount = 20;
 
     _stopAutoScroll(); // Stop any ongoing scroll
     _scrollTimer = Timer.periodic(const Duration(milliseconds: 16), (_) {
@@ -102,7 +102,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
   }
 
   void _startUpwardsAutoScroll() {
-    const double scrollAmount = 5;
+    const double scrollAmount = 20;
 
     _stopAutoScroll(); // Stop any ongoing scroll
     _scrollTimer = Timer.periodic(const Duration(milliseconds: 16), (_) {
@@ -296,6 +296,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                         child: CalendarWidget(
                           context: this.context,
                           slotHeight: defaultTimeSlotHeight,
+                          snapInterval: TimeSlotInfo.snapInterval,
                         ),
                       ),
                     ),

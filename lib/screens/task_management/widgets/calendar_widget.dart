@@ -4,11 +4,13 @@ import 'package:timetailor/screens/task_management/widgets/calendar_painter.dart
 class CalendarWidget extends StatelessWidget {
   final BuildContext context; // Add BuildContext
   final double slotHeight;
+  final double snapInterval;
 
   const CalendarWidget({
     super.key,
     required this.context,
     required this.slotHeight,
+    required this.snapInterval,
   });
 
   @override
@@ -48,6 +50,7 @@ class CalendarWidget extends StatelessWidget {
       painter: CalendarPainter(
         timePeriods: timePeriods,
         slotHeight: slotHeight,
+        snapInterval: snapInterval,
         context: context,
       ),
     );

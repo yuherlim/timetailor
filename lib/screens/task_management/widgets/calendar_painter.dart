@@ -3,15 +3,17 @@ import 'package:flutter/material.dart';
 class CalendarPainter extends CustomPainter {
   final List<String> timePeriods;
   final double slotHeight;
+  final double snapInterval;
   final BuildContext context; // Add BuildContext
-  
 
   static double slotWidth = 0;
   static double slotStartX = 0;
+  int numberOfIntervals = 0;
 
   CalendarPainter({
     required this.timePeriods,
     required this.slotHeight,
+    required this.snapInterval,
     required this.context,
   });
 
@@ -22,7 +24,8 @@ class CalendarPainter extends CustomPainter {
           fontWeight: FontWeight.bold,
           letterSpacing: 1,
         );
-    final maxTextWidth = calculateMaxTextWidth(timePeriods, timePeriodTextStyle!);
+    final maxTextWidth =
+        calculateMaxTextWidth(timePeriods, timePeriodTextStyle!);
 
     final paint = Paint()
       ..color = Colors.grey
@@ -32,6 +35,12 @@ class CalendarPainter extends CustomPainter {
       textAlign: TextAlign.left,
       textDirection: TextDirection.ltr,
     );
+
+    numberOfIntervals = (slotHeight > 0 && snapInterval > 0)
+        ? (slotHeight / snapInterval).toInt()
+        : 0;
+
+    print("numberOfIntervals: $numberOfIntervals");
 
     for (int i = 0; i < timePeriods.length; i++) {
       final y = i * slotHeight;
@@ -49,7 +58,27 @@ class CalendarPainter extends CustomPainter {
       // Draw the horizontal line
       canvas.drawLine(
           Offset(maxTextWidth + 16, y), Offset(size.width, y), paint);
-      
+
+      // Draw the 5 min interval lines
+      for (int j = 0; j < numberOfIntervals; j++) {
+        if (j != 0) {
+          final yToDraw = y + j * snapInterval;
+          // 30 minute mark, draw a longer line.
+          if (j == 6) {
+            canvas.drawLine(
+              Offset(maxTextWidth + 16, yToDraw),
+              Offset(maxTextWidth + 48, yToDraw),
+              paint,
+            );
+          }
+          canvas.drawLine(
+            Offset(maxTextWidth + 16, yToDraw),
+            Offset(maxTextWidth + 32, yToDraw),
+            paint,
+          );
+        }
+      }
+
       // Update slot width with line width
       slotWidth = size.width - (maxTextWidth + 16);
 
