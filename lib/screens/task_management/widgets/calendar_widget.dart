@@ -5,12 +5,14 @@ class CalendarWidget extends StatelessWidget {
   final BuildContext context; // Add BuildContext
   final double slotHeight;
   final double snapInterval;
+  final double bottomPadding;
 
   const CalendarWidget({
     super.key,
     required this.context,
     required this.slotHeight,
     required this.snapInterval,
+    required this.bottomPadding,
   });
 
   @override
@@ -45,13 +47,16 @@ class CalendarWidget extends StatelessWidget {
     // Calculate the total height for 24 slots
     double calendarHeight = timePeriods.length * slotHeight;
 
-    return CustomPaint(
-      size: Size(double.infinity, calendarHeight),
-      painter: CalendarPainter(
-        timePeriods: timePeriods,
-        slotHeight: slotHeight,
-        snapInterval: snapInterval,
-        context: context,
+    return Padding(
+      padding: EdgeInsets.only(bottom: bottomPadding),
+      child: CustomPaint(
+        size: Size(double.infinity, calendarHeight),
+        painter: CalendarPainter(
+          timePeriods: timePeriods,
+          slotHeight: slotHeight,
+          snapInterval: snapInterval,
+          context: context,
+        ),
       ),
     );
   }

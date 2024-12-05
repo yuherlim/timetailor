@@ -31,6 +31,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
   int currentSlotIndex = 0;
   bool showDraggableBox = false;
   static const double calendarWidgetTopBoundaryY = 16;
+  static const double calendarBottomPadding = 120;
   double calendarWidgetBottomBoundaryY = 0;
   late ScrollController _scrollController;
   List<double> timeSlotBoundaries = [];
@@ -293,6 +294,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                         context: this.context,
                         slotHeight: defaultTimeSlotHeight,
                         snapInterval: TimeSlotInfo.snapInterval,
+                        bottomPadding: calendarBottomPadding,
                       ),
                     ),
                     if (showDraggableBox)

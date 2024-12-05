@@ -41,6 +41,7 @@ class CalendarPainter extends CustomPainter {
     const double textPadding = 16;
     const double intervalLineWidthSmall = 16;
     const double intervalLineWidthLarge = 32;
+    double lastLineY = timePeriods.length * slotHeight + verticalPadding;
 
     numberOfIntervals = (slotHeight > 0 && snapInterval > 0)
         ? (slotHeight / snapInterval).toInt()
@@ -59,11 +60,12 @@ class CalendarPainter extends CustomPainter {
       textPainter.layout();
 
       // Position the text to the left of the line
-      textPainter.paint(canvas, Offset(horizontalPadding, y - textPainter.height * 0.5));
+      textPainter.paint(
+          canvas, Offset(horizontalPadding, y - textPainter.height * 0.5));
 
       // Draw the horizontal line
-      canvas.drawLine(
-          Offset(horizontalPadding + maxTextWidth + textPadding, y), Offset(size.width - horizontalPadding, y), paint);
+      canvas.drawLine(Offset(horizontalPadding + maxTextWidth + textPadding, y),
+          Offset(size.width - horizontalPadding, y), paint);
 
       // Draw the 5 min interval lines
       for (int j = 0; j < numberOfIntervals; j++) {
@@ -73,26 +75,41 @@ class CalendarPainter extends CustomPainter {
           if (j == 6) {
             canvas.drawLine(
               Offset(horizontalPadding + maxTextWidth + textPadding, yToDraw),
-              Offset(horizontalPadding + maxTextWidth + textPadding + intervalLineWidthLarge, yToDraw),
+              Offset(
+                  horizontalPadding +
+                      maxTextWidth +
+                      textPadding +
+                      intervalLineWidthLarge,
+                  yToDraw),
               paint,
             );
           }
           canvas.drawLine(
             Offset(horizontalPadding + maxTextWidth + textPadding, yToDraw),
-            Offset(horizontalPadding + maxTextWidth + textPadding + intervalLineWidthSmall, yToDraw),
+            Offset(
+                horizontalPadding +
+                    maxTextWidth +
+                    textPadding +
+                    intervalLineWidthSmall,
+                yToDraw),
             paint,
           );
         }
       }
-
-
-
-      // Update slot width with line width
-      slotWidth = size.width - horizontalPadding - (horizontalPadding + maxTextWidth + textPadding);
-
-      // update slot start x coordinate with sum of text and padding lencth
-      slotStartX = horizontalPadding + maxTextWidth + textPadding;
     }
+
+
+    // Draw the last horizontal line
+    canvas.drawLine(Offset(horizontalPadding + maxTextWidth + textPadding, lastLineY),
+        Offset(size.width - horizontalPadding, lastLineY), paint);
+
+    // Update slot width with line width
+    slotWidth = size.width -
+        horizontalPadding -
+        (horizontalPadding + maxTextWidth + textPadding);
+
+    // update slot start x coordinate with sum of text and padding lencth
+    slotStartX = horizontalPadding + maxTextWidth + textPadding;
   }
 
   @override
