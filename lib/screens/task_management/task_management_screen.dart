@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:timetailor/core/constants/route_path.dart';
-import 'package:timetailor/core/shared/provider/navigation_provider.dart';
 import 'package:timetailor/core/shared/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/data/task_management/models/draggable_box.dart';
@@ -82,8 +81,8 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
     
 
     final location = GoRouter.of(context).state!.path;
-    print(location);
-    print(location == RoutePath.taskManagementPath);
+    // print(location);
+    // print(location == RoutePath.taskManagementPath);
 
     // only intercept back gesture when the current nav branch is task management
     if (location == RoutePath.taskManagementPath &&
@@ -115,7 +114,6 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
   Widget build(BuildContext context) {
     final currentSelectedDate = ref.watch(currentDateNotifierProvider);
     final currentMonth = ref.watch(currentMonthNotifierProvider);
-    final bottomNavHeight = ref.watch(bottomNavHeightNotifierProvider);
 
     // indicator dimensions
     const double indicatorWidth = 80;
@@ -365,8 +363,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
 
                               // Calculate the visible bottom boundary of the viewport
                               final viewportBottom = scrollOffset +
-                                  remainingScrollableContentInView -
-                                  bottomNavHeight;
+                                  remainingScrollableContentInView;
 
                               print("");
                               print("current position: ${draggableBox.dy}");
