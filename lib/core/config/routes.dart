@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
-import 'package:timetailor/core/constants/route_paths.dart';
+import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/main_layout.dart';
 import 'package:timetailor/screens/task_management/task_completion_history_screen.dart';
 import 'package:timetailor/screens/task_management/task_creation_screen.dart';
@@ -13,7 +13,7 @@ final GlobalKey<NavigatorState> _noteNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _accountNavigatorKey = GlobalKey<NavigatorState>();
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: taskManagementPath,
+  initialLocation: RoutePath.taskManagementPath,
   routes: [
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
@@ -24,15 +24,15 @@ final GoRouter appRouter = GoRouter(
           navigatorKey: _taskNavigatorKey,
           routes: [
             GoRoute(
-              path: taskManagementPath,
+              path: RoutePath.taskManagementPath,
               builder: (context, state) => const TaskManagementScreen(),
               routes: [
                 GoRoute(
-                  path: relativeTaskHistoryPath,
+                  path: RoutePath.relativeTaskHistoryPath,
                   builder: (context, state) => const TaskCompletionHistoryScreen(),
                 ),
                 GoRoute(
-                  path: relativeTaskCreationPath,
+                  path: RoutePath.relativeTaskCreationPath,
                   builder: (context, state) => const TaskCreationScreen(),
                 ),
               ],
@@ -43,7 +43,7 @@ final GoRouter appRouter = GoRouter(
           navigatorKey: _noteNavigatorKey,
           routes: [
             GoRoute(
-              path: noteManagementPath,
+              path: RoutePath.noteManagementPath,
               builder: (context, state) => const NoteManagementScreen(),
             ),
           ],
@@ -52,7 +52,7 @@ final GoRouter appRouter = GoRouter(
           navigatorKey: _accountNavigatorKey,
           routes: [
             GoRoute(
-              path: accountManagementPath,
+              path: RoutePath.accountManagementPath,
               builder: (context, state) => const AccountManagementScreen(),
             ),
           ],

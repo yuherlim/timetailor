@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/core/shared/styled_text.dart';
 
-class NoteManagementScreen extends StatefulWidget {
+class NoteManagementScreen extends ConsumerStatefulWidget {
   const NoteManagementScreen({super.key});
 
   @override
-  State<NoteManagementScreen> createState() => _NoteManagementScreenState();
+  ConsumerState<NoteManagementScreen> createState() =>
+      _NoteManagementScreenState();
 }
 
-class _NoteManagementScreenState extends State<NoteManagementScreen> {
+class _NoteManagementScreenState extends ConsumerState<NoteManagementScreen> {
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {},

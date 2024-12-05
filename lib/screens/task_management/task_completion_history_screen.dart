@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/styled_button.dart';
 import 'package:timetailor/core/shared/styled_text.dart';
 
@@ -36,7 +37,7 @@ class _TaskCompletionHistoryScreenState
                 // Navigate back to the previous screen
                 GoRouter.of(context).canPop()
                     ? {context.pop()}
-                    : context.go('/tasks'); // Fallback to Tasks
+                    : context.go(RoutePath.taskManagementPath); // Fallback to Tasks
               },
               child: const StyledTitle("Back"),
             ),
