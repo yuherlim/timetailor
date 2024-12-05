@@ -21,7 +21,7 @@ class TaskManagementScreen extends ConsumerStatefulWidget {
       _TaskManagementScreenState();
 }
 
-class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> with WidgetsBindingObserver{
+class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
   TimeSlotInfo timeSlotInfo = TimeSlotInfo();
   double currentTimeSlotHeight = 0;
   double defaultTimeSlotHeight = 0;
@@ -38,10 +38,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> wit
     _scrollController = ScrollController(); // Initialize the scroll controller
 
     BackButtonInterceptor.add(_backButtonInterceptor);
-    print("state reintialized.");
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    print("State initialized.");
   }
 
   @override
@@ -78,20 +75,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> wit
     // Clean up
     _scrollController.dispose();
     BackButtonInterceptor.remove(_backButtonInterceptor);
-    WidgetsBinding.instance.removeObserver(this);
-    print("State disposed.");
     super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    print("App lifecycle state changed: $state");
-    if (state == AppLifecycleState.resumed) {
-      print("App resumed.");
-    } else if (state == AppLifecycleState.paused) {
-      print("App paused.");
-    }
   }
 
   bool _backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
