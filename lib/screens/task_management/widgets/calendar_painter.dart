@@ -49,7 +49,14 @@ class CalendarPainter extends CustomPainter {
         ? (slotHeight / snapInterval).toInt()
         : 0;
 
-    print("numberOfIntervals: $numberOfIntervals");
+    // print("numberOfIntervals: $numberOfIntervals");
+
+    // update slot start x coordinate with sum of text and padding lencth
+    slotStartX =
+        (horizontalPadding + maxTextWidth + textPadding).floorToDouble();
+
+    // Update slot width with line width
+    slotWidth = size.width - horizontalPadding - slotStartX;
 
     for (int i = 0; i < timePeriods.length; i++) {
       final y = i * slotHeight + verticalPadding;
@@ -66,7 +73,7 @@ class CalendarPainter extends CustomPainter {
           canvas, Offset(horizontalPadding, y - textPainter.height * 0.5));
 
       // Draw the horizontal line
-      canvas.drawLine(Offset(horizontalPadding + maxTextWidth + textPadding, y),
+      canvas.drawLine(Offset(slotStartX, y),
           Offset(size.width - horizontalPadding, y), paint);
 
       // Draw the 5 min interval lines
@@ -76,42 +83,27 @@ class CalendarPainter extends CustomPainter {
           // 30 minute mark, draw a longer line.
           if (j == 6) {
             canvas.drawLine(
-              Offset(horizontalPadding + maxTextWidth + textPadding, yToDraw),
-              Offset(
-                  horizontalPadding +
-                      maxTextWidth +
-                      textPadding +
-                      intervalLineWidthLarge,
-                  yToDraw),
+              Offset(slotStartX, yToDraw),
+              Offset(slotStartX + intervalLineWidthLarge, yToDraw),
               paint,
             );
           }
           canvas.drawLine(
-            Offset(horizontalPadding + maxTextWidth + textPadding, yToDraw),
-            Offset(
-                horizontalPadding +
-                    maxTextWidth +
-                    textPadding +
-                    intervalLineWidthSmall,
-                yToDraw),
+            Offset(slotStartX, yToDraw),
+            Offset(slotStartX + intervalLineWidthSmall, yToDraw),
             paint,
           );
         }
       }
     }
 
-
     // Draw the last horizontal line
-    canvas.drawLine(Offset(horizontalPadding + maxTextWidth + textPadding, lastLineY),
-        Offset(size.width - horizontalPadding, lastLineY), paint);
+    canvas.drawLine(
+        Offset(slotStartX, lastLineY),
+        Offset(size.width - horizontalPadding, lastLineY),
+        paint);
 
-    // Update slot width with line width
-    slotWidth = size.width -
-        horizontalPadding -
-        (horizontalPadding + maxTextWidth + textPadding);
-
-    // update slot start x coordinate with sum of text and padding lencth
-    slotStartX = horizontalPadding + maxTextWidth + textPadding;
+    print("slotStart in painter: $slotStartX");
   }
 
   @override
