@@ -294,6 +294,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                         context: this.context,
                         slotHeight: defaultTimeSlotHeight,
                         snapInterval: TimeSlotInfo.snapInterval,
+                        topPadding: calendarWidgetTopBoundaryY,
                         bottomPadding: calendarBottomPadding,
                       ),
                     ),

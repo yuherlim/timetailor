@@ -4,6 +4,7 @@ class CalendarPainter extends CustomPainter {
   final List<String> timePeriods;
   final double slotHeight;
   final double snapInterval;
+  final double topPadding;
   final BuildContext context; // Add BuildContext
 
   static double slotWidth = 0;
@@ -15,6 +16,7 @@ class CalendarPainter extends CustomPainter {
     required this.slotHeight,
     required this.snapInterval,
     required this.context,
+    required this.topPadding,
   });
 
   @override
@@ -36,7 +38,7 @@ class CalendarPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     );
 
-    const double verticalPadding = 16;
+    double verticalPadding = topPadding;
     const double horizontalPadding = 16;
     const double textPadding = 16;
     const double intervalLineWidthSmall = 16;

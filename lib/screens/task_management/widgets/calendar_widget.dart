@@ -6,6 +6,7 @@ class CalendarWidget extends StatelessWidget {
   final double slotHeight;
   final double snapInterval;
   final double bottomPadding;
+  final double topPadding;
 
   const CalendarWidget({
     super.key,
@@ -13,6 +14,7 @@ class CalendarWidget extends StatelessWidget {
     required this.slotHeight,
     required this.snapInterval,
     required this.bottomPadding,
+    required this.topPadding,
   });
 
   @override
@@ -56,6 +58,7 @@ class CalendarWidget extends StatelessWidget {
           slotHeight: slotHeight,
           snapInterval: snapInterval,
           context: context,
+          topPadding: topPadding,
         ),
       ),
     );
