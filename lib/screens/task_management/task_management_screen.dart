@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
+import 'package:timetailor/domain/task_management/providers/draggable_box_provider.dart';
 import 'package:timetailor/domain/task_management/state/calendar_state.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
@@ -190,6 +191,8 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
     final currentSelectedDate = ref.watch(currentDateNotifierProvider);
     final currentMonth = ref.watch(currentMonthNotifierProvider);
     final currentCalendarState = ref.watch(calendarStateNotifierProvider);
+    final currentDraggableBoxState = ref.watch(draggableBoxNotifierProvider);
+    final draggableBoxStateNotifier = ref.read(draggableBoxNotifierProvider.notifier);
     final calendarStateNotifier =
         ref.read(calendarStateNotifierProvider.notifier);
 
@@ -277,7 +280,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
 
                       // Snap to the correct time slot
                       if (slotIndex != -1) {
-                        calendarStateNotifier.updateDraggableBoxPosition(
+                        draggableBoxStateNotifier.updateDraggableBoxPosition(
                           dx: currentCalendarState.slotStartX,
                           dy: currentCalendarState
                               .timeSlotBoundaries[slotIndex],
@@ -348,6 +351,8 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                           print(
                               "minDraggableBoxSizeDy: $minDraggableBoxSizeDy");
                           print("");
+
+                          
 
                           // Adjust height and position for top resizing
                           final newDy = currentCalendarState.draggableBox.dy +
