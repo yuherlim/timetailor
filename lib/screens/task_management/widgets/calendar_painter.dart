@@ -9,6 +9,7 @@ class CalendarPainter extends CustomPainter {
 
   static double slotWidth = 0;
   static double slotStartX = 0;
+  static double slotEndX = 0;
   int numberOfIntervals = 0;
 
   CalendarPainter({
@@ -55,8 +56,10 @@ class CalendarPainter extends CustomPainter {
     slotStartX =
         (horizontalPadding + maxTextWidth + textPadding).floorToDouble();
 
+    slotEndX = (size.width - horizontalPadding).floorToDouble();
+
     // Update slot width with line width
-    slotWidth = size.width - horizontalPadding - slotStartX;
+    slotWidth = slotEndX - slotStartX;
 
     for (int i = 0; i < timePeriods.length; i++) {
       final y = i * slotHeight + verticalPadding;
@@ -73,8 +76,7 @@ class CalendarPainter extends CustomPainter {
           canvas, Offset(horizontalPadding, y - textPainter.height * 0.5));
 
       // Draw the horizontal line
-      canvas.drawLine(Offset(slotStartX, y),
-          Offset(size.width - horizontalPadding, y), paint);
+      canvas.drawLine(Offset(slotStartX, y), Offset(slotEndX, y), paint);
 
       // Draw the 5 min interval lines
       for (int j = 0; j < numberOfIntervals; j++) {
@@ -99,9 +101,7 @@ class CalendarPainter extends CustomPainter {
 
     // Draw the last horizontal line
     canvas.drawLine(
-        Offset(slotStartX, lastLineY),
-        Offset(size.width - horizontalPadding, lastLineY),
-        paint);
+        Offset(slotStartX, lastLineY), Offset(slotEndX, lastLineY), paint);
 
     print("slotStart in painter: $slotStartX");
   }
