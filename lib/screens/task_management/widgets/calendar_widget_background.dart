@@ -3,14 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_widget_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_painter.dart';
 
-class CalendarWidget extends ConsumerWidget {
+class CalendarWidgetBackground extends ConsumerWidget {
   final BuildContext context; // Add BuildContext
   final double slotHeight;
   final double snapInterval;
   final double bottomPadding;
   final double topPadding;
 
-  const CalendarWidget({
+  const CalendarWidgetBackground({
     super.key,
     required this.context,
     required this.slotHeight,

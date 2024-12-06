@@ -13,7 +13,7 @@ import 'package:timetailor/data/task_management/models/time_slot_info.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_widget_provider.dart';
 import 'package:timetailor/domain/task_management/providers/task_management_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_header.dart';
-import 'package:timetailor/screens/task_management/widgets/calendar_widget.dart';
+import 'package:timetailor/screens/task_management/widgets/calendar_widget_background.dart';
 
 class TaskManagementScreen extends ConsumerStatefulWidget {
   const TaskManagementScreen({super.key});
@@ -284,7 +284,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                         });
                       }
                     },
-                    child: CalendarWidget(
+                    child: CalendarWidgetBackground(
                       context: this.context,
                       slotHeight: defaultTimeSlotHeight,
                       snapInterval: TimeSlotInfo.snapInterval,
