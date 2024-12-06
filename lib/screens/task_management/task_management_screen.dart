@@ -57,8 +57,6 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
       setState(() {
         defaultTimeSlotHeight =
             calculatedTimeSlotHeight; // Initialize time slot height
-        TimeSlotInfo.slotWidth = CalendarPainter
-            .slotWidth; //Need wait for calendar painter to finish building first.
         TimeSlotInfo.pixelsPerMinute = defaultTimeSlotHeight / 60;
         print("defaultTimeSlotHeight: $defaultTimeSlotHeight");
         print("pixelsPerMinute: ${TimeSlotInfo.pixelsPerMinute}");
@@ -191,6 +189,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
     final currentSelectedDate = ref.watch(currentDateNotifierProvider);
     final currentMonth = ref.watch(currentMonthNotifierProvider);
     final slotStartX = ref.watch(slotStartXNotifierProvider);
+    final slotWidth = ref.watch(slotWidthNotifierProvider);
 
     // indicator dimensions
     const double indicatorWidth = 80;
@@ -312,7 +311,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                         left: draggableBox.dx,
                         top: draggableBox.dy,
                         child: Container(
-                          width: TimeSlotInfo.slotWidth, // Fixed width
+                          width: slotWidth, // Fixed width
                           height:
                               currentTimeSlotHeight, // Dynamically adjusted height.
                           decoration: BoxDecoration(
@@ -328,7 +327,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                     if (showDraggableBox)
                       Positioned(
                         left: draggableBox.dx +
-                            TimeSlotInfo.slotWidth * 0.25 -
+                            slotWidth * 0.25 -
                             indicatorWidth * 0.5, // Center horizontally
                         top: draggableBox.dy -
                             indicatorHeight / 2, // Above the top edge
@@ -505,7 +504,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                     if (showDraggableBox)
                       Positioned(
                         left: draggableBox.dx +
-                            TimeSlotInfo.slotWidth * 0.75 -
+                            slotWidth * 0.75 -
                             indicatorWidth * 0.5, // Center horizontally
                         top: draggableBox.dy +
                             currentTimeSlotHeight -

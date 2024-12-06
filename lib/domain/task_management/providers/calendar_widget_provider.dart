@@ -13,3 +13,15 @@ class SlotStartXNotifier extends _$SlotStartXNotifier {
     state = slotStartX;
   }
 }
+
+@riverpod
+class SlotWidthNotifier extends _$SlotWidthNotifier {
+  @override
+  double build() {
+    return 0;
+  }
+
+  void updateSlotWidth(double slotWidth) {
+    state = slotWidth;
+  }
+}

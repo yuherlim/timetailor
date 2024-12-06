@@ -61,12 +61,16 @@ class CalendarWidget extends ConsumerWidget {
           snapInterval: snapInterval,
           context: context,
           topPadding: topPadding,
-          onSlotStartXCalculated: (slotStartX) {
+          onSlotCalendarPainted: ({required slotStartX, required slotWidth}) {
             // Delay the update to avoid lifecycle issues
             Future.microtask(() {
+              // update the slotStart and slotWidth states.
               ref
                   .read(slotStartXNotifierProvider.notifier)
                   .updateSlotStartX(slotStartX);
+              ref
+                  .read(slotWidthNotifierProvider.notifier)
+                  .updateSlotWidth(slotWidth);
 
               print("");
               print("===============================");

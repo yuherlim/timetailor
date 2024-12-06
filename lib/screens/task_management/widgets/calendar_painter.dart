@@ -5,12 +5,11 @@ class CalendarPainter extends CustomPainter {
   final double slotHeight;
   final double snapInterval;
   final double topPadding;
-  final void Function(double) onSlotStartXCalculated;
+  final void Function({
+    required double slotStartX,
+    required double slotWidth,
+  }) onSlotCalendarPainted;
   final BuildContext context; // Add BuildContext
-
-  static double slotWidth = 0;
-  static double slotEndX = 0;
-  int numberOfIntervals = 0;
 
   CalendarPainter({
     required this.timePeriods,
@@ -18,7 +17,7 @@ class CalendarPainter extends CustomPainter {
     required this.snapInterval,
     required this.context,
     required this.topPadding,
-    required this.onSlotStartXCalculated,
+    required this.onSlotCalendarPainted,
   });
 
   @override
@@ -41,7 +40,10 @@ class CalendarPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     );
 
+    int numberOfIntervals = 0;
+    double slotEndX = 0;
     double slotStartX = 0;
+    double slotWidth = 0;
     double verticalPadding = topPadding;
     const double horizontalPadding = 16;
     const double textPadding = 8;
@@ -59,12 +61,16 @@ class CalendarPainter extends CustomPainter {
     slotStartX =
         (horizontalPadding + maxTextWidth + textPadding).floorToDouble();
 
-    onSlotStartXCalculated(slotStartX);
-
     slotEndX = (size.width - horizontalPadding).floorToDouble();
 
     // Update slot width with line width
     slotWidth = slotEndX - slotStartX;
+
+    // callback to notify state changes in due to calendar painted.
+    onSlotCalendarPainted(
+      slotStartX: slotStartX,
+      slotWidth: slotWidth,
+    ); 
 
     for (int i = 0; i < timePeriods.length; i++) {
       final y = i * slotHeight + verticalPadding;
