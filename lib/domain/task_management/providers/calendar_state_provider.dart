@@ -21,6 +21,8 @@ class CalendarStateNotifier extends _$CalendarStateNotifier {
       calendarHeight: 0,
       slotStartX: 0,
       slotWidth: 0,
+      textPadding: 0,
+      sidePadding: 0,
     );
   }
 
@@ -75,5 +77,13 @@ class CalendarStateNotifier extends _$CalendarStateNotifier {
 
   void updateSlotWidth(double slotWidth) {
     state = state.copyWith(slotWidth: slotWidth);
+  }
+
+  void updateTextPadding(double textPadding) {
+    state = state.copyWith(textPadding: textPadding);
+  }
+
+  void updateSidePadding(double sidePadding) {
+    state = state.copyWith(sidePadding: sidePadding);
   }
 }

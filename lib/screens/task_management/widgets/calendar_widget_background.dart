@@ -61,25 +61,22 @@ class CalendarWidgetBackground extends ConsumerWidget {
           snapInterval: snapInterval,
           context: context,
           topPadding: topPadding,
-          onSlotCalendarPainted: ({required slotStartX, required slotWidth}) {
+          onSlotCalendarPainted: ({required slotStartX, required slotWidth, required sidePadding, required textPadding}) {
             // Delay the update to avoid lifecycle issues
             Future.microtask(() {
-              // update the slotStart and slotWidth states.
+              // update the states.
               ref
                   .read(calendarStateNotifierProvider.notifier)
                   .updateSlotStartX(slotStartX);
               ref
                   .read(calendarStateNotifierProvider.notifier)
                   .updateSlotWidth(slotWidth);
-
-              // print("");
-              // print("===============================");
-              // print("DEBUGGING UI bug in calendar widget background");
-              // print("===============================");
-              // print("");
-
-              // print("Updated slotStartX in provider: $slotStartX");
-              // print("===============================");
+              ref
+                  .read(calendarStateNotifierProvider.notifier)
+                  .updateSidePadding(sidePadding);
+              ref
+                  .read(calendarStateNotifierProvider.notifier)
+                  .updateTextPadding(textPadding);
             });
           },
         ),

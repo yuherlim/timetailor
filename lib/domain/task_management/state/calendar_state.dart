@@ -14,6 +14,8 @@ class CalendarState {
 
   final double slotStartX;
   final double slotWidth;
+  final double textPadding;
+  final double sidePadding;
 
   static const double calendarWidgetTopBoundaryY = 16;
   static const double calendarBottomPadding = 120;
@@ -31,6 +33,8 @@ class CalendarState {
     required this.pixelsPerMinute,
     required this.snapInterval,
     required this.calendarHeight,
+    required this.textPadding,
+    required this.sidePadding,
   });
 
   CalendarState copyWith({
@@ -46,6 +50,8 @@ class CalendarState {
     double? pixelsPerMinute,
     double? snapInterval,
     double? calendarHeight,
+    double? textPadding,
+    double? sidePadding,
   }) {
     return CalendarState(
       defaultTimeSlotHeight:
@@ -63,6 +69,8 @@ class CalendarState {
       pixelsPerMinute: pixelsPerMinute ?? this.pixelsPerMinute,
       snapInterval: snapInterval ?? this.snapInterval,
       calendarHeight: calendarHeight ?? this.calendarHeight,
+      textPadding: textPadding ?? this.textPadding,
+      sidePadding: sidePadding ?? this.sidePadding,
     );
   }
 }

@@ -8,6 +8,8 @@ class CalendarPainter extends CustomPainter {
   final void Function({
     required double slotStartX,
     required double slotWidth,
+    required double sidePadding,
+    required double textPadding,
   }) onSlotCalendarPainted;
   final BuildContext context; // Add BuildContext
 
@@ -77,6 +79,8 @@ class CalendarPainter extends CustomPainter {
     onSlotCalendarPainted(
       slotStartX: slotStartX,
       slotWidth: slotWidth,
+      sidePadding: horizontalPadding,
+      textPadding: textPadding,
     );
 
     for (int i = 0; i < timePeriods.length; i++) {

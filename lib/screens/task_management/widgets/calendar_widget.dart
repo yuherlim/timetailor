@@ -254,6 +254,16 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
     const double indicatorWidth = 80;
     const double indicatorHeight = 30;
 
+    // time indicator position
+    final screenWidth = MediaQuery.of(context).size.width;
+    final indicatorSidePadding = currentCalendarState.sidePadding;
+    final textPadding = currentCalendarState.textPadding;
+    const double timeIndicatorIconSize = 8;
+    final timeIndicatorStart = indicatorSidePadding +
+        screenWidth * 0.1 +
+        textPadding -
+        timeIndicatorIconSize * 0.5;
+
     return SingleChildScrollView(
       controller: _scrollController,
       child: Stack(
@@ -613,24 +623,29 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
               ),
             ),
           // Current Time Indicator
-          // const Positioned(
-          //   top: 100, // Dynamically calculate this position
-          //   left: 0,
-          //   right: 0,
-          //   child: Row(
-          //     children: [
-          //       SizedBox(width: 10),
-          //       Icon(Icons.access_time, color: Colors.red),
-          //       SizedBox(width: 10),
-          //       Expanded(
-          //         child: Divider(
-          //           color: Colors.red,
-          //           thickness: 1.5,
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
+          Positioned(
+            top: 100, // Dynamically calculate this position
+            left: timeIndicatorStart,
+            right: 0,
+            child: Row(
+              children: [
+                Container(
+                  width: timeIndicatorIconSize, // Diameter of the circle
+                  height: timeIndicatorIconSize,
+                  decoration: BoxDecoration(
+                    color: AppColors.timeIndicatorColor, // Color of the circle
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                Expanded(
+                  child: Divider(
+                    color: AppColors.timeIndicatorColor,
+                    thickness: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
