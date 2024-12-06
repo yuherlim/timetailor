@@ -10,6 +10,7 @@ import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/state/calendar_state.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_widget_background.dart';
+import 'package:timetailor/screens/task_management/widgets/current_time_indicator.dart';
 
 class CalendarWidget extends ConsumerStatefulWidget {
   const CalendarWidget({super.key});
@@ -253,16 +254,6 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
     // indicator dimensions
     const double indicatorWidth = 80;
     const double indicatorHeight = 30;
-
-    // time indicator position
-    final screenWidth = MediaQuery.of(context).size.width;
-    final indicatorSidePadding = currentCalendarState.sidePadding;
-    final textPadding = currentCalendarState.textPadding;
-    const double timeIndicatorIconSize = 8;
-    final timeIndicatorStart = indicatorSidePadding +
-        screenWidth * 0.1 +
-        textPadding -
-        timeIndicatorIconSize * 0.5;
 
     return SingleChildScrollView(
       controller: _scrollController,
@@ -623,29 +614,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
               ),
             ),
           // Current Time Indicator
-          Positioned(
-            top: 100, // Dynamically calculate this position
-            left: timeIndicatorStart,
-            right: 0,
-            child: Row(
-              children: [
-                Container(
-                  width: timeIndicatorIconSize, // Diameter of the circle
-                  height: timeIndicatorIconSize,
-                  decoration: BoxDecoration(
-                    color: AppColors.timeIndicatorColor, // Color of the circle
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                Expanded(
-                  child: Divider(
-                    color: AppColors.timeIndicatorColor,
-                    thickness: 1.5,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          const CurrentTimeIndicator(),
         ],
       ),
     );
