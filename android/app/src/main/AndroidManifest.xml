@@ -3,7 +3,8 @@
         android:label="timetailor"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:enableOnBackInvokedCallback="false">
+        android:enableOnBackInvokedCallback="false"
+        android:screenOrientation="portrait">
         <activity
             android:name=".MainActivity"
             android:exported="true"
