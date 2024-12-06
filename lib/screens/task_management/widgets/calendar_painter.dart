@@ -44,12 +44,16 @@ class CalendarPainter extends CustomPainter {
     double slotEndX = 0;
     double slotStartX = 0;
     double slotWidth = 0;
+    double horizontalLineStartX = 0;
     double verticalPadding = topPadding;
     const double horizontalPadding = 16;
-    const double textPadding = 8;
+    const double textPadding = 16;
     const double intervalLineWidthSmall = 16;
     const double intervalLineWidthLarge = 32;
+    double calendarHeight = slotHeight * 24;
     double lastLineY = timePeriods.length * slotHeight + verticalPadding;
+    double verticalLineStartY = verticalPadding;
+    double verticalLineEndY = verticalPadding + calendarHeight;
 
     numberOfIntervals = (slotHeight > 0 && snapInterval > 0)
         ? (slotHeight / snapInterval).toInt()
@@ -66,11 +70,14 @@ class CalendarPainter extends CustomPainter {
     // Update slot width with line width
     slotWidth = slotEndX - slotStartX;
 
+    // calculate horizontalLineStartX for hour lines.
+    horizontalLineStartX = slotStartX - 8;
+
     // callback to notify state changes in due to calendar painted.
     onSlotCalendarPainted(
       slotStartX: slotStartX,
       slotWidth: slotWidth,
-    ); 
+    );
 
     for (int i = 0; i < timePeriods.length; i++) {
       final y = i * slotHeight + verticalPadding;
@@ -87,7 +94,7 @@ class CalendarPainter extends CustomPainter {
           canvas, Offset(horizontalPadding, y - textPainter.height * 0.5));
 
       // Draw the horizontal line
-      canvas.drawLine(Offset(slotStartX, y), Offset(slotEndX, y), paint);
+      canvas.drawLine(Offset(horizontalLineStartX, y), Offset(slotEndX, y), paint);
 
       // Draw the 5 min interval lines
       for (int j = 0; j < numberOfIntervals; j++) {
@@ -113,6 +120,12 @@ class CalendarPainter extends CustomPainter {
     // Draw the last horizontal line
     canvas.drawLine(
         Offset(slotStartX, lastLineY), Offset(slotEndX, lastLineY), paint);
+
+    
+
+    // Draw the vertical line
+    canvas.drawLine(Offset(slotStartX, verticalLineStartY),
+        Offset(slotStartX, verticalLineEndY), paint);
 
     // print("");
     // print("===============================");
