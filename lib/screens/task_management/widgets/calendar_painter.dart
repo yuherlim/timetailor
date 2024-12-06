@@ -114,16 +114,16 @@ class CalendarPainter extends CustomPainter {
     canvas.drawLine(
         Offset(slotStartX, lastLineY), Offset(slotEndX, lastLineY), paint);
 
-    print("");
-    print("===============================");
-    print("DEBUGGING UI bug in painter");
-    print("===============================");
-    print("");
-    print("horizontalPadding: $horizontalPadding");
-    print("maxTextWidth: $maxTextWidth");
-    print("textPadding: $textPadding");
-    print("Calculated slotStartX: $slotStartX");
-    print("===============================");
+    // print("");
+    // print("===============================");
+    // print("DEBUGGING UI bug in painter");
+    // print("===============================");
+    // print("");
+    // print("horizontalPadding: $horizontalPadding");
+    // print("maxTextWidth: $maxTextWidth");
+    // print("textPadding: $textPadding");
+    // print("Calculated slotStartX: $slotStartX");
+    // print("===============================");
   }
 
   @override

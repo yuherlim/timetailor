@@ -336,7 +336,9 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                                   currentCalendarState.snapInterval;
 
                           print("");
+                          print("=========================================");
                           print("debugging draggable box initial values:");
+                          print("=========================================");
                           print(
                               "draggableBoxBottomBoundary: $draggableBoxBottomBoundary");
                           print(
@@ -361,6 +363,8 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                           print("moved by: ${details.delta.dy}");
                           print("new position: $newDy");
                           print("new size: $newSize");
+
+                          print("=========================================");
 
                           if (newDy >=
                                   CalendarState.calendarWidgetTopBoundaryY &&
@@ -417,20 +421,33 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                           //     "before update Height: $currentTimeSlotHeight");
                           // print("current dy: ${draggableBox.dy}");
 
+                          print("");
+                          print("=========================================");
+                          print(
+                              "debugging draggable box onVerticalDragEnd for top indicator:");
+                          print("=========================================");
+
                           // Adjust for padding before snapping
                           final adjustedDy =
                               currentCalendarState.draggableBox.dy -
                                   CalendarState.calendarWidgetTopBoundaryY;
 
+                          print("adjustedDy: $adjustedDy");
+                          print(
+                              "current dy before adjust: ${currentCalendarState.draggableBox.dy}");
+
                           // Snap position to the nearest interval
-                          currentCalendarState.draggableBox.dy =
+                          double newDy =
                               (adjustedDy / currentCalendarState.snapInterval)
                                       .round() *
                                   currentCalendarState.snapInterval;
 
                           // Reapply the padding offset
-                          currentCalendarState.draggableBox.dy +=
-                              CalendarState.calendarWidgetTopBoundaryY;
+                          newDy += CalendarState.calendarWidgetTopBoundaryY;
+
+                          // Update the new position
+                          calendarStateNotifier.updateDraggableBoxPosition(
+                              dy: newDy);
 
                           // Snap the height directly (no adjustment needed for height)
                           calendarStateNotifier.updateCurrentTimeSlotHeight(
@@ -438,6 +455,8 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                                           currentCalendarState.snapInterval)
                                       .round() *
                                   currentCalendarState.snapInterval);
+
+                          print("=========================================");
                         },
                         child: Container(
                           width: indicatorWidth,

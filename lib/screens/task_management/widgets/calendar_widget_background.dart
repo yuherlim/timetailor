@@ -72,14 +72,14 @@ class CalendarWidgetBackground extends ConsumerWidget {
                   .read(calendarStateNotifierProvider.notifier)
                   .updateSlotWidth(slotWidth);
 
-              print("");
-              print("===============================");
-              print("DEBUGGING UI bug in calendar widget");
-              print("===============================");
-              print("");
+              // print("");
+              // print("===============================");
+              // print("DEBUGGING UI bug in calendar widget background");
+              // print("===============================");
+              // print("");
 
-              print("Updated slotStartX in provider: $slotStartX");
-              print("===============================");
+              // print("Updated slotStartX in provider: $slotStartX");
+              // print("===============================");
             });
           },
         ),
