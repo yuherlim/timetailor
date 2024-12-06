@@ -12,6 +12,7 @@ class AppColors {
   static Color textColor = const Color.fromRGBO(150, 150, 150, 1);
   static Color successColor = const Color.fromRGBO(9, 149, 110, 1);
   static Color highlightColor = const Color.fromRGBO(212, 172, 13, 1);
+  static Color timeIndicatorColor = const Color.fromRGBO(161, 103, 13, 1);
 }
 
 // ThemeData primaryTheme = ThemeData(
