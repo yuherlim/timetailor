@@ -5,10 +5,10 @@ class CalendarPainter extends CustomPainter {
   final double slotHeight;
   final double snapInterval;
   final double topPadding;
+  final void Function(double) onSlotStartXCalculated;
   final BuildContext context; // Add BuildContext
 
   static double slotWidth = 0;
-  static double slotStartX = 0;
   static double slotEndX = 0;
   int numberOfIntervals = 0;
 
@@ -18,6 +18,7 @@ class CalendarPainter extends CustomPainter {
     required this.snapInterval,
     required this.context,
     required this.topPadding,
+    required this.onSlotStartXCalculated,
   });
 
   @override
@@ -27,8 +28,9 @@ class CalendarPainter extends CustomPainter {
           fontWeight: FontWeight.bold,
           letterSpacing: 1,
         );
-    final maxTextWidth =
-        calculateMaxTextWidth(timePeriods, timePeriodTextStyle!);
+
+    // 10% of the screen width.
+    final maxTextWidth = size.width * 0.1;
 
     final paint = Paint()
       ..color = Colors.grey
@@ -39,9 +41,10 @@ class CalendarPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     );
 
+    double slotStartX = 0;
     double verticalPadding = topPadding;
     const double horizontalPadding = 16;
-    const double textPadding = 16;
+    const double textPadding = 8;
     const double intervalLineWidthSmall = 16;
     const double intervalLineWidthLarge = 32;
     double lastLineY = timePeriods.length * slotHeight + verticalPadding;
@@ -55,6 +58,8 @@ class CalendarPainter extends CustomPainter {
     // update slot start x coordinate with sum of text and padding lencth
     slotStartX =
         (horizontalPadding + maxTextWidth + textPadding).floorToDouble();
+
+    onSlotStartXCalculated(slotStartX);
 
     slotEndX = (size.width - horizontalPadding).floorToDouble();
 
@@ -103,7 +108,16 @@ class CalendarPainter extends CustomPainter {
     canvas.drawLine(
         Offset(slotStartX, lastLineY), Offset(slotEndX, lastLineY), paint);
 
-    print("slotStart in painter: $slotStartX");
+    print("");
+    print("===============================");
+    print("DEBUGGING UI bug in painter");
+    print("===============================");
+    print("");
+    print("horizontalPadding: $horizontalPadding");
+    print("maxTextWidth: $maxTextWidth");
+    print("textPadding: $textPadding");
+    print("Calculated slotStartX: $slotStartX");
+    print("===============================");
   }
 
   @override

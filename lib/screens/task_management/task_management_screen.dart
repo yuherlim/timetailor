@@ -10,6 +10,7 @@ import 'package:timetailor/core/shared/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/data/task_management/models/draggable_box.dart';
 import 'package:timetailor/data/task_management/models/time_slot_info.dart';
+import 'package:timetailor/domain/task_management/providers/calendar_widget_provider.dart';
 import 'package:timetailor/domain/task_management/providers/task_management_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_header.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_painter.dart';
@@ -58,9 +59,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
             calculatedTimeSlotHeight; // Initialize time slot height
         TimeSlotInfo.slotWidth = CalendarPainter
             .slotWidth; //Need wait for calendar painter to finish building first.
-        TimeSlotInfo.slotStartX = CalendarPainter.slotStartX;
         TimeSlotInfo.pixelsPerMinute = defaultTimeSlotHeight / 60;
-        print("slotStartX: ${TimeSlotInfo.slotStartX}");
         print("defaultTimeSlotHeight: $defaultTimeSlotHeight");
         print("pixelsPerMinute: ${TimeSlotInfo.pixelsPerMinute}");
         TimeSlotInfo.snapInterval =
@@ -191,6 +190,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
   Widget build(BuildContext context) {
     final currentSelectedDate = ref.watch(currentDateNotifierProvider);
     final currentMonth = ref.watch(currentMonthNotifierProvider);
+    final slotStartX = ref.watch(slotStartXNotifierProvider);
 
     // indicator dimensions
     const double indicatorWidth = 80;
@@ -289,7 +289,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                         if (slotIndex != -1) {
                           setState(() {
                             draggableBox = DraggableBox(
-                              dx: TimeSlotInfo.slotStartX,
+                              dx: slotStartX,
                               dy: timeSlotBoundaries[slotIndex],
                             );
                             currentTimeSlotHeight =

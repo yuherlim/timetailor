@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:timetailor/domain/task_management/providers/calendar_widget_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_painter.dart';
 
-class CalendarWidget extends StatelessWidget {
+class CalendarWidget extends ConsumerWidget {
   final BuildContext context; // Add BuildContext
   final double slotHeight;
   final double snapInterval;
@@ -18,7 +20,7 @@ class CalendarWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final List<String> timePeriods = [
       '12 AM',
       ' 1 AM',
@@ -59,6 +61,23 @@ class CalendarWidget extends StatelessWidget {
           snapInterval: snapInterval,
           context: context,
           topPadding: topPadding,
+          onSlotStartXCalculated: (slotStartX) {
+            // Delay the update to avoid lifecycle issues
+            Future.microtask(() {
+              ref
+                  .read(slotStartXNotifierProvider.notifier)
+                  .updateSlotStartX(slotStartX);
+
+              print("");
+              print("===============================");
+              print("DEBUGGING UI bug in calendar widget");
+              print("===============================");
+              print("");
+
+              print("Updated slotStartX in provider: $slotStartX");
+              print("===============================");
+            });
+          },
         ),
       ),
     );
