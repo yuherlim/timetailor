@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:timetailor/domain/task_management/providers/calendar_widget_provider.dart';
+import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_painter.dart';
 
 class CalendarWidgetBackground extends ConsumerWidget {
@@ -66,10 +66,10 @@ class CalendarWidgetBackground extends ConsumerWidget {
             Future.microtask(() {
               // update the slotStart and slotWidth states.
               ref
-                  .read(slotStartXNotifierProvider.notifier)
+                  .read(calendarStateNotifierProvider.notifier)
                   .updateSlotStartX(slotStartX);
               ref
-                  .read(slotWidthNotifierProvider.notifier)
+                  .read(calendarStateNotifierProvider.notifier)
                   .updateSlotWidth(slotWidth);
 
               print("");

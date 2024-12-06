@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'task_management_provider.dart';
+part of 'date_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator

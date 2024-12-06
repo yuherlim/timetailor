@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:timetailor/domain/task_management/providers/datebox_animation_provider.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/core/shared/styled_text.dart';
-import 'package:timetailor/domain/task_management/providers/task_management_provider.dart';
+import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 
 class CalendarHeader extends ConsumerWidget {
   const CalendarHeader({

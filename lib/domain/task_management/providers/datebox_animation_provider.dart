@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:timetailor/domain/task_management/providers/task_management_provider.dart';
+import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 
 part 'datebox_animation_provider.g.dart'; // Generated file
 

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:intl/intl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'task_management_provider.g.dart'; // Generated file
+part 'date_provider.g.dart'; // Generated file
 
 @riverpod
 class CurrentDateNotifier extends _$CurrentDateNotifier {
