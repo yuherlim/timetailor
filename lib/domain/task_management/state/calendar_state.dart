@@ -5,7 +5,6 @@ class CalendarState {
   final double defaultTimeSlotHeight;
   final double pixelsPerMinute;
   final double snapInterval;
-  final int currentSlotIndex;
   final DraggableBoxState draggableBox;
   final bool showDraggableBox;
   final List<double> timeSlotBoundaries;
@@ -24,7 +23,6 @@ class CalendarState {
     required this.showDraggableBox,
     required this.currentTimeSlotHeight,
     required this.draggableBox,
-    required this.currentSlotIndex,
     required this.timeSlotBoundaries,
     required this.maxTaskHeight,
     required this.calendarWidgetBottomBoundaryY,
@@ -39,7 +37,6 @@ class CalendarState {
     double? defaultTimeSlotHeight,
     bool? showDraggableBox,
     double? currentTimeSlotHeight,
-    int? currentSlotIndex,
     DraggableBoxState? draggableBox,
     List<double>? timeSlotBoundaries,
     double? maxTaskHeight,
@@ -57,7 +54,6 @@ class CalendarState {
       currentTimeSlotHeight:
           currentTimeSlotHeight ?? this.currentTimeSlotHeight,
       draggableBox: draggableBox ?? this.draggableBox,
-      currentSlotIndex: currentSlotIndex ?? this.currentSlotIndex,
       timeSlotBoundaries: timeSlotBoundaries ?? this.timeSlotBoundaries,
       maxTaskHeight: maxTaskHeight ?? this.maxTaskHeight,
       calendarWidgetBottomBoundaryY:

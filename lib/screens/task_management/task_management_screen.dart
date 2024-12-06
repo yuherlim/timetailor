@@ -26,6 +26,8 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
   bool isScrolled = false;
   late ScrollController _scrollController;
   Timer? _scrollTimer;
+  double localDy = 0;
+  double localCurrentTimeSlotHeight = 0;
 
   @override
   void initState() {
@@ -71,7 +73,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
   }
 
   void _startDownwardsAutoScroll() {
-    const double scrollAmount = 20;
+    const double scrollAmount = 15;
 
     final currentCalendarState = ref.read(calendarStateNotifierProvider);
     final calendarStateNotifier =
@@ -89,10 +91,15 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
           (currentOffset + scrollAmount)
               .clamp(0, maxScrollExtent), // Scroll down
         );
-        final newSize =
-            (currentCalendarState.currentTimeSlotHeight + scrollAmount).clamp(
-                currentCalendarState.snapInterval,
-                currentCalendarState.maxTaskHeight);
+        final newSize = (localCurrentTimeSlotHeight + scrollAmount).clamp(
+            currentCalendarState.snapInterval,
+            currentCalendarState.maxTaskHeight);
+
+        // update local state
+        setState(() {
+          localCurrentTimeSlotHeight = newSize;
+        });
+
         calendarStateNotifier.updateCurrentTimeSlotHeight(newSize);
       } else {
         _stopAutoScroll(); // Stop scrolling if we reach the end
@@ -101,7 +108,11 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
   }
 
   void _startUpwardsAutoScroll() {
-    const double scrollAmount = 20;
+    const double scrollAmount = 15;
+
+    print("===========================");
+    print("Debugging auto scroll up");
+    print("===========================");
 
     final currentCalendarState = ref.read(calendarStateNotifierProvider);
     final calendarStateNotifier =
@@ -115,21 +126,26 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
         _scrollController.jumpTo(
           max(0.0, (currentOffset - scrollAmount)), // Scroll up
         );
-        final newDy = max(CalendarState.calendarWidgetTopBoundaryY,
-            (currentCalendarState.draggableBox.dy - scrollAmount));
+        final newDy = max(
+            CalendarState.calendarWidgetTopBoundaryY, (localDy - scrollAmount));
         print("newDy: $newDy");
         print(
             "TimeSlotInfo.snapInterval: ${currentCalendarState.snapInterval}");
         print("maxTaskHeight: ${currentCalendarState.maxTaskHeight}");
-        final newSize =
-            (currentCalendarState.currentTimeSlotHeight + scrollAmount).clamp(
-                currentCalendarState.snapInterval,
-                currentCalendarState.maxTaskHeight);
+        final newSize = (localCurrentTimeSlotHeight + scrollAmount).clamp(
+            currentCalendarState.snapInterval,
+            currentCalendarState.maxTaskHeight);
         print("ran clamp");
 
-        print("dy: ${currentCalendarState.draggableBox.dy}");
-        print(
-            "currentTimeSlotHeight: ${currentCalendarState.currentTimeSlotHeight}");
+        print("dy: $localDy");
+        print("currentTimeSlotHeight: $newSize");
+
+        // update local state
+        setState(() {
+          localDy = newDy;
+          localCurrentTimeSlotHeight = newSize;
+        });
+
         calendarStateNotifier.updateDraggableBoxPosition(dy: newDy);
         calendarStateNotifier.updateCurrentTimeSlotHeight(newSize);
       } else {
@@ -244,10 +260,20 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                 children: [
                   GestureDetector(
                     onTapUp: (details) {
-                      // if draggable box already created, do nothing
+                      // if draggable box already created, reset state
+                      print(
+                          "showBox: ${currentCalendarState.showDraggableBox}");
                       if (currentCalendarState.showDraggableBox) {
                         calendarStateNotifier.toggleDraggableBox(
                             !currentCalendarState.showDraggableBox);
+
+                        print("=================");
+                        print("enter reset state");
+                        print("=================");
+                        setState(() {
+                          localDy = 0;
+                          localCurrentTimeSlotHeight = 0;
+                        });
                         return;
                       }
 
@@ -285,9 +311,15 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                         calendarStateNotifier.updateCurrentTimeSlotHeight(
                             currentCalendarState
                                 .defaultTimeSlotHeight); // Reset height
-                        calendarStateNotifier.updateCurrentSlotIndex(
-                            slotIndex); // current slot index
                         calendarStateNotifier.toggleDraggableBox(true);
+
+                        // update local state
+                        setState(() {
+                          localDy = currentCalendarState
+                              .timeSlotBoundaries[slotIndex];
+                          localCurrentTimeSlotHeight =
+                              currentCalendarState.defaultTimeSlotHeight;
+                        });
                       }
                     },
                     child: CalendarWidgetBackground(
@@ -298,14 +330,15 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                       bottomPadding: CalendarState.calendarBottomPadding,
                     ),
                   ),
+                  // draggable box
                   if (currentCalendarState.showDraggableBox)
                     Positioned(
                       left: currentCalendarState.draggableBox.dx,
-                      top: currentCalendarState.draggableBox.dy,
+                      top: localDy,
                       child: Container(
                         width: currentCalendarState.slotWidth, // Fixed width
-                        height: currentCalendarState
-                            .currentTimeSlotHeight, // Dynamically adjusted height.
+                        height:
+                            localCurrentTimeSlotHeight, // Dynamically adjusted height.
                         decoration: BoxDecoration(
                           color: Colors.transparent, // Transparent background
                           border: Border.all(
@@ -321,15 +354,13 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                       left: currentCalendarState.draggableBox.dx +
                           currentCalendarState.slotWidth * 0.25 -
                           indicatorWidth * 0.5, // Center horizontally
-                      top: currentCalendarState.draggableBox.dy -
-                          indicatorHeight / 2, // Above the top edge
+                      top: localDy - indicatorHeight / 2, // Above the top edge
                       child: GestureDetector(
                         onVerticalDragUpdate: (details) {
                           print("");
                           print("onVerticalDragUpdate triggered");
                           final draggableBoxBottomBoundary =
-                              (currentCalendarState.draggableBox.dy +
-                                  currentCalendarState.currentTimeSlotHeight);
+                              (localDy + localCurrentTimeSlotHeight);
 
                           final minDraggableBoxSizeDy =
                               draggableBoxBottomBoundary -
@@ -342,7 +373,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                           print(
                               "draggableBoxBottomBoundary: $draggableBoxBottomBoundary");
                           print(
-                              "currentTimeSlotHeight: ${currentCalendarState.currentTimeSlotHeight}");
+                              "currentTimeSlotHeight: $localCurrentTimeSlotHeight");
                           print(
                               "TimeSlotInfo.snapInterval: ${currentCalendarState.snapInterval}");
                           print(
@@ -350,16 +381,13 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                           print("");
 
                           // Adjust height and position for top resizing
-                          final newDy = currentCalendarState.draggableBox.dy +
-                              details.delta.dy;
+                          final newDy = localDy + details.delta.dy;
                           final newSize =
-                              (currentCalendarState.currentTimeSlotHeight -
-                                      details.delta.dy)
+                              (localCurrentTimeSlotHeight - details.delta.dy)
                                   .clamp(currentCalendarState.snapInterval,
                                       double.infinity);
 
-                          print(
-                              "current position: ${currentCalendarState.draggableBox.dy}");
+                          print("current position: $localDy");
                           print("moved by: ${details.delta.dy}");
                           print("new position: $newDy");
                           print("new size: $newSize");
@@ -369,10 +397,14 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                           if (newDy >=
                                   CalendarState.calendarWidgetTopBoundaryY &&
                               newDy < minDraggableBoxSizeDy) {
-                            calendarStateNotifier.updateDraggableBoxPosition(
-                                dy: newDy);
-                            calendarStateNotifier
-                                .updateCurrentTimeSlotHeight(newSize);
+                            setState(() {
+                              localDy = newDy;
+                              localCurrentTimeSlotHeight = newSize;
+                            });
+                            // calendarStateNotifier.updateDraggableBoxPosition(
+                            //     dy: newDy);
+                            // calendarStateNotifier
+                            //     .updateCurrentTimeSlotHeight(newSize);
                           }
 
                           // print(
@@ -384,16 +416,14 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                           //     "draggableBoxTopBoundary: ${draggableBox.dy}");
                           // print("scrollOffset: $scrollOffset");
 
-                          calendarStateNotifier.updateMaxTaskHeight(
-                              currentCalendarState.draggableBox.dy -
-                                  CalendarState.calendarWidgetTopBoundaryY +
-                                  currentCalendarState.currentTimeSlotHeight);
+                          calendarStateNotifier.updateMaxTaskHeight(localDy -
+                              CalendarState.calendarWidgetTopBoundaryY +
+                              localCurrentTimeSlotHeight);
 
                           // print(
                           //     "maxTaskHeight before auto scroll: $maxTaskHeight");
 
-                          if (currentCalendarState.draggableBox.dy <
-                              scrollOffset) {
+                          if (localDy < scrollOffset) {
                             print("");
                             print("start upwards scroll");
                             print("");
@@ -428,9 +458,8 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                           print("=========================================");
 
                           // Adjust for padding before snapping
-                          final adjustedDy =
-                              currentCalendarState.draggableBox.dy -
-                                  CalendarState.calendarWidgetTopBoundaryY;
+                          final adjustedDy = localDy -
+                              CalendarState.calendarWidgetTopBoundaryY;
 
                           print("adjustedDy: $adjustedDy");
                           print(
@@ -445,16 +474,23 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                           // Reapply the padding offset
                           newDy += CalendarState.calendarWidgetTopBoundaryY;
 
-                          // Update the new position
+                          // Snap the height directly (no adjustment needed for height)
+                          final newSize = (localCurrentTimeSlotHeight /
+                                      currentCalendarState.snapInterval)
+                                  .round() *
+                              currentCalendarState.snapInterval;
+
+                          // Update local state
+                          setState(() {
+                            localDy = newDy;
+                            localCurrentTimeSlotHeight = newSize;
+                          });
+
+                          // Update the new position and timeslot height
                           calendarStateNotifier.updateDraggableBoxPosition(
                               dy: newDy);
-
-                          // Snap the height directly (no adjustment needed for height)
-                          calendarStateNotifier.updateCurrentTimeSlotHeight(
-                              (currentCalendarState.currentTimeSlotHeight /
-                                          currentCalendarState.snapInterval)
-                                      .round() *
-                                  currentCalendarState.snapInterval);
+                          calendarStateNotifier
+                              .updateCurrentTimeSlotHeight(newSize);
 
                           print("=========================================");
                         },
@@ -483,8 +519,8 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                       left: currentCalendarState.draggableBox.dx +
                           currentCalendarState.slotWidth * 0.75 -
                           indicatorWidth * 0.5, // Center horizontally
-                      top: currentCalendarState.draggableBox.dy +
-                          currentCalendarState.currentTimeSlotHeight -
+                      top: localDy +
+                          localCurrentTimeSlotHeight -
                           indicatorHeight / 2, // Below the bottom edge
                       child: GestureDetector(
                         onVerticalDragUpdate: (details) {
@@ -497,7 +533,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                           calendarStateNotifier.updateMaxTaskHeight(max(
                               (currentCalendarState
                                       .calendarWidgetBottomBoundaryY -
-                                  currentCalendarState.draggableBox.dy),
+                                  localDy),
                               currentCalendarState.snapInterval));
 
                           print(
@@ -517,19 +553,18 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
 
                           // Adjust height for bottom resizing
                           final newSize =
-                              (currentCalendarState.currentTimeSlotHeight +
-                                      details.delta.dy)
+                              (localCurrentTimeSlotHeight + details.delta.dy)
                                   .clamp(currentCalendarState.snapInterval,
                                       currentCalendarState.maxTaskHeight);
                           if (newSize >= currentCalendarState.snapInterval) {
-                            calendarStateNotifier
-                                .updateCurrentTimeSlotHeight(newSize);
+                            setState(() {
+                              localCurrentTimeSlotHeight = newSize;
+                            });
                           }
 
                           // Calculate the bottom position of the draggable box
                           final draggableBoxBottomBoundary =
-                              currentCalendarState.draggableBox.dy +
-                                  currentCalendarState.currentTimeSlotHeight;
+                              localDy + localCurrentTimeSlotHeight;
 
                           // Calculate the visible bottom boundary of the viewport
                           final viewportBottom =
@@ -564,11 +599,17 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                           }
 
                           // Snap height to the nearest interval after dragging
-                          calendarStateNotifier.updateCurrentTimeSlotHeight(
-                              (currentCalendarState.currentTimeSlotHeight /
-                                          currentCalendarState.snapInterval)
-                                      .round() *
-                                  currentCalendarState.snapInterval);
+                          final newSize = (localCurrentTimeSlotHeight /
+                                      currentCalendarState.snapInterval)
+                                  .round() *
+                              currentCalendarState.snapInterval;
+
+                          setState(() {
+                            localCurrentTimeSlotHeight = newSize;
+                          });
+
+                          calendarStateNotifier
+                              .updateCurrentTimeSlotHeight(newSize);
                         },
                         child: Container(
                           width: indicatorWidth,
