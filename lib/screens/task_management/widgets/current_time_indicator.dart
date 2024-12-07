@@ -17,29 +17,17 @@ class CurrentTimeIndicator extends ConsumerStatefulWidget {
 }
 
 class _CurrentTimeIndicatorState extends ConsumerState<CurrentTimeIndicator> {
-  late double topPosition;
+  double topPosition = 0;
   Timer? _timer;
-  double calendarHeight = 0;
-  double calendarWidgetTopPadding = CalendarState.calendarWidgetTopBoundaryY;
   static const double timeIndicatorIconSize = 8;
-  static const timeIndicatorStartY = timeIndicatorIconSize * 0.5;
 
   @override
   void initState() {
-    _calculateCurrentTimePosition();
+    // _calculateCurrentTimePosition();
 
-    // Wait for widget to finish building before fetching these values.
+    // Initial setup after the widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final currentCalendarState = ref.read(calendarStateNotifierProvider);
-      calendarHeight = currentCalendarState.calendarHeight;
-
-      print("=========================");
-      print("debugging time indicator");
-      print("=========================");
-
-      print("calendar Height: $calendarHeight");
-      print(
-          "calendar bottom boundary: ${currentCalendarState.calendarWidgetBottomBoundaryY}");
+      _calculateCurrentTimePosition();
     });
 
     // Update the position every minute
@@ -50,25 +38,34 @@ class _CurrentTimeIndicatorState extends ConsumerState<CurrentTimeIndicator> {
   }
 
   void _calculateCurrentTimePosition() {
+    final currentCalendarState = ref.read(calendarStateNotifierProvider);
+    final slotHeight = currentCalendarState.defaultTimeSlotHeight;
+    final timeSlotBoundaries = currentCalendarState.timeSlotBoundaries;
+    const indicatorYOffset = timeIndicatorIconSize / 2;
+    final minuteInterval = slotHeight / 60;
     final now = DateTime.now();
+    final slotHeightStart = timeSlotBoundaries[now.hour];
+    double newIndicatorPosition = slotHeightStart - indicatorYOffset;
 
-    // Total seconds passed since midnight
-    final totalSeconds = now.hour * 3600 + now.minute * 60 + now.second;
-
-    // Total seconds in a day (24 hours)
-    const totalSecondsInDay = 24 * 3600;
-
-    // Calculate the fraction of the day passed
-    final fractionOfDay = totalSeconds / totalSecondsInDay;
-
-    // Calculate the top position
-    final newTopPosition = fractionOfDay * calendarHeight;
+    // if there are minute in the current time, add the additional height of minutes
+    if (now.minute != 0) {
+      newIndicatorPosition += minuteInterval * now.minute;
+    }
 
     setState(() {
-      // account for calendarWidgetTopPadding and timeIndicatorStartY offset
-      topPosition =
-          newTopPosition + calendarWidgetTopPadding - timeIndicatorStartY;
+      topPosition = newIndicatorPosition;
     });
+
+    print("=========================");
+    print("debugging time indicator position");
+    print("=========================");
+
+    print("defaultSlotHeight: ${currentCalendarState.defaultTimeSlotHeight}");
+    print("calendarHeight: ${currentCalendarState.calendarHeight}");
+    print("timeSlotBoundaries: ${currentCalendarState.timeSlotBoundaries}");
+    print(
+        "calendar bottom boundary: ${currentCalendarState.calendarWidgetBottomBoundaryY}");
+    print("currentTime: ${now.toString()}");
   }
 
   @override
@@ -105,9 +102,15 @@ class _CurrentTimeIndicatorState extends ConsumerState<CurrentTimeIndicator> {
             ),
           ),
           Expanded(
-            child: Divider(
-              color: AppColors.timeIndicatorColor,
-              thickness: 1.5,
+            child: Padding(
+              padding: EdgeInsets.only(right: indicatorSidePadding),
+              child: SizedBox(
+                height: timeIndicatorIconSize,
+                child: Divider(
+                  color: AppColors.timeIndicatorColor,
+                  thickness: 1,
+                ),
+              ),
             ),
           ),
         ],
