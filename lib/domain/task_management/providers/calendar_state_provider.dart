@@ -12,7 +12,7 @@ class CalendarStateNotifier extends _$CalendarStateNotifier {
       currentTimeSlotHeight: 0,
       defaultTimeSlotHeight: 0,
       pixelsPerMinute: 0,
-      snapInterval: 0,
+      snapIntervalHeight: 0,
       draggableBox: DraggableBoxState(dx: 0, dy: 0),
       showDraggableBox: false,
       timeSlotBoundaries: [],
@@ -38,8 +38,8 @@ class CalendarStateNotifier extends _$CalendarStateNotifier {
     state = state.copyWith(pixelsPerMinute: pixelsPerMinute);
   }
 
-  void updateSnapInterval(double snapInterval) {
-    state = state.copyWith(snapInterval: snapInterval);
+  void updateSnapIntervalHeight(double snapIntervalHeight) {
+    state = state.copyWith(snapIntervalHeight: snapIntervalHeight);
   }
 
   void updateDraggableBoxPosition({double? dx, double? dy}) {

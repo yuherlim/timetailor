@@ -40,7 +40,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
       // Calculate first
       final double defaultTimeSlotHeight = screenHeight <= 800 ? 120 : 144;
       final double pixelsPerMinute = defaultTimeSlotHeight / 60;
-      final double snapInterval = 5 * pixelsPerMinute;
+      final double snapIntervalHeight = 5 * pixelsPerMinute;
       final double calendarHeight = defaultTimeSlotHeight * 24;
       final double calendarWidgetBottomBoundaryY =
           CalendarState.calendarWidgetTopBoundaryY + calendarHeight;
@@ -56,7 +56,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
       ref.read(calendarStateNotifierProvider.notifier)
         ..updateDefaultTimeSlotHeight(defaultTimeSlotHeight)
         ..updatePixelsPerMinute(pixelsPerMinute)
-        ..updateSnapInterval(snapInterval)
+        ..updateSnapIntervalHeight(snapIntervalHeight)
         ..updateCalendarHeight(calendarHeight)
         ..updateCalendarWidgetBottomBoundaryY(calendarWidgetBottomBoundaryY)
         ..updateTimeSlotBoundaries(timeSlotBoundaries);
@@ -169,7 +169,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
               .clamp(0, maxScrollExtent), // Scroll down
         );
         final newSize = (localCurrentTimeSlotHeight + scrollAmount).clamp(
-            currentCalendarState.snapInterval,
+            currentCalendarState.snapIntervalHeight,
             currentCalendarState.maxTaskHeight);
 
         // update local state
@@ -207,10 +207,10 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
             CalendarState.calendarWidgetTopBoundaryY, (localDy - scrollAmount));
         print("newDy: $newDy");
         print(
-            "TimeSlotInfo.snapInterval: ${currentCalendarState.snapInterval}");
+            "TimeSlotInfo.snapInterval: ${currentCalendarState.snapIntervalHeight}");
         print("maxTaskHeight: ${currentCalendarState.maxTaskHeight}");
         final newSize = (localCurrentTimeSlotHeight + scrollAmount).clamp(
-            currentCalendarState.snapInterval,
+            currentCalendarState.snapIntervalHeight,
             currentCalendarState.maxTaskHeight);
         print("ran clamp");
 
@@ -320,7 +320,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
             child: CalendarWidgetBackground(
               context: this.context,
               slotHeight: currentCalendarState.defaultTimeSlotHeight,
-              snapInterval: currentCalendarState.snapInterval,
+              snapInterval: currentCalendarState.snapIntervalHeight,
               topPadding: CalendarState.calendarWidgetTopBoundaryY,
               bottomPadding: CalendarState.calendarBottomPadding,
             ),
@@ -358,7 +358,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                       (localDy + localCurrentTimeSlotHeight);
 
                   final minDraggableBoxSizeDy = draggableBoxBottomBoundary -
-                      currentCalendarState.snapInterval;
+                      currentCalendarState.snapIntervalHeight;
 
                   print("");
                   print("=========================================");
@@ -368,7 +368,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                       "draggableBoxBottomBoundary: $draggableBoxBottomBoundary");
                   print("currentTimeSlotHeight: $localCurrentTimeSlotHeight");
                   print(
-                      "TimeSlotInfo.snapInterval: ${currentCalendarState.snapInterval}");
+                      "TimeSlotInfo.snapInterval: ${currentCalendarState.snapIntervalHeight}");
                   print("minDraggableBoxSizeDy: $minDraggableBoxSizeDy");
                   print("");
 
@@ -376,7 +376,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                   final newDy = localDy + details.delta.dy;
                   final newSize =
                       (localCurrentTimeSlotHeight - details.delta.dy).clamp(
-                          currentCalendarState.snapInterval, double.infinity);
+                          currentCalendarState.snapIntervalHeight, double.infinity);
 
                   print("current position: $localDy");
                   print("moved by: ${details.delta.dy}");
@@ -457,17 +457,17 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
 
                   // Snap position to the nearest interval
                   double newDy =
-                      (adjustedDy / currentCalendarState.snapInterval).round() *
-                          currentCalendarState.snapInterval;
+                      (adjustedDy / currentCalendarState.snapIntervalHeight).round() *
+                          currentCalendarState.snapIntervalHeight;
 
                   // Reapply the padding offset
                   newDy += CalendarState.calendarWidgetTopBoundaryY;
 
                   // Snap the height directly (no adjustment needed for height)
                   final newSize = (localCurrentTimeSlotHeight /
-                              currentCalendarState.snapInterval)
+                              currentCalendarState.snapIntervalHeight)
                           .round() *
-                      currentCalendarState.snapInterval;
+                      currentCalendarState.snapIntervalHeight;
 
                   // Update local state
                   setState(() {
@@ -520,7 +520,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                   calendarStateNotifier.updateMaxTaskHeight(max(
                       (currentCalendarState.calendarWidgetBottomBoundaryY -
                           localDy),
-                      currentCalendarState.snapInterval));
+                      currentCalendarState.snapIntervalHeight));
 
                   print(
                       "calendarWidgetBottomBoundaryY: ${currentCalendarState.calendarWidgetBottomBoundaryY}");
@@ -534,14 +534,14 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                       "current position: ${currentCalendarState.draggableBox.dy}");
                   print("moved by: ${details.delta.dy}");
                   print(
-                      "TimeSlotInfo.snapInterval: ${currentCalendarState.snapInterval}");
+                      "TimeSlotInfo.snapInterval: ${currentCalendarState.snapIntervalHeight}");
 
                   // Adjust height for bottom resizing
                   final newSize =
                       (localCurrentTimeSlotHeight + details.delta.dy).clamp(
-                          currentCalendarState.snapInterval,
+                          currentCalendarState.snapIntervalHeight,
                           currentCalendarState.maxTaskHeight);
-                  if (newSize >= currentCalendarState.snapInterval) {
+                  if (newSize >= currentCalendarState.snapIntervalHeight) {
                     setState(() {
                       localCurrentTimeSlotHeight = newSize;
                     });
@@ -585,9 +585,9 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
 
                   // Snap height to the nearest interval after dragging
                   final newSize = (localCurrentTimeSlotHeight /
-                              currentCalendarState.snapInterval)
+                              currentCalendarState.snapIntervalHeight)
                           .round() *
-                      currentCalendarState.snapInterval;
+                      currentCalendarState.snapIntervalHeight;
 
                   setState(() {
                     localCurrentTimeSlotHeight = newSize;

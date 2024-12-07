@@ -4,7 +4,7 @@ class CalendarState {
   final double currentTimeSlotHeight;
   final double defaultTimeSlotHeight;
   final double pixelsPerMinute;
-  final double snapInterval;
+  final double snapIntervalHeight;
   final DraggableBoxState draggableBox;
   final bool showDraggableBox;
   final List<double> timeSlotBoundaries;
@@ -31,7 +31,7 @@ class CalendarState {
     required this.slotStartX,
     required this.slotWidth,
     required this.pixelsPerMinute,
-    required this.snapInterval,
+    required this.snapIntervalHeight,
     required this.calendarHeight,
     required this.textPadding,
     required this.sidePadding,
@@ -48,7 +48,7 @@ class CalendarState {
     double? slotStartX,
     double? slotWidth,
     double? pixelsPerMinute,
-    double? snapInterval,
+    double? snapIntervalHeight,
     double? calendarHeight,
     double? textPadding,
     double? sidePadding,
@@ -67,7 +67,7 @@ class CalendarState {
       slotStartX: slotStartX ?? this.slotStartX,
       slotWidth: slotWidth ?? this.slotWidth,
       pixelsPerMinute: pixelsPerMinute ?? this.pixelsPerMinute,
-      snapInterval: snapInterval ?? this.snapInterval,
+      snapIntervalHeight: snapIntervalHeight ?? this.snapIntervalHeight,
       calendarHeight: calendarHeight ?? this.calendarHeight,
       textPadding: textPadding ?? this.textPadding,
       sidePadding: sidePadding ?? this.sidePadding,
