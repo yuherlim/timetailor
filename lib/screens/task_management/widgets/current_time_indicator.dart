@@ -60,16 +60,16 @@ class _CurrentTimeIndicatorState extends ConsumerState<CurrentTimeIndicator> {
       topPosition = newIndicatorPosition;
     });
 
-    print("=========================");
-    print("debugging time indicator position");
-    print("=========================");
+    // print("=========================");
+    // print("debugging time indicator position");
+    // print("=========================");
 
-    print("defaultSlotHeight: ${currentCalendarState.defaultTimeSlotHeight}");
-    print("calendarHeight: ${currentCalendarState.calendarHeight}");
-    print("timeSlotBoundaries: ${currentCalendarState.timeSlotBoundaries}");
-    print(
-        "calendar bottom boundary: ${currentCalendarState.calendarWidgetBottomBoundaryY}");
-    print("currentTime: ${now.toString()}");
+    // print("defaultSlotHeight: ${currentCalendarState.defaultTimeSlotHeight}");
+    // print("calendarHeight: ${currentCalendarState.calendarHeight}");
+    // print("timeSlotBoundaries: ${currentCalendarState.timeSlotBoundaries}");
+    // print(
+    //     "calendar bottom boundary: ${currentCalendarState.calendarWidgetBottomBoundaryY}");
+    // print("currentTime: ${now.toString()}");
   }
 
   @override
