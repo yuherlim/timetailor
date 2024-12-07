@@ -3,26 +3,28 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 
-class DraggableBox extends ConsumerStatefulWidget {
+class DraggableBox extends ConsumerWidget {
+  final double localDy;
+  final double localCurrentTimeSlotHeight;
 
-  const DraggableBox({super.key});
+  const DraggableBox({
+    super.key,
+    required this.localDy,
+    required this.localCurrentTimeSlotHeight,
+  });
 
   @override
-  ConsumerState<DraggableBox> createState() => _DraggableBoxState();
-}
-
-class _DraggableBoxState extends ConsumerState<DraggableBox> {
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentCalendarState = ref.watch(calendarStateNotifierProvider);
 
     return // draggable box
         Positioned(
-      left: ref.watch(calendarStateNotifierProvider).draggableBox.dx,
-      top: ref.watch(calendarStateNotifierProvider).draggableBox.dy,
+      left: currentCalendarState.draggableBox.dx,
+      top: localDy,
       child: Container(
-        width: ref.watch(calendarStateNotifierProvider).slotWidth, // Fixed width
-        height: ref.watch(calendarStateNotifierProvider).currentTimeSlotHeight, // Dynamically adjusted height.
+        width:
+            currentCalendarState.slotWidth, // Fixed width
+        height: localCurrentTimeSlotHeight, // Dynamically adjusted height.
         decoration: BoxDecoration(
           color: Colors.transparent, // Transparent background
           border: Border.all(

@@ -9,7 +9,20 @@ import 'package:timetailor/domain/task_management/state/calendar_state.dart';
 
 class TopIndicator extends ConsumerStatefulWidget {
   final ScrollController scrollController;
-  const TopIndicator({super.key, required this.scrollController});
+  final double localDy;
+  final double localCurrentTimeSlotHeight;
+  final void Function({
+    double? localDy,
+    double? localCurrentTimeSlotHeight,
+  }) onDyOrCurrentTimeSlotHeightUpdate;
+
+  const TopIndicator({
+    super.key,
+    required this.scrollController,
+    required this.localDy,
+    required this.localCurrentTimeSlotHeight,
+    required this.onDyOrCurrentTimeSlotHeightUpdate,
+  });
 
   @override
   ConsumerState<TopIndicator> createState() => _TopIndicatorState();
@@ -19,17 +32,10 @@ class _TopIndicatorState extends ConsumerState<TopIndicator> {
   late ScrollController _scrollController;
   bool isScrolled = false;
   Timer? _scrollTimer;
-  double localDy = 0;
-  double localCurrentTimeSlotHeight = 0;
 
   @override
   void initState() {
     _scrollController = widget.scrollController;
-
-    // reinitialize local state
-    final currentCalendarState = ref.read(calendarStateNotifierProvider);
-    localDy = currentCalendarState.draggableBox.dy;
-    localCurrentTimeSlotHeight = currentCalendarState.currentTimeSlotHeight;
     super.initState();
   }
 
@@ -69,25 +75,25 @@ class _TopIndicatorState extends ConsumerState<TopIndicator> {
         _scrollController.jumpTo(
           max(0.0, (currentOffset - scrollAmount)), // Scroll up
         );
-        final newDy = max(
-            CalendarState.calendarWidgetTopBoundaryY, (localDy - scrollAmount));
+        final newDy = max(CalendarState.calendarWidgetTopBoundaryY,
+            (widget.localDy - scrollAmount));
         print("newDy: $newDy");
         print(
             "TimeSlotInfo.snapInterval: ${currentCalendarState.snapIntervalHeight}");
         print("maxTaskHeight: ${currentCalendarState.maxTaskHeight}");
-        final newSize = (localCurrentTimeSlotHeight + scrollAmount).clamp(
-            currentCalendarState.snapIntervalHeight,
-            currentCalendarState.maxTaskHeight);
+        final newSize = (widget.localCurrentTimeSlotHeight + scrollAmount)
+            .clamp(currentCalendarState.snapIntervalHeight,
+                currentCalendarState.maxTaskHeight);
         print("ran clamp");
 
-        print("dy: $localDy");
+        print("dy: ${widget.localDy}");
         print("currentTimeSlotHeight: $newSize");
 
         // update local state
-        setState(() {
-          localDy = newDy;
-          localCurrentTimeSlotHeight = newSize;
-        });
+        widget.onDyOrCurrentTimeSlotHeightUpdate(
+          localDy: newDy,
+          localCurrentTimeSlotHeight: newSize,
+        );
 
         calendarStateNotifier.updateDraggableBoxPosition(dy: newDy);
         calendarStateNotifier.updateCurrentTimeSlotHeight(newSize);
@@ -112,6 +118,12 @@ class _TopIndicatorState extends ConsumerState<TopIndicator> {
 
   @override
   Widget build(BuildContext context) {
+    print("========================");
+    print("top indicator build start");
+    print("========================");
+    print("localDy: ${widget.localDy}");
+    print("localCurrentTimeSlotHeight: ${widget.localCurrentTimeSlotHeight}");
+
     final currentCalendarState = ref.watch(calendarStateNotifierProvider);
     final calendarStateNotifier =
         ref.read(calendarStateNotifierProvider.notifier);
@@ -125,13 +137,13 @@ class _TopIndicatorState extends ConsumerState<TopIndicator> {
       left: currentCalendarState.draggableBox.dx +
           currentCalendarState.slotWidth * 0.25 -
           indicatorWidth * 0.5, // Center horizontally
-      top: localDy - indicatorHeight / 2, // Above the top edge
+      top: widget.localDy - indicatorHeight / 2, // Above the top edge
       child: GestureDetector(
         onVerticalDragUpdate: (details) {
           print("");
-          print("onVerticalDragUpdate triggered");
+          print("onVerticalDragUpdate triggered for top indicator");
           final draggableBoxBottomBoundary =
-              (localDy + localCurrentTimeSlotHeight);
+              (widget.localDy + widget.localCurrentTimeSlotHeight);
 
           final minDraggableBoxSizeDy = draggableBoxBottomBoundary -
               currentCalendarState.snapIntervalHeight;
@@ -141,18 +153,18 @@ class _TopIndicatorState extends ConsumerState<TopIndicator> {
           print("debugging draggable box initial values:");
           print("=========================================");
           print("draggableBoxBottomBoundary: $draggableBoxBottomBoundary");
-          print("currentTimeSlotHeight: $localCurrentTimeSlotHeight");
+          print("currentTimeSlotHeight: ${widget.localCurrentTimeSlotHeight}");
           print(
               "TimeSlotInfo.snapInterval: ${currentCalendarState.snapIntervalHeight}");
           print("minDraggableBoxSizeDy: $minDraggableBoxSizeDy");
           print("");
 
           // Adjust height and position for top resizing
-          final newDy = localDy + details.delta.dy;
-          final newSize = (localCurrentTimeSlotHeight - details.delta.dy)
+          final newDy = widget.localDy + details.delta.dy;
+          final newSize = (widget.localCurrentTimeSlotHeight - details.delta.dy)
               .clamp(currentCalendarState.snapIntervalHeight, double.infinity);
 
-          print("current position: $localDy");
+          print("current position: ${widget.localDy}");
           print("moved by: ${details.delta.dy}");
           print("new position: $newDy");
           print("new size: $newSize");
@@ -161,15 +173,21 @@ class _TopIndicatorState extends ConsumerState<TopIndicator> {
 
           if (newDy >= CalendarState.calendarWidgetTopBoundaryY &&
               newDy < minDraggableBoxSizeDy) {
-            setState(() {
-              localDy = newDy;
-              localCurrentTimeSlotHeight = newSize;
-            });
+            widget.onDyOrCurrentTimeSlotHeightUpdate(
+              localDy: newDy,
+              localCurrentTimeSlotHeight: newSize,
+            );
             // calendarStateNotifier.updateDraggableBoxPosition(
             //     dy: newDy);
             // calendarStateNotifier
             //     .updateCurrentTimeSlotHeight(newSize);
           }
+          print("========================");
+          print("top indicator debugging state update");
+          print("========================");
+          print("localDy: ${widget.localDy}");
+          print(
+              "localCurrentTimeSlotHeight: ${widget.localCurrentTimeSlotHeight}");
 
           // print(
           //     "currentTimeSlotHeight: $currentTimeSlotHeight");
@@ -180,14 +198,14 @@ class _TopIndicatorState extends ConsumerState<TopIndicator> {
           //     "draggableBoxTopBoundary: ${draggableBox.dy}");
           // print("scrollOffset: $scrollOffset");
 
-          calendarStateNotifier.updateMaxTaskHeight(localDy -
+          calendarStateNotifier.updateMaxTaskHeight(widget.localDy -
               CalendarState.calendarWidgetTopBoundaryY +
-              localCurrentTimeSlotHeight);
+              widget.localCurrentTimeSlotHeight);
 
           // print(
           //     "maxTaskHeight before auto scroll: $maxTaskHeight");
 
-          if (localDy < scrollOffset) {
+          if (widget.localDy < scrollOffset) {
             print("");
             print("start upwards scroll");
             print("");
@@ -219,7 +237,8 @@ class _TopIndicatorState extends ConsumerState<TopIndicator> {
           print("=========================================");
 
           // Adjust for padding before snapping
-          final adjustedDy = localDy - CalendarState.calendarWidgetTopBoundaryY;
+          final adjustedDy =
+              widget.localDy - CalendarState.calendarWidgetTopBoundaryY;
 
           print("adjustedDy: $adjustedDy");
           print(
@@ -234,16 +253,16 @@ class _TopIndicatorState extends ConsumerState<TopIndicator> {
           newDy += CalendarState.calendarWidgetTopBoundaryY;
 
           // Snap the height directly (no adjustment needed for height)
-          final newSize = (localCurrentTimeSlotHeight /
+          final newSize = (widget.localCurrentTimeSlotHeight /
                       currentCalendarState.snapIntervalHeight)
                   .round() *
               currentCalendarState.snapIntervalHeight;
 
           // Update local state
-          setState(() {
-            localDy = newDy;
-            localCurrentTimeSlotHeight = newSize;
-          });
+          widget.onDyOrCurrentTimeSlotHeightUpdate(
+            localDy: newDy,
+            localCurrentTimeSlotHeight: newSize,
+          );
 
           // Update the new position and timeslot height
           calendarStateNotifier.updateDraggableBoxPosition(dy: newDy);

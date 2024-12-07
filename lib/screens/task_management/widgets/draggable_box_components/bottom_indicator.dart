@@ -8,7 +8,20 @@ import 'package:timetailor/domain/task_management/providers/calendar_state_provi
 
 class BottomIndicator extends ConsumerStatefulWidget {
   final ScrollController scrollController;
-  const BottomIndicator({super.key, required this.scrollController});
+  final double localDy;
+  final double localCurrentTimeSlotHeight;
+  final void Function({
+    double? localDy,
+    double? localCurrentTimeSlotHeight,
+  }) onDyOrCurrentTimeSlotHeightUpdate;
+
+  const BottomIndicator({
+    super.key,
+    required this.scrollController,
+    required this.localDy,
+    required this.localCurrentTimeSlotHeight,
+    required this.onDyOrCurrentTimeSlotHeightUpdate,
+  });
 
   @override
   ConsumerState<BottomIndicator> createState() => _BottomIndicatorState();
@@ -18,17 +31,10 @@ class _BottomIndicatorState extends ConsumerState<BottomIndicator> {
   late ScrollController _scrollController;
   bool isScrolled = false;
   Timer? _scrollTimer;
-  double localDy = 0;
-  double localCurrentTimeSlotHeight = 0;
 
   @override
   void initState() {
     _scrollController = widget.scrollController;
-
-    // reinitialize local state
-    final currentCalendarState = ref.read(calendarStateNotifierProvider);
-    localDy = currentCalendarState.draggableBox.dy;
-    localCurrentTimeSlotHeight = currentCalendarState.currentTimeSlotHeight;
     super.initState();
   }
 
@@ -69,14 +75,14 @@ class _BottomIndicatorState extends ConsumerState<BottomIndicator> {
           (currentOffset + scrollAmount)
               .clamp(0, maxScrollExtent), // Scroll down
         );
-        final newSize = (localCurrentTimeSlotHeight + scrollAmount).clamp(
-            currentCalendarState.snapIntervalHeight,
-            currentCalendarState.maxTaskHeight);
+        final newSize = (widget.localCurrentTimeSlotHeight + scrollAmount)
+            .clamp(currentCalendarState.snapIntervalHeight,
+                currentCalendarState.maxTaskHeight);
 
         // update local state
-        setState(() {
-          localCurrentTimeSlotHeight = newSize;
-        });
+        widget.onDyOrCurrentTimeSlotHeightUpdate(
+          localCurrentTimeSlotHeight: newSize,
+        );
 
         calendarStateNotifier.updateCurrentTimeSlotHeight(newSize);
       } else {
@@ -114,8 +120,8 @@ class _BottomIndicatorState extends ConsumerState<BottomIndicator> {
       left: currentCalendarState.draggableBox.dx +
           currentCalendarState.slotWidth * 0.75 -
           indicatorWidth * 0.5, // Center horizontally
-      top: localDy +
-          localCurrentTimeSlotHeight -
+      top: widget.localDy +
+          widget.localCurrentTimeSlotHeight -
           indicatorHeight / 2, // Below the bottom edge
       child: GestureDetector(
         onVerticalDragUpdate: (details) {
@@ -126,7 +132,8 @@ class _BottomIndicatorState extends ConsumerState<BottomIndicator> {
 
           // Calculate the maximum height for the task to prevent exceeding the calendar boundary
           calendarStateNotifier.updateMaxTaskHeight(max(
-              (currentCalendarState.calendarWidgetBottomBoundaryY - localDy),
+              (currentCalendarState.calendarWidgetBottomBoundaryY -
+                  widget.localDy),
               currentCalendarState.snapIntervalHeight));
 
           print(
@@ -143,18 +150,18 @@ class _BottomIndicatorState extends ConsumerState<BottomIndicator> {
               "TimeSlotInfo.snapInterval: ${currentCalendarState.snapIntervalHeight}");
 
           // Adjust height for bottom resizing
-          final newSize = (localCurrentTimeSlotHeight + details.delta.dy).clamp(
-              currentCalendarState.snapIntervalHeight,
-              currentCalendarState.maxTaskHeight);
+          final newSize = (widget.localCurrentTimeSlotHeight + details.delta.dy)
+              .clamp(currentCalendarState.snapIntervalHeight,
+                  currentCalendarState.maxTaskHeight);
           if (newSize >= currentCalendarState.snapIntervalHeight) {
-            setState(() {
-              localCurrentTimeSlotHeight = newSize;
-            });
+            widget.onDyOrCurrentTimeSlotHeightUpdate(
+              localCurrentTimeSlotHeight: newSize,
+            );
           }
 
           // Calculate the bottom position of the draggable box
           final draggableBoxBottomBoundary =
-              localDy + localCurrentTimeSlotHeight;
+              widget.localDy + widget.localCurrentTimeSlotHeight;
 
           // Calculate the visible bottom boundary of the viewport
           final viewportBottom =
@@ -188,14 +195,15 @@ class _BottomIndicatorState extends ConsumerState<BottomIndicator> {
           }
 
           // Snap height to the nearest interval after dragging
-          final newSize = (localCurrentTimeSlotHeight /
+          final newSize = (widget.localCurrentTimeSlotHeight /
                       currentCalendarState.snapIntervalHeight)
                   .round() *
               currentCalendarState.snapIntervalHeight;
 
-          setState(() {
-            localCurrentTimeSlotHeight = newSize;
-          });
+          // update local state
+          widget.onDyOrCurrentTimeSlotHeightUpdate(
+            localCurrentTimeSlotHeight: newSize,
+          );
 
           calendarStateNotifier.updateCurrentTimeSlotHeight(newSize);
         },

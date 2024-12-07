@@ -203,12 +203,39 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
               bottomPadding: CalendarState.calendarBottomPadding,
             ),
           ),
-          // Draggable box
-          if (currentCalendarState.showDraggableBox) const DraggableBox(),
           if (currentCalendarState.showDraggableBox)
-            TopIndicator(scrollController: _scrollController),
+            DraggableBox(
+              localDy: localDy,
+              localCurrentTimeSlotHeight: localCurrentTimeSlotHeight,
+            ),
           if (currentCalendarState.showDraggableBox)
-            BottomIndicator(scrollController: _scrollController),
+            TopIndicator(
+              scrollController: _scrollController,
+              localDy: localDy,
+              localCurrentTimeSlotHeight: localCurrentTimeSlotHeight,
+              onDyOrCurrentTimeSlotHeightUpdate: (
+                  {double? localCurrentTimeSlotHeight, double? localDy}) {
+                setState(() {
+                  localDy = localDy ?? this.localDy;
+                  localCurrentTimeSlotHeight =
+                      localCurrentTimeSlotHeight ?? this.localCurrentTimeSlotHeight;
+                });
+              },
+            ),
+          if (currentCalendarState.showDraggableBox)
+            BottomIndicator(
+              scrollController: _scrollController,
+              localDy: localDy,
+              localCurrentTimeSlotHeight: localCurrentTimeSlotHeight,
+              onDyOrCurrentTimeSlotHeightUpdate: (
+                  {double? localCurrentTimeSlotHeight, double? localDy}) {
+                setState(() {
+                  localDy = localDy ?? this.localDy;
+                  localCurrentTimeSlotHeight =
+                      localCurrentTimeSlotHeight ?? this.localCurrentTimeSlotHeight;
+                });
+              },
+            ),
           // Current Time Indicator
           CurrentTimeIndicator(
               scrollToCurrentTimeIndicator: scrollToCurrentTimeIndicator),
