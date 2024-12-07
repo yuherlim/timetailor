@@ -131,6 +131,17 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
     return slotIndex;
   }
 
+  void scrollToCurrentTimeIndicator({required double position}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final screenHeight = MediaQuery.of(context).size.height;
+      _scrollController.animateTo(
+        position - screenHeight * 0.3,
+        duration: const Duration(seconds: 1),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
   bool _backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     final showDraggableBox =
         ref.read(calendarStateNotifierProvider).showDraggableBox;
@@ -376,7 +387,8 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                   final newDy = localDy + details.delta.dy;
                   final newSize =
                       (localCurrentTimeSlotHeight - details.delta.dy).clamp(
-                          currentCalendarState.snapIntervalHeight, double.infinity);
+                          currentCalendarState.snapIntervalHeight,
+                          double.infinity);
 
                   print("current position: $localDy");
                   print("moved by: ${details.delta.dy}");
@@ -457,7 +469,8 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
 
                   // Snap position to the nearest interval
                   double newDy =
-                      (adjustedDy / currentCalendarState.snapIntervalHeight).round() *
+                      (adjustedDy / currentCalendarState.snapIntervalHeight)
+                              .round() *
                           currentCalendarState.snapIntervalHeight;
 
                   // Reapply the padding offset
@@ -614,7 +627,8 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
               ),
             ),
           // Current Time Indicator
-          const CurrentTimeIndicator(),
+          CurrentTimeIndicator(
+              scrollToCurrentTimeIndicator: scrollToCurrentTimeIndicator),
         ],
       ),
     );
