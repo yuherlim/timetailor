@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
+import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
 import 'package:timetailor/domain/task_management/state/calendar_state.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_widget_background.dart';
 import 'package:timetailor/screens/task_management/widgets/current_time_indicator.dart';
@@ -19,11 +20,9 @@ class CalendarWidget extends ConsumerStatefulWidget {
 }
 
 class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
-  late ScrollController _scrollController;
 
   @override
   void initState() {
-    _scrollController = ScrollController(); // Initialize the scroll controller
     BackButtonInterceptor.add(_backButtonInterceptor);
     _initializeCalendarState();
     super.initState();
@@ -60,17 +59,6 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
     });
   }
 
-  void scrollToCurrentTimeIndicator({required double position}) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final screenHeight = MediaQuery.of(context).size.height;
-      _scrollController.animateTo(
-        position - screenHeight * 0.3,
-        duration: const Duration(seconds: 1),
-        curve: Curves.easeInOut,
-      );
-    });
-  }
-
   bool _backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     final showDraggableBox =
         ref.read(calendarStateNotifierProvider).showDraggableBox;
@@ -90,13 +78,13 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
   @override
   void dispose() {
     // Clean up
-    _scrollController.dispose();
     BackButtonInterceptor.remove(_backButtonInterceptor);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final scrollController = ref.watch(scrollControllerNotifierProvider);
     final currentCalendarState = ref.watch(calendarStateNotifierProvider);
 
     // indicator dimensions
@@ -104,7 +92,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
     const double indicatorHeight = 30;
 
     return SingleChildScrollView(
-      controller: _scrollController,
+      controller: scrollController,
       child: Stack(
         children: [
           CalendarWidgetBackground(
@@ -118,22 +106,18 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
           if (currentCalendarState.showDraggableBox) const DraggableBox(),
           // Top Indicator
           if (currentCalendarState.showDraggableBox)
-            TopIndicator(
+            const TopIndicator(
               indicatorWidth: indicatorWidth,
               indicatorHeight: indicatorHeight,
-              scrollController: _scrollController,
             ),
           // Bottom Indicator
           if (currentCalendarState.showDraggableBox)
-            BottomIndicator(
+            const BottomIndicator(
               indicatorWidth: indicatorWidth,
               indicatorHeight: indicatorHeight,
-              scrollController: _scrollController,
             ),
           // Current Time Indicator
-          CurrentTimeIndicator(
-            scrollToCurrentTimeIndicator: scrollToCurrentTimeIndicator,
-          ),
+          const CurrentTimeIndicator(),
         ],
       ),
     );

@@ -1,27 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'calendar_state_provider.dart';
+part of 'scroll_controller_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$calendarStateNotifierHash() =>
-    r'db6b15f017f8c2dca29f8f2f8b19eac4abe85160';
+String _$scrollControllerNotifierHash() =>
+    r'6bacecfa84c528bd57e4650fb256a892ff8c2c9d';
 
-/// See also [CalendarStateNotifier].
-@ProviderFor(CalendarStateNotifier)
-final calendarStateNotifierProvider =
-    AutoDisposeNotifierProvider<CalendarStateNotifier, CalendarState>.internal(
-  CalendarStateNotifier.new,
-  name: r'calendarStateNotifierProvider',
+/// See also [ScrollControllerNotifier].
+@ProviderFor(ScrollControllerNotifier)
+final scrollControllerNotifierProvider = AutoDisposeNotifierProvider<
+    ScrollControllerNotifier, ScrollController>.internal(
+  ScrollControllerNotifier.new,
+  name: r'scrollControllerNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$calendarStateNotifierHash,
+      : _$scrollControllerNotifierHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$CalendarStateNotifier = AutoDisposeNotifier<CalendarState>;
+typedef _$ScrollControllerNotifier = AutoDisposeNotifier<ScrollController>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -16,7 +16,6 @@ class CalendarStateNotifier extends _$CalendarStateNotifier {
       draggableBox: DraggableBoxState(dx: 0, dy: 0),
       showDraggableBox: false,
       timeSlotBoundaries: [],
-      maxTaskHeight: 0,
       calendarWidgetBottomBoundaryY: 0,
       calendarHeight: 0,
       slotStartX: 0,
@@ -57,10 +56,6 @@ class CalendarStateNotifier extends _$CalendarStateNotifier {
 
   void updateTimeSlotBoundaries(List<double> timeSlotBoundaries) {
     state = state.copyWith(timeSlotBoundaries: timeSlotBoundaries);
-  }
-
-  void updateMaxTaskHeight(double height) {
-    state = state.copyWith(maxTaskHeight: height);
   }
 
   void updateCalendarWidgetBottomBoundaryY(double calendarWidgetBottomBoundaryY) {
