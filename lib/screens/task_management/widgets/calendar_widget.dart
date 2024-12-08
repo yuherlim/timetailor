@@ -11,7 +11,7 @@ import 'package:timetailor/domain/task_management/providers/calendar_state_provi
 import 'package:timetailor/domain/task_management/state/calendar_state.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_widget_background.dart';
 import 'package:timetailor/screens/task_management/widgets/current_time_indicator.dart';
-import 'package:timetailor/screens/task_management/widgets/draggable_box_components/bottom_indicator.dart';
+import 'package:timetailor/screens/task_management/widgets/draggable_box_components/bottom_indicator_widget.dart';
 import 'package:timetailor/screens/task_management/widgets/draggable_box_components/draggable_box.dart';
 import 'package:timetailor/screens/task_management/widgets/draggable_box_components/top_indicator.dart';
 
@@ -467,45 +467,23 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
             ),
           // Top Indicator
           if (currentCalendarState.showDraggableBox)
-            Positioned(
-              left: currentCalendarState.draggableBox.dx +
-                  currentCalendarState.slotWidth * 0.25 -
-                  indicatorWidth * 0.5, // Center horizontally
-              top: localDy - indicatorHeight / 2, // Above the top edge
-              child: GestureDetector(
-                onVerticalDragUpdate: (details) {
-                  _handleTopDrag(details: details);
-                },
-                onVerticalDragEnd: (_) {
-                  _handleTopDragEnd();
-                },
-                child: const TopIndicator(
-                  indicatorWidth: indicatorWidth,
-                  indicatorHeight: indicatorHeight,
-                ),
-              ),
+            TopIndicator(
+              indicatorWidth: indicatorWidth,
+              indicatorHeight: indicatorHeight,
+              localDy: localDy,
+              localCurrentTimeSlotHeight: localCurrentTimeSlotHeight,
+              onDragUpdate: _handleTopDrag,
+              onDragEnd: _handleTopDragEnd,
             ),
           // Bottom Indicator
           if (currentCalendarState.showDraggableBox)
-            Positioned(
-              left: currentCalendarState.draggableBox.dx +
-                  currentCalendarState.slotWidth * 0.75 -
-                  indicatorWidth * 0.5, // Center horizontally
-              top: localDy +
-                  localCurrentTimeSlotHeight -
-                  indicatorHeight / 2, // Below the bottom edge
-              child: GestureDetector(
-                onVerticalDragUpdate: (details) {
-                  _handleBottomDrag(details: details);
-                },
-                onVerticalDragEnd: (_) {
-                  _handleBottomDragEnd();
-                },
-                child: const BottomIndicator(
-                  indicatorWidth: indicatorWidth,
-                  indicatorHeight: indicatorHeight,
-                ),
-              ),
+            BottomIndicator(
+              indicatorWidth: indicatorWidth,
+              indicatorHeight: indicatorHeight,
+              localDy: localDy,
+              localCurrentTimeSlotHeight: localCurrentTimeSlotHeight,
+              onDragUpdate: _handleBottomDrag,
+              onDragEnd: _handleBottomDragEnd,
             ),
           // Current Time Indicator
           CurrentTimeIndicator(
