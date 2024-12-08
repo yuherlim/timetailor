@@ -4,13 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
+import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
 
 class CurrentTimeIndicator extends ConsumerStatefulWidget {
-  final void Function({required double position}) scrollToCurrentTimeIndicator;
-
   const CurrentTimeIndicator({
     super.key,
-    required this.scrollToCurrentTimeIndicator,
   });
 
   @override
@@ -28,9 +26,8 @@ class _CurrentTimeIndicatorState extends ConsumerState<CurrentTimeIndicator> {
     // Initial setup after the widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _calculateCurrentTimePosition();
-      widget.scrollToCurrentTimeIndicator(position: topPosition);
+      ref.read(scrollControllerNotifierProvider.notifier).scrollToCurrentTimeIndicator(position: topPosition, context: context);
     });
-
 
     // Update the position every minute
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
