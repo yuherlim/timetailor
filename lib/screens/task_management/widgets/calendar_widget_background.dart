@@ -58,7 +58,6 @@ class _CalendarWidgetBackgroundState
         dx: ref.read(slotStartXProvider),
         dy: ref.read(timeSlotBoundariesProvider)[slotIndex],
       );
-      debugPrint("dx in handleOnTap: ${ref.read(calendarStateNotifierProvider).draggableBox.dx}");
       calendarStateNotifier.updateCurrentTimeSlotHeight(
           ref.read(defaultTimeSlotHeightProvider)); // Reset height
       ref.read(showDraggableBoxProvider.notifier).state = true;
