@@ -3,13 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_painter.dart';
 
-class CalendarWidgetBackground extends ConsumerWidget {
+class CalendarWidgetBackground extends ConsumerStatefulWidget {
   final BuildContext context; // Add BuildContext
   final double slotHeight;
   final double snapInterval;
   final double bottomPadding;
   final double topPadding;
-  final void Function({required TapUpDetails details}) onTapUp;
+  final void Function({
+    double? localDy,
+    double? localCurrentTimeSlotHeight,
+    bool? isScrolled,
+  }) updateParentState;
 
   const CalendarWidgetBackground({
     super.key,
@@ -18,11 +22,94 @@ class CalendarWidgetBackground extends ConsumerWidget {
     required this.snapInterval,
     required this.bottomPadding,
     required this.topPadding,
-    required this.onTapUp,
+    required this.updateParentState,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CalendarWidgetBackground> createState() =>
+      _CalendarWidgetBackgroundState();
+}
+
+class _CalendarWidgetBackgroundState
+    extends ConsumerState<CalendarWidgetBackground> {
+
+  void _handleCalendarOnTapUp({
+    required TapUpDetails details,
+  }) {
+    final currentCalendarState = ref.read(calendarStateNotifierProvider);
+    final calendarStateNotifier =
+        ref.read(calendarStateNotifierProvider.notifier);
+
+    // if draggable box already created, reset state
+    if (currentCalendarState.showDraggableBox) {
+      calendarStateNotifier
+          .toggleDraggableBox(!currentCalendarState.showDraggableBox);
+
+      widget.updateParentState(
+        localDy: 0,
+        localCurrentTimeSlotHeight: 0,
+      );
+
+      return;
+    }
+
+    final tapPosition = details.localPosition.dy;
+
+    // Binary search to find the correct time slot
+    int slotIndex = binarySearchSlotIndex(
+        tapPosition, currentCalendarState.timeSlotBoundaries);
+
+    // Handle case where the tap is after the last slot
+    if (slotIndex == -1 &&
+        tapPosition >= currentCalendarState.timeSlotBoundaries.last) {
+      slotIndex = currentCalendarState.timeSlotBoundaries.length - 1;
+    }
+
+    // Snap to the correct time slot
+    if (slotIndex != -1) {
+      // update local state
+      widget.updateParentState(
+        localDy: currentCalendarState.timeSlotBoundaries[slotIndex],
+        localCurrentTimeSlotHeight: currentCalendarState.defaultTimeSlotHeight,
+      );
+
+      calendarStateNotifier.updateDraggableBoxPosition(
+        dx: currentCalendarState.slotStartX,
+        dy: currentCalendarState.timeSlotBoundaries[slotIndex],
+      );
+      calendarStateNotifier.updateCurrentTimeSlotHeight(
+          currentCalendarState.defaultTimeSlotHeight); // Reset height
+      calendarStateNotifier.toggleDraggableBox(true);
+    }
+  }
+
+  int binarySearchSlotIndex(
+    double tapPosition,
+    List<double> timeSlotBoundaries,
+  ) {
+    int low = 0;
+    int high = timeSlotBoundaries.length - 1;
+    int slotIndex = -1;
+
+    while (low <= high) {
+      int mid = (low + high) ~/ 2;
+
+      if (mid < timeSlotBoundaries.length - 1 &&
+          tapPosition >= timeSlotBoundaries[mid] &&
+          tapPosition < timeSlotBoundaries[mid + 1]) {
+        slotIndex = mid; // Found the slot
+        break;
+      } else if (tapPosition < timeSlotBoundaries[mid]) {
+        high = mid - 1; // Search in the left half
+      } else {
+        low = mid + 1; // Search in the right half
+      }
+    }
+    return slotIndex;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final List<String> timePeriods = [
       '12 AM',
       ' 1 AM',
@@ -51,23 +138,27 @@ class CalendarWidgetBackground extends ConsumerWidget {
     ];
 
     // Calculate the total height for 24 slots
-    double calendarHeight = timePeriods.length * slotHeight;
+    double calendarHeight = timePeriods.length * widget.slotHeight;
 
     return GestureDetector(
       onTapUp: (details) {
-        onTapUp(details: details);
+        _handleCalendarOnTapUp(details: details);
       },
       child: Padding(
-        padding: EdgeInsets.only(bottom: bottomPadding),
+        padding: EdgeInsets.only(bottom: widget.bottomPadding),
         child: CustomPaint(
           size: Size(double.infinity, calendarHeight),
           painter: CalendarPainter(
             timePeriods: timePeriods,
-            slotHeight: slotHeight,
-            snapInterval: snapInterval,
+            slotHeight: widget.slotHeight,
+            snapInterval: widget.snapInterval,
             context: context,
-            topPadding: topPadding,
-            onSlotCalendarPainted: ({required slotStartX, required slotWidth, required sidePadding, required textPadding}) {
+            topPadding: widget.topPadding,
+            onSlotCalendarPainted: (
+                {required slotStartX,
+                required slotWidth,
+                required sidePadding,
+                required textPadding}) {
               // Delay the update to avoid lifecycle issues
               Future.microtask(() {
                 // update the states.
