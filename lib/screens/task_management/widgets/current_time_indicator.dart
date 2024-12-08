@@ -25,8 +25,6 @@ class _CurrentTimeIndicatorState extends ConsumerState<CurrentTimeIndicator> {
 
   @override
   void initState() {
-    // _calculateCurrentTimePosition();
-
     // Initial setup after the widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _calculateCurrentTimePosition();
@@ -59,17 +57,6 @@ class _CurrentTimeIndicatorState extends ConsumerState<CurrentTimeIndicator> {
     setState(() {
       topPosition = newIndicatorPosition;
     });
-
-    print("=========================");
-    print("debugging time indicator position");
-    print("=========================");
-
-    print("defaultSlotHeight: ${currentCalendarState.defaultTimeSlotHeight}");
-    print("calendarHeight: ${currentCalendarState.calendarHeight}");
-    print("timeSlotBoundaries: ${currentCalendarState.timeSlotBoundaries}");
-    print(
-        "calendar bottom boundary: ${currentCalendarState.calendarWidgetBottomBoundaryY}");
-    print("currentTime: ${now.toString()}");
   }
 
   @override
