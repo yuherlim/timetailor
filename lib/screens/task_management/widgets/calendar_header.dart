@@ -16,19 +16,19 @@ class CalendarHeader extends ConsumerWidget {
   // Helper function to trigger ripple animation
   void _triggerRipple(GlobalKey? key, BuildContext context) {
     if (key == null) {
-      print("No GlobalKey for this date");
+      debugPrint("No GlobalKey for this date");
       return;
     }
 
     final boxContext = key.currentContext;
     if (boxContext == null) {
-      print("No context for this GlobalKey");
+      debugPrint("No context for this GlobalKey");
       return;
     }
 
     final renderBox = boxContext.findRenderObject() as RenderBox?;
     if (renderBox == null) {
-      print("No RenderBox for this GlobalKey");
+      debugPrint("No RenderBox for this GlobalKey");
       return;
     }
 
@@ -36,7 +36,7 @@ class CalendarHeader extends ConsumerWidget {
         Overlay.of(context).context.findRenderObject() as RenderBox?;
 
     if (overlay == null) {
-      print("No Overlay found for context");
+      debugPrint("No Overlay found for context");
       return;
     }
 
