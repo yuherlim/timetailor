@@ -97,13 +97,12 @@ class _BottomIndicatorState extends ConsumerState<BottomIndicator> {
 
   @override
   Widget build(BuildContext context) {
-    final currentCalendarState = ref.watch(calendarStateNotifierProvider);
     final localDy = ref.watch(localDyProvider);
     final localCurrentTimeSlotHeight =
         ref.watch(localCurrentTimeSlotHeightProvider);
 
     return Positioned(
-      left: currentCalendarState.draggableBox.dx +
+      left: ref.watch(slotStartXProvider) +
           ref.watch(slotWidthProvider) * 0.75 -
           ref.watch(draggableBoxIndicatorWidthProvider) *
               0.5, // Center horizontally

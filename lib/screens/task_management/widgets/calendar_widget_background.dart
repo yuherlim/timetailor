@@ -58,6 +58,7 @@ class _CalendarWidgetBackgroundState
         dx: ref.read(slotStartXProvider),
         dy: ref.read(timeSlotBoundariesProvider)[slotIndex],
       );
+      debugPrint("dx in handleOnTap: ${ref.read(calendarStateNotifierProvider).draggableBox.dx}");
       calendarStateNotifier.updateCurrentTimeSlotHeight(
           ref.read(defaultTimeSlotHeightProvider)); // Reset height
       ref.read(showDraggableBoxProvider.notifier).state = true;
@@ -112,10 +113,15 @@ class _CalendarWidgetBackgroundState
                 required sidePadding,
                 required textPadding}) {
               // update the states.
-              ref.read(slotStartXProvider.notifier).state = slotStartX;
-              ref.read(slotWidthProvider.notifier).state = slotWidth;
-              ref.read(sidePaddingProvider.notifier).state = sidePadding;
-              ref.read(textPaddingProvider.notifier).state = textPadding;
+              // WidgetsBinding.instance.addPostFrameCallback((_) {
+
+              // });
+              Future.microtask(() {
+                ref.read(slotStartXProvider.notifier).state = slotStartX;
+                ref.read(slotWidthProvider.notifier).state = slotWidth;
+                ref.read(sidePaddingProvider.notifier).state = sidePadding;
+                ref.read(textPaddingProvider.notifier).state = textPadding;
+              });
             },
           ),
         ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_local_state_provider.dart';
-import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 
 class DraggableBox extends ConsumerWidget {
 
@@ -12,16 +11,13 @@ class DraggableBox extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentCalendarState = ref.watch(calendarStateNotifierProvider);
-    final localDy = ref.watch(localDyProvider);
-    final localCurrentTimeSlotHeight = ref.watch(localCurrentTimeSlotHeightProvider);
 
     return Positioned(
-      left: currentCalendarState.draggableBox.dx,
-      top: localDy,
+      left: ref.watch(slotStartXProvider),
+      top: ref.watch(localDyProvider),
       child: Container(
         width: ref.watch(slotWidthProvider), // Fixed width
-        height: localCurrentTimeSlotHeight, // Dynamically adjusted height.
+        height: ref.watch(localCurrentTimeSlotHeightProvider), // Dynamically adjusted height.
         decoration: BoxDecoration(
           color: Colors.transparent, // Transparent background
           border: Border.all(

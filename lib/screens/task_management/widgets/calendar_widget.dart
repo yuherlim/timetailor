@@ -47,9 +47,12 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // initialize screen height
-    ref.read(screenHeightProvider.notifier).state =
-        MediaQuery.of(context).size.height;
+    // initialize screen height after screen finish rendering
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(screenHeightProvider.notifier).state =
+          MediaQuery.of(context).size.height;
+    });
+
     final scrollController = ref.watch(scrollControllerNotifierProvider);
 
     return SingleChildScrollView(
