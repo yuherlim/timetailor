@@ -6,12 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:timetailor/core/constants/route_path.dart';
-import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/state/calendar_state.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_widget_background.dart';
 import 'package:timetailor/screens/task_management/widgets/current_time_indicator.dart';
-import 'package:timetailor/screens/task_management/widgets/draggable_box_components/bottom_indicator_widget.dart';
+import 'package:timetailor/screens/task_management/widgets/draggable_box_components/bottom_indicator.dart';
 import 'package:timetailor/screens/task_management/widgets/draggable_box_components/draggable_box.dart';
 import 'package:timetailor/screens/task_management/widgets/draggable_box_components/top_indicator.dart';
 
@@ -444,26 +443,19 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
       controller: _scrollController,
       child: Stack(
         children: [
-          GestureDetector(
-            onTapUp: (details) {
-              _handleCalendarOnTapUp(details: details);
-            },
-            child: CalendarWidgetBackground(
-              context: this.context,
-              slotHeight: currentCalendarState.defaultTimeSlotHeight,
-              snapInterval: currentCalendarState.snapIntervalHeight,
-              topPadding: CalendarState.calendarWidgetTopBoundaryY,
-              bottomPadding: CalendarState.calendarBottomPadding,
-            ),
+          CalendarWidgetBackground(
+            context: this.context,
+            slotHeight: currentCalendarState.defaultTimeSlotHeight,
+            snapInterval: currentCalendarState.snapIntervalHeight,
+            topPadding: CalendarState.calendarWidgetTopBoundaryY,
+            bottomPadding: CalendarState.calendarBottomPadding,
+            onTapUp: _handleCalendarOnTapUp,
           ),
           // draggable box
           if (currentCalendarState.showDraggableBox)
-            Positioned(
-              left: currentCalendarState.draggableBox.dx,
-              top: localDy,
-              child: DraggableBox(
-                localCurrentTimeSlotHeight: localCurrentTimeSlotHeight,
-              ),
+            DraggableBox(
+              localDy: localDy,
+              localCurrentTimeSlotHeight: localCurrentTimeSlotHeight,
             ),
           // Top Indicator
           if (currentCalendarState.showDraggableBox)

@@ -4,10 +4,12 @@ import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 
 class DraggableBox extends ConsumerWidget {
+  final double localDy;
   final double localCurrentTimeSlotHeight;
 
   const DraggableBox({
     super.key,
+    required this.localDy,
     required this.localCurrentTimeSlotHeight,
   });
 
@@ -15,14 +17,18 @@ class DraggableBox extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentCalendarState = ref.watch(calendarStateNotifierProvider);
 
-    return Container(
-      width: currentCalendarState.slotWidth, // Fixed width
-      height: localCurrentTimeSlotHeight, // Dynamically adjusted height.
-      decoration: BoxDecoration(
-        color: Colors.transparent, // Transparent background
-        border: Border.all(
-          color: AppColors.primaryAccent, // Border color
-          width: 2.0, // Border thickness
+    return Positioned(
+      left: currentCalendarState.draggableBox.dx,
+      top: localDy,
+      child: Container(
+        width: currentCalendarState.slotWidth, // Fixed width
+        height: localCurrentTimeSlotHeight, // Dynamically adjusted height.
+        decoration: BoxDecoration(
+          color: Colors.transparent, // Transparent background
+          border: Border.all(
+            color: AppColors.primaryAccent, // Border color
+            width: 2.0, // Border thickness
+          ),
         ),
       ),
     );

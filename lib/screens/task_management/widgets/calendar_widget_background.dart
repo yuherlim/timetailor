@@ -9,6 +9,7 @@ class CalendarWidgetBackground extends ConsumerWidget {
   final double snapInterval;
   final double bottomPadding;
   final double topPadding;
+  final void Function({required TapUpDetails details}) onTapUp;
 
   const CalendarWidgetBackground({
     super.key,
@@ -17,6 +18,7 @@ class CalendarWidgetBackground extends ConsumerWidget {
     required this.snapInterval,
     required this.bottomPadding,
     required this.topPadding,
+    required this.onTapUp,
   });
 
   @override
@@ -51,34 +53,39 @@ class CalendarWidgetBackground extends ConsumerWidget {
     // Calculate the total height for 24 slots
     double calendarHeight = timePeriods.length * slotHeight;
 
-    return Padding(
-      padding: EdgeInsets.only(bottom: bottomPadding),
-      child: CustomPaint(
-        size: Size(double.infinity, calendarHeight),
-        painter: CalendarPainter(
-          timePeriods: timePeriods,
-          slotHeight: slotHeight,
-          snapInterval: snapInterval,
-          context: context,
-          topPadding: topPadding,
-          onSlotCalendarPainted: ({required slotStartX, required slotWidth, required sidePadding, required textPadding}) {
-            // Delay the update to avoid lifecycle issues
-            Future.microtask(() {
-              // update the states.
-              ref
-                  .read(calendarStateNotifierProvider.notifier)
-                  .updateSlotStartX(slotStartX);
-              ref
-                  .read(calendarStateNotifierProvider.notifier)
-                  .updateSlotWidth(slotWidth);
-              ref
-                  .read(calendarStateNotifierProvider.notifier)
-                  .updateSidePadding(sidePadding);
-              ref
-                  .read(calendarStateNotifierProvider.notifier)
-                  .updateTextPadding(textPadding);
-            });
-          },
+    return GestureDetector(
+      onTapUp: (details) {
+        onTapUp(details: details);
+      },
+      child: Padding(
+        padding: EdgeInsets.only(bottom: bottomPadding),
+        child: CustomPaint(
+          size: Size(double.infinity, calendarHeight),
+          painter: CalendarPainter(
+            timePeriods: timePeriods,
+            slotHeight: slotHeight,
+            snapInterval: snapInterval,
+            context: context,
+            topPadding: topPadding,
+            onSlotCalendarPainted: ({required slotStartX, required slotWidth, required sidePadding, required textPadding}) {
+              // Delay the update to avoid lifecycle issues
+              Future.microtask(() {
+                // update the states.
+                ref
+                    .read(calendarStateNotifierProvider.notifier)
+                    .updateSlotStartX(slotStartX);
+                ref
+                    .read(calendarStateNotifierProvider.notifier)
+                    .updateSlotWidth(slotWidth);
+                ref
+                    .read(calendarStateNotifierProvider.notifier)
+                    .updateSidePadding(sidePadding);
+                ref
+                    .read(calendarStateNotifierProvider.notifier)
+                    .updateTextPadding(textPadding);
+              });
+            },
+          ),
         ),
       ),
     );
