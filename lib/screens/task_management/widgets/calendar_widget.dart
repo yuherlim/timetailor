@@ -1,12 +1,8 @@
-import 'dart:async';
-import 'dart:math';
-
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:timetailor/core/constants/route_path.dart';
-import 'package:timetailor/domain/task_management/providers/calendar_local_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/state/calendar_state.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_widget_background.dart';
@@ -91,7 +87,6 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
     return false; // Allows the default back button behavior
   }
 
-
   @override
   void dispose() {
     // Clean up
@@ -100,14 +95,9 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
     super.dispose();
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     final currentCalendarState = ref.watch(calendarStateNotifierProvider);
-    final localDy = ref.watch(localDyProvider);
-    final localCurrentTimeSlotHeight = ref.watch(localCurrentTimeSlotHeightProvider);
-    final isScrolled = ref.watch(isScrolledProvider);
 
     // indicator dimensions
     const double indicatorWidth = 80;
@@ -125,11 +115,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
             bottomPadding: CalendarState.calendarBottomPadding,
           ),
           // draggable box
-          if (currentCalendarState.showDraggableBox)
-            DraggableBox(
-              localDy: localDy,
-              localCurrentTimeSlotHeight: localCurrentTimeSlotHeight,
-            ),
+          if (currentCalendarState.showDraggableBox) const DraggableBox(),
           // Top Indicator
           if (currentCalendarState.showDraggableBox)
             TopIndicator(
@@ -142,16 +128,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
             BottomIndicator(
               indicatorWidth: indicatorWidth,
               indicatorHeight: indicatorHeight,
-              localDy: localDy,
-              localCurrentTimeSlotHeight: localCurrentTimeSlotHeight,
-              isScrolled: isScrolled,
               scrollController: _scrollController,
-              updateParentState: ({
-                double? localDy,
-                double? localCurrentTimeSlotHeight,
-                bool? isScrolled,
-              }) {
-              },
             ),
           // Current Time Indicator
           CurrentTimeIndicator(
