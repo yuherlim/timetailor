@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:timetailor/core/constants/route_path.dart';
+import 'package:timetailor/domain/task_management/providers/calendar_local_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/state/calendar_state.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_widget_background.dart';
@@ -22,10 +23,7 @@ class CalendarWidget extends ConsumerStatefulWidget {
 }
 
 class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
-  bool isScrolled = false;
   late ScrollController _scrollController;
-  double localDy = 0;
-  double localCurrentTimeSlotHeight = 0;
 
   @override
   void initState() {
@@ -107,6 +105,9 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
   @override
   Widget build(BuildContext context) {
     final currentCalendarState = ref.watch(calendarStateNotifierProvider);
+    final localDy = ref.watch(localDyProvider);
+    final localCurrentTimeSlotHeight = ref.watch(localCurrentTimeSlotHeightProvider);
+    final isScrolled = ref.watch(isScrolledProvider);
 
     // indicator dimensions
     const double indicatorWidth = 80;
@@ -122,15 +123,6 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
             snapInterval: currentCalendarState.snapIntervalHeight,
             topPadding: CalendarState.calendarWidgetTopBoundaryY,
             bottomPadding: CalendarState.calendarBottomPadding,
-            updateParentState: ({
-              double? localDy,
-              double? localCurrentTimeSlotHeight,
-              bool? isScrolled,
-            }) {
-              updateLocalState(
-                  localDy: localDy,
-                  localCurrentTimeSlotHeight: localCurrentTimeSlotHeight);
-            },
           ),
           // draggable box
           if (currentCalendarState.showDraggableBox)
@@ -143,21 +135,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
             TopIndicator(
               indicatorWidth: indicatorWidth,
               indicatorHeight: indicatorHeight,
-              localDy: localDy,
-              localCurrentTimeSlotHeight: localCurrentTimeSlotHeight,
-              isScrolled: isScrolled,
               scrollController: _scrollController,
-              updateParentState: ({
-                double? localDy,
-                double? localCurrentTimeSlotHeight,
-                bool? isScrolled,
-              }) {
-                updateLocalState(
-                  localDy: localDy,
-                  localCurrentTimeSlotHeight: localCurrentTimeSlotHeight,
-                  isScrolled: isScrolled,
-                );
-              },
             ),
           // Bottom Indicator
           if (currentCalendarState.showDraggableBox)
@@ -173,11 +151,6 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                 double? localCurrentTimeSlotHeight,
                 bool? isScrolled,
               }) {
-                updateLocalState(
-                  localDy: localDy,
-                  localCurrentTimeSlotHeight: localCurrentTimeSlotHeight,
-                  isScrolled: isScrolled,
-                );
               },
             ),
           // Current Time Indicator
@@ -187,18 +160,5 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
         ],
       ),
     );
-  }
-
-  void updateLocalState({
-    double? localDy,
-    double? localCurrentTimeSlotHeight,
-    bool? isScrolled,
-  }) {
-    setState(() {
-      this.localDy = localDy ?? this.localDy;
-      this.localCurrentTimeSlotHeight =
-          localCurrentTimeSlotHeight ?? this.localCurrentTimeSlotHeight;
-      this.isScrolled = isScrolled ?? this.isScrolled;
-    });
   }
 }

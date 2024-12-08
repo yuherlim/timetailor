@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:timetailor/domain/task_management/providers/calendar_local_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_painter.dart';
 
@@ -9,11 +10,6 @@ class CalendarWidgetBackground extends ConsumerStatefulWidget {
   final double snapInterval;
   final double bottomPadding;
   final double topPadding;
-  final void Function({
-    double? localDy,
-    double? localCurrentTimeSlotHeight,
-    bool? isScrolled,
-  }) updateParentState;
 
   const CalendarWidgetBackground({
     super.key,
@@ -22,7 +18,6 @@ class CalendarWidgetBackground extends ConsumerStatefulWidget {
     required this.snapInterval,
     required this.bottomPadding,
     required this.topPadding,
-    required this.updateParentState,
   });
 
   @override
@@ -32,23 +27,23 @@ class CalendarWidgetBackground extends ConsumerStatefulWidget {
 
 class _CalendarWidgetBackgroundState
     extends ConsumerState<CalendarWidgetBackground> {
-
   void _handleCalendarOnTapUp({
     required TapUpDetails details,
   }) {
     final currentCalendarState = ref.read(calendarStateNotifierProvider);
     final calendarStateNotifier =
         ref.read(calendarStateNotifierProvider.notifier);
+    final localDyNotifier = ref.read(localDyProvider.notifier);
+    final localCurrentTimeSlotHeightNotifier =
+        ref.read(localCurrentTimeSlotHeightProvider.notifier);
 
     // if draggable box already created, reset state
     if (currentCalendarState.showDraggableBox) {
       calendarStateNotifier
           .toggleDraggableBox(!currentCalendarState.showDraggableBox);
 
-      widget.updateParentState(
-        localDy: 0,
-        localCurrentTimeSlotHeight: 0,
-      );
+      localDyNotifier.state = 0;
+      localCurrentTimeSlotHeightNotifier.state = 0;
 
       return;
     }
@@ -68,10 +63,8 @@ class _CalendarWidgetBackgroundState
     // Snap to the correct time slot
     if (slotIndex != -1) {
       // update local state
-      widget.updateParentState(
-        localDy: currentCalendarState.timeSlotBoundaries[slotIndex],
-        localCurrentTimeSlotHeight: currentCalendarState.defaultTimeSlotHeight,
-      );
+      localDyNotifier.state = currentCalendarState.timeSlotBoundaries[slotIndex];
+      localCurrentTimeSlotHeightNotifier.state = currentCalendarState.defaultTimeSlotHeight;
 
       calendarStateNotifier.updateDraggableBoxPosition(
         dx: currentCalendarState.slotStartX,
