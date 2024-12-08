@@ -1,9 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
-import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
+import 'package:timetailor/domain/task_management/providers/calendar_local_state_provider.dart';
+import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
+import 'package:timetailor/domain/task_management/providers/current_time_position_provider.dart';
 import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
 
 class CurrentTimeIndicator extends ConsumerStatefulWidget {
@@ -17,59 +17,20 @@ class CurrentTimeIndicator extends ConsumerStatefulWidget {
 }
 
 class _CurrentTimeIndicatorState extends ConsumerState<CurrentTimeIndicator> {
-  double topPosition = 0;
-  Timer? _timer;
-  static const double timeIndicatorIconSize = 8;
-
-  @override
-  void initState() {
-    // Initial setup after the widget is built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _calculateCurrentTimePosition();
-      ref.read(scrollControllerNotifierProvider.notifier).scrollToCurrentTimeIndicator(position: topPosition, context: context);
-    });
-
-    // Update the position every minute
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      _calculateCurrentTimePosition();
-    });
-    super.initState();
-  }
-
-  void _calculateCurrentTimePosition() {
-    final currentCalendarState = ref.read(calendarStateNotifierProvider);
-    final slotHeight = currentCalendarState.defaultTimeSlotHeight;
-    final timeSlotBoundaries = currentCalendarState.timeSlotBoundaries;
-    const indicatorYOffset = timeIndicatorIconSize / 2;
-    final minuteInterval = slotHeight / 60;
-    final now = DateTime.now();
-    final slotHeightStart = timeSlotBoundaries[now.hour];
-    double newIndicatorPosition = slotHeightStart - indicatorYOffset;
-
-    // if there are minute in the current time, add the additional height of minutes
-    if (now.minute != 0) {
-      newIndicatorPosition += minuteInterval * now.minute;
-    }
-
-    setState(() {
-      topPosition = newIndicatorPosition;
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
-    final currentCalendarState = ref.watch(calendarStateNotifierProvider);
+    final timeIndicatorIconSize = ref.watch(timeIndicatorIconSizeProvider);
+    final topPosition = ref.watch(currentTimePositionNotifierProvider);
+
+    ref
+        .read(scrollControllerNotifierProvider.notifier)
+        .scrollToCurrentTimeIndicator(position: topPosition, context: context);
 
     // time indicator position
     final screenWidth = MediaQuery.of(context).size.width;
-    final indicatorSidePadding = currentCalendarState.sidePadding;
-    final textPadding = currentCalendarState.textPadding;
+    final indicatorSidePadding = ref.read(sidePaddingProvider);
+    final textPadding = ref.read(textPaddingProvider);
     final timeIndicatorStartX = indicatorSidePadding +
         screenWidth * 0.1 +
         textPadding -

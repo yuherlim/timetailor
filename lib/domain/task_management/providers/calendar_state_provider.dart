@@ -10,35 +10,12 @@ class CalendarStateNotifier extends _$CalendarStateNotifier {
   CalendarState build() {
     return CalendarState(
       currentTimeSlotHeight: 0,
-      defaultTimeSlotHeight: 0,
-      pixelsPerMinute: 0,
-      snapIntervalHeight: 0,
       draggableBox: DraggableBoxState(dx: 0, dy: 0),
-      showDraggableBox: false,
-      timeSlotBoundaries: [],
-      calendarWidgetBottomBoundaryY: 0,
-      calendarHeight: 0,
-      slotStartX: 0,
-      slotWidth: 0,
-      textPadding: 0,
-      sidePadding: 0,
     );
   }
 
   void updateCurrentTimeSlotHeight(double height) {
     state = state.copyWith(currentTimeSlotHeight: height);
-  }
-
-  void updateDefaultTimeSlotHeight(double height) {
-    state = state.copyWith(defaultTimeSlotHeight: height);
-  }
-
-  void updatePixelsPerMinute(double pixelsPerMinute) {
-    state = state.copyWith(pixelsPerMinute: pixelsPerMinute);
-  }
-
-  void updateSnapIntervalHeight(double snapIntervalHeight) {
-    state = state.copyWith(snapIntervalHeight: snapIntervalHeight);
   }
 
   void updateDraggableBoxPosition({double? dx, double? dy}) {
@@ -48,37 +25,5 @@ class CalendarStateNotifier extends _$CalendarStateNotifier {
         dy: dy,
       ),
     );
-  }
-
-  void toggleDraggableBox(bool value) {
-    state = state.copyWith(showDraggableBox: value);
-  }
-
-  void updateTimeSlotBoundaries(List<double> timeSlotBoundaries) {
-    state = state.copyWith(timeSlotBoundaries: timeSlotBoundaries);
-  }
-
-  void updateCalendarWidgetBottomBoundaryY(double calendarWidgetBottomBoundaryY) {
-    state = state.copyWith(calendarWidgetBottomBoundaryY: calendarWidgetBottomBoundaryY);
-  }
-
-  void updateCalendarHeight(double calendarHeight) {
-    state = state.copyWith(calendarHeight: calendarHeight);
-  }
-
-  void updateSlotStartX(double slotStartX) {
-    state = state.copyWith(slotStartX: slotStartX);
-  }
-
-  void updateSlotWidth(double slotWidth) {
-    state = state.copyWith(slotWidth: slotWidth);
-  }
-
-  void updateTextPadding(double textPadding) {
-    state = state.copyWith(textPadding: textPadding);
-  }
-
-  void updateSidePadding(double sidePadding) {
-    state = state.copyWith(sidePadding: sidePadding);
   }
 }

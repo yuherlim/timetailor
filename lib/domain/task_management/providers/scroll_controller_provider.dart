@@ -4,8 +4,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_local_state_provider.dart';
+import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
-import 'package:timetailor/domain/task_management/state/calendar_state.dart';
 
 part 'scroll_controller_provider.g.dart'; // Generated file
 
@@ -43,7 +43,6 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
   void startUpwardsAutoScroll() {
     const double scrollAmount = 15;
 
-    final currentCalendarState = ref.read(calendarStateNotifierProvider);
     final calendarStateNotifier =
         ref.read(calendarStateNotifierProvider.notifier);
     final localDyNotifier = ref.read(localDyProvider.notifier);
@@ -64,9 +63,9 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
           max(0.0, (currentOffset - scrollAmount)), // Scroll up
         );
         final newDy = max(
-            CalendarState.calendarWidgetTopBoundaryY, (localDy - scrollAmount));
-        final newSize = (localCurrentTimeSlotHeight + scrollAmount)
-            .clamp(currentCalendarState.snapIntervalHeight, maxTaskHeight);
+            ref.read(calendarWidgetTopBoundaryYProvider), (localDy - scrollAmount));
+        final double newSize = (localCurrentTimeSlotHeight + scrollAmount)
+            .clamp(ref.read(snapIntervalHeightProvider), maxTaskHeight);
 
         // update local state
         localDyNotifier.state = newDy;
@@ -101,7 +100,6 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
   void startDownwardsAutoScroll() {
     const double scrollAmount = 15;
 
-    final currentCalendarState = ref.read(calendarStateNotifierProvider);
     final calendarStateNotifier =
         ref.read(calendarStateNotifierProvider.notifier);
 
@@ -122,8 +120,8 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
           (currentOffset + scrollAmount)
               .clamp(0, maxScrollExtent), // Scroll down
         );
-        final newSize = (localCurrentTimeSlotHeight + scrollAmount)
-            .clamp(currentCalendarState.snapIntervalHeight, maxTaskHeight);
+        final double newSize = (localCurrentTimeSlotHeight + scrollAmount)
+            .clamp(ref.read(snapIntervalHeightProvider), maxTaskHeight);
 
         // update local state
         localCurrentTimeSlotHeightNotifier.state = newSize;

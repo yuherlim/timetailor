@@ -7,7 +7,7 @@ part of 'calendar_state_provider.dart';
 // **************************************************************************
 
 String _$calendarStateNotifierHash() =>
-    r'db6b15f017f8c2dca29f8f2f8b19eac4abe85160';
+    r'b4cc632dbd5c4dc8b29ff350e5b11369b31689fe';
 
 /// See also [CalendarStateNotifier].
 @ProviderFor(CalendarStateNotifier)

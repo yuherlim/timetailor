@@ -61,8 +61,6 @@ class CalendarPainter extends CustomPainter {
         ? (slotHeight / snapInterval).toInt()
         : 0;
 
-    // print("numberOfIntervals: $numberOfIntervals");
-
     // update slot start x coordinate with sum of text and padding lencth
     slotStartX =
         (horizontalPadding + maxTextWidth + textPadding).floorToDouble();
@@ -130,17 +128,6 @@ class CalendarPainter extends CustomPainter {
     // Draw the vertical line
     canvas.drawLine(Offset(slotStartX, verticalLineStartY),
         Offset(slotStartX, verticalLineEndY), paint);
-
-    // print("");
-    // print("===============================");
-    // print("DEBUGGING UI bug in painter");
-    // print("===============================");
-    // print("");
-    // print("horizontalPadding: $horizontalPadding");
-    // print("maxTextWidth: $maxTextWidth");
-    // print("textPadding: $textPadding");
-    // print("Calculated slotStartX: $slotStartX");
-    // print("===============================");
   }
 
   @override

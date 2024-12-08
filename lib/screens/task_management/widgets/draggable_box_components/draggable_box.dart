@@ -20,7 +20,7 @@ class DraggableBox extends ConsumerWidget {
       left: currentCalendarState.draggableBox.dx,
       top: localDy,
       child: Container(
-        width: currentCalendarState.slotWidth, // Fixed width
+        width: ref.watch(slotWidthProvider), // Fixed width
         height: localCurrentTimeSlotHeight, // Dynamically adjusted height.
         decoration: BoxDecoration(
           color: Colors.transparent, // Transparent background

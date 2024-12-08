@@ -1,23 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_local_state_provider.dart';
+import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_painter.dart';
 
 class CalendarWidgetBackground extends ConsumerStatefulWidget {
-  final BuildContext context; // Add BuildContext
-  final double slotHeight;
-  final double snapInterval;
-  final double bottomPadding;
-  final double topPadding;
-
   const CalendarWidgetBackground({
     super.key,
-    required this.context,
-    required this.slotHeight,
-    required this.snapInterval,
-    required this.bottomPadding,
-    required this.topPadding,
   });
 
   @override
@@ -30,7 +20,6 @@ class _CalendarWidgetBackgroundState
   void _handleCalendarOnTapUp({
     required TapUpDetails details,
   }) {
-    final currentCalendarState = ref.read(calendarStateNotifierProvider);
     final calendarStateNotifier =
         ref.read(calendarStateNotifierProvider.notifier);
     final localDyNotifier = ref.read(localDyProvider.notifier);
@@ -38,13 +27,11 @@ class _CalendarWidgetBackgroundState
         ref.read(localCurrentTimeSlotHeightProvider.notifier);
 
     // if draggable box already created, reset state
-    if (currentCalendarState.showDraggableBox) {
-      calendarStateNotifier
-          .toggleDraggableBox(!currentCalendarState.showDraggableBox);
-
+    if (ref.read(showDraggableBoxProvider)) {
+      ref.read(showDraggableBoxProvider.notifier).state =
+          !ref.read(showDraggableBoxProvider);
       localDyNotifier.state = 0;
       localCurrentTimeSlotHeightNotifier.state = 0;
-
       return;
     }
 
@@ -52,27 +39,28 @@ class _CalendarWidgetBackgroundState
 
     // Binary search to find the correct time slot
     int slotIndex = binarySearchSlotIndex(
-        tapPosition, currentCalendarState.timeSlotBoundaries);
+        tapPosition, ref.read(timeSlotBoundariesProvider));
 
     // Handle case where the tap is after the last slot
     if (slotIndex == -1 &&
-        tapPosition >= currentCalendarState.timeSlotBoundaries.last) {
-      slotIndex = currentCalendarState.timeSlotBoundaries.length - 1;
+        tapPosition >= ref.read(timeSlotBoundariesProvider).last) {
+      slotIndex = ref.read(timeSlotBoundariesProvider).length - 1;
     }
 
     // Snap to the correct time slot
     if (slotIndex != -1) {
       // update local state
-      localDyNotifier.state = currentCalendarState.timeSlotBoundaries[slotIndex];
-      localCurrentTimeSlotHeightNotifier.state = currentCalendarState.defaultTimeSlotHeight;
+      localDyNotifier.state = ref.read(timeSlotBoundariesProvider)[slotIndex];
+      localCurrentTimeSlotHeightNotifier.state =
+          ref.read(defaultTimeSlotHeightProvider);
 
       calendarStateNotifier.updateDraggableBoxPosition(
-        dx: currentCalendarState.slotStartX,
-        dy: currentCalendarState.timeSlotBoundaries[slotIndex],
+        dx: ref.read(slotStartXProvider),
+        dy: ref.read(timeSlotBoundariesProvider)[slotIndex],
       );
       calendarStateNotifier.updateCurrentTimeSlotHeight(
-          currentCalendarState.defaultTimeSlotHeight); // Reset height
-      calendarStateNotifier.toggleDraggableBox(true);
+          ref.read(defaultTimeSlotHeightProvider)); // Reset height
+      ref.read(showDraggableBoxProvider.notifier).state = true;
     }
   }
 
@@ -103,71 +91,31 @@ class _CalendarWidgetBackgroundState
 
   @override
   Widget build(BuildContext context) {
-    final List<String> timePeriods = [
-      '12 AM',
-      ' 1 AM',
-      ' 2 AM',
-      ' 3 AM',
-      ' 4 AM',
-      ' 5 AM',
-      ' 6 AM',
-      ' 7 AM',
-      ' 8 AM',
-      ' 9 AM',
-      '10 AM',
-      '11 AM',
-      '12 PM',
-      ' 1 PM',
-      ' 2 PM',
-      ' 3 PM',
-      ' 4 PM',
-      ' 5 PM',
-      ' 6 PM',
-      ' 7 PM',
-      ' 8 PM',
-      ' 9 PM',
-      '10 PM',
-      '11 PM'
-    ];
-
-    // Calculate the total height for 24 slots
-    double calendarHeight = timePeriods.length * widget.slotHeight;
-
     return GestureDetector(
       onTapUp: (details) {
         _handleCalendarOnTapUp(details: details);
       },
       child: Padding(
-        padding: EdgeInsets.only(bottom: widget.bottomPadding),
+        padding:
+            EdgeInsets.only(bottom: ref.watch(calendarBottomPaddingProvider)),
         child: CustomPaint(
-          size: Size(double.infinity, calendarHeight),
+          size: Size(double.infinity, ref.watch(calendarHeightProvider)),
           painter: CalendarPainter(
-            timePeriods: timePeriods,
-            slotHeight: widget.slotHeight,
-            snapInterval: widget.snapInterval,
+            timePeriods: ref.watch(timePeriodsProvider),
+            slotHeight: ref.watch(defaultTimeSlotHeightProvider),
+            snapInterval: ref.watch(snapIntervalHeightProvider),
             context: context,
-            topPadding: widget.topPadding,
+            topPadding: ref.watch(calendarWidgetTopBoundaryYProvider),
             onSlotCalendarPainted: (
                 {required slotStartX,
                 required slotWidth,
                 required sidePadding,
                 required textPadding}) {
-              // Delay the update to avoid lifecycle issues
-              Future.microtask(() {
-                // update the states.
-                ref
-                    .read(calendarStateNotifierProvider.notifier)
-                    .updateSlotStartX(slotStartX);
-                ref
-                    .read(calendarStateNotifierProvider.notifier)
-                    .updateSlotWidth(slotWidth);
-                ref
-                    .read(calendarStateNotifierProvider.notifier)
-                    .updateSidePadding(sidePadding);
-                ref
-                    .read(calendarStateNotifierProvider.notifier)
-                    .updateTextPadding(textPadding);
-              });
+              // update the states.
+              ref.read(slotStartXProvider.notifier).state = slotStartX;
+              ref.read(slotWidthProvider.notifier).state = slotWidth;
+              ref.read(sidePaddingProvider.notifier).state = sidePadding;
+              ref.read(textPaddingProvider.notifier).state = textPadding;
             },
           ),
         ),
