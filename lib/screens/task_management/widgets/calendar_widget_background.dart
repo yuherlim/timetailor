@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_local_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
+import 'package:timetailor/domain/task_management/task_manager.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_painter.dart';
 
 class CalendarWidgetBackground extends ConsumerStatefulWidget {
@@ -38,7 +39,7 @@ class _CalendarWidgetBackgroundState
     final tapPosition = details.localPosition.dy;
 
     // Binary search to find the correct time slot
-    int slotIndex = binarySearchSlotIndex(
+    int slotIndex = TaskManager.binarySearchSlotIndex(
         tapPosition, ref.read(timeSlotBoundariesProvider));
 
     // Handle case where the tap is after the last slot
@@ -64,30 +65,7 @@ class _CalendarWidgetBackgroundState
     }
   }
 
-  int binarySearchSlotIndex(
-    double tapPosition,
-    List<double> timeSlotBoundaries,
-  ) {
-    int low = 0;
-    int high = timeSlotBoundaries.length - 1;
-    int slotIndex = -1;
-
-    while (low <= high) {
-      int mid = (low + high) ~/ 2;
-
-      if (mid < timeSlotBoundaries.length - 1 &&
-          tapPosition >= timeSlotBoundaries[mid] &&
-          tapPosition < timeSlotBoundaries[mid + 1]) {
-        slotIndex = mid; // Found the slot
-        break;
-      } else if (tapPosition < timeSlotBoundaries[mid]) {
-        high = mid - 1; // Search in the left half
-      } else {
-        low = mid + 1; // Search in the right half
-      }
-    }
-    return slotIndex;
-  }
+  
 
   @override
   Widget build(BuildContext context) {
