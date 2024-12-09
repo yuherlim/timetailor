@@ -8,9 +8,11 @@ import 'package:timetailor/domain/task_management/providers/calendar_read_only_p
 import 'package:timetailor/domain/task_management/providers/current_time_position_provider.dart';
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
+import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 import 'package:timetailor/domain/task_management/task_manager.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_header.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_widget.dart';
+import 'package:timetailor/screens/task_management/widgets/draggable_box_components/task_creation_bottom_sheet.dart';
 
 class TaskManagementScreen extends ConsumerStatefulWidget {
   const TaskManagementScreen({super.key});
@@ -71,10 +73,16 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
     localCurrentTimeSlotHeightNotifier.state =
         ref.read(defaultTimeSlotHeightProvider);
 
+    ref
+        .read(tasksNotifierProvider.notifier)
+        .updateTaskTimeStateFromDraggableBox(
+          dy: ref.read(localDyProvider),
+          currentTimeSlotHeight: ref.read(localCurrentTimeSlotHeightProvider),
+        );
+    showTaskCreationBottomSheet(context: context, ref: ref, onConfirm: (){print("onconfirm pressed.");});
+
     ref.read(showDraggableBoxProvider.notifier).state = true;
   }
-
-
 
   @override
   Widget build(BuildContext context) {
