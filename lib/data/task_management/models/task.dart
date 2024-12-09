@@ -68,10 +68,10 @@ final List<Task> tasks = [
     id: 'task2',
     name: 'Write Project Report',
     startTime:
-        roundToFiveMinuteInterval(DateTime.now().add(Duration(hours: 1))),
+        roundToFiveMinuteInterval(DateTime.now().add(const Duration(hours: 1))),
     duration: 30,
     endTime: roundToFiveMinuteInterval(
-        DateTime.now().add(Duration(hours: 1, minutes: 30))),
+        DateTime.now().add(const Duration(hours: 1, minutes: 30))),
     completed: false,
     linkedNote: ['note3'],
   ),
@@ -79,10 +79,10 @@ final List<Task> tasks = [
     id: 'task3',
     name: 'Workout',
     startTime:
-        roundToFiveMinuteInterval(DateTime.now().add(Duration(hours: 3))),
+        roundToFiveMinuteInterval(DateTime.now().add(const Duration(hours: 3))),
     duration: 45,
     endTime: roundToFiveMinuteInterval(
-        DateTime.now().add(Duration(hours: 3, minutes: 45))),
+        DateTime.now().add(const Duration(hours: 3, minutes: 45))),
     completed: true,
     linkedNote: [],
   ),
@@ -90,10 +90,10 @@ final List<Task> tasks = [
     id: 'task4',
     name: 'Prepare Presentation',
     startTime:
-        roundToFiveMinuteInterval(DateTime.now().add(Duration(hours: 4))),
+        roundToFiveMinuteInterval(DateTime.now().add(const Duration(hours: 4))),
     duration: 90,
     endTime: roundToFiveMinuteInterval(
-        DateTime.now().add(Duration(hours: 5, minutes: 30))),
+        DateTime.now().add(const Duration(hours: 5, minutes: 30))),
     completed: false,
     linkedNote: ['note4'],
   ),
