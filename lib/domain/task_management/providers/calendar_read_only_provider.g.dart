@@ -7,7 +7,7 @@ part of 'calendar_read_only_provider.dart';
 // **************************************************************************
 
 String _$defaultTimeSlotHeightHash() =>
-    r'43ec306b204883b27b726343b178a794843cdaa2';
+    r'33ac5ca1bdf75c87a6251f0a084dc23c63d220c6';
 
 /// See also [defaultTimeSlotHeight].
 @ProviderFor(defaultTimeSlotHeight)
@@ -294,5 +294,22 @@ final dragIndicatorIconSizeProvider = AutoDisposeProvider<double>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DragIndicatorIconSizeRef = AutoDisposeProviderRef<double>;
+String _$autoScrollAmountHash() => r'8fc64ce4095e37dbfd55773414d0d488b168374d';
+
+/// See also [autoScrollAmount].
+@ProviderFor(autoScrollAmount)
+final autoScrollAmountProvider = AutoDisposeProvider<double>.internal(
+  autoScrollAmount,
+  name: r'autoScrollAmountProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$autoScrollAmountHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AutoScrollAmountRef = AutoDisposeProviderRef<double>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

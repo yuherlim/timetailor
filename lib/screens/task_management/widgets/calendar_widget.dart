@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:timetailor/core/constants/route_path.dart';
-import 'package:timetailor/domain/task_management/providers/calendar_local_state_provider.dart';
+import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_widget_background.dart';
 import 'package:timetailor/screens/task_management/widgets/current_time_indicator.dart';
@@ -48,11 +48,18 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = ref.watch(screenHeightProvider);
+
     // initialize screen height after screen finish rendering
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(screenHeightProvider.notifier).state =
           MediaQuery.of(context).size.height;
     });
+
+    // Check if the screenHeight is initialized
+    if (screenHeight == 0.0) {
+      return const CircularProgressIndicator(); // Show loading indicator
+    }
 
     final scrollController = ref.watch(scrollControllerNotifierProvider);
 
@@ -68,8 +75,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
           // Bottom Indicator
           if (ref.watch(showDraggableBoxProvider)) const BottomIndicator(),
           // left drag Indicator
-          if (ref.watch(showDraggableBoxProvider))
-            const DragIndicator(),
+          if (ref.watch(showDraggableBoxProvider)) const DragIndicator(),
           // Current Time Indicator
           const CurrentTimeIndicator(),
         ],

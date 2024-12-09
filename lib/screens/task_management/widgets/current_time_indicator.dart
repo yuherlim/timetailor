@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
-import 'package:timetailor/domain/task_management/providers/calendar_local_state_provider.dart';
+import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/current_time_position_provider.dart';
 import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
@@ -17,12 +17,13 @@ class CurrentTimeIndicator extends ConsumerStatefulWidget {
 }
 
 class _CurrentTimeIndicatorState extends ConsumerState<CurrentTimeIndicator> {
-
   @override
   void initState() {
     ref
         .read(scrollControllerNotifierProvider.notifier)
-        .scrollToCurrentTimeIndicator(position: ref.read(currentTimePositionNotifierProvider), context: context);
+        .scrollToCurrentTimeIndicator(
+            position: ref.read(currentTimePositionNotifierProvider),
+            context: context);
     super.initState();
   }
 

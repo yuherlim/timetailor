@@ -1,18 +1,20 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:timetailor/domain/task_management/providers/calendar_local_state_provider.dart';
+import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 
 part 'calendar_read_only_provider.g.dart';
 
 @riverpod
 double defaultTimeSlotHeight(ref) =>
-    ref.watch(screenHeightProvider) <= 800 ? 120 : 144;
+    ref.watch(screenHeightProvider) <= 800 ? 120.0 : 144.0;
 
 @riverpod
 double snapIntervalMinutes(ref) => 5;
 
 @riverpod
 double snapIntervalHeight(ref) =>
-    ref.watch(defaultTimeSlotHeightProvider) / 60 * ref.watch(snapIntervalMinutesProvider);
+    ref.watch(defaultTimeSlotHeightProvider) /
+    60 *
+    ref.watch(snapIntervalMinutesProvider);
 
 @riverpod
 double calendarHeight(ref) => ref.watch(defaultTimeSlotHeightProvider) * 24;
@@ -86,3 +88,6 @@ double dragIndicatorHeight(ref) => 30;
 
 @riverpod
 double dragIndicatorIconSize(ref) => 16;
+
+@riverpod
+double autoScrollAmount(ref) => 10;
