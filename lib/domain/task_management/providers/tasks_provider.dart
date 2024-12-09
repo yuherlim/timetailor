@@ -70,13 +70,47 @@ class TasksNotifier extends _$TasksNotifier {
       return '$normalizedHour:$paddedMinutes $period';
     }
 
-    ref.read(startTimeProvider.notifier).state = formatTime(startHour, startMinutes);
+    ref.read(startTimeProvider.notifier).state =
+        formatTime(startHour, startMinutes);
     ref.read(endTimeProvider.notifier).state = formatTime(endHour, endMinutes);
+  }
 
-    // // Return start and end times
-    // return {
-    //   'startTime': formatTime(startHour, startMinutes),
-    //   'endTime': formatTime(endHour, endMinutes),
-    // };
+  // Get the task's position from their start and end time.
+  Map<String, double> calculateTimeSlotFromTaskTime({
+    required DateTime startTime,
+    required DateTime endTime,
+  }) {
+    // Fetch required providers
+    final snapIntervalMinutes = ref.read(snapIntervalMinutesProvider);
+    final snapIntervalHeight = ref.read(snapIntervalHeightProvider);
+    final calendarWidgetTopBoundaryY =
+        ref.read(calendarWidgetTopBoundaryYProvider);
+
+    // Ensure endTime is after startTime
+    assert(endTime.isAfter(startTime), 'endTime must be after startTime.');
+
+    // Calculate the start time's offset from midnight in minutes
+    int startOffsetMinutes = startTime.hour * 60 + startTime.minute;
+
+    // Calculate dyTop (position of the box's top edge)
+    double dyTop = calendarWidgetTopBoundaryY +
+        (startOffsetMinutes / snapIntervalMinutes) * snapIntervalHeight;
+
+    // Calculate the duration in minutes between start and end times
+    int durationMinutes = endTime.difference(startTime).inMinutes;
+
+    // Calculate currentTimeSlotHeight (box height in pixels)
+    double currentTimeSlotHeight =
+        (durationMinutes / snapIntervalMinutes) * snapIntervalHeight;
+
+    // Calculate dyBottom (position of the box's bottom edge)
+    double dyBottom = dyTop + currentTimeSlotHeight;
+
+    // Return the computed values
+    return {
+      'dyTop': dyTop,
+      'currentTimeSlotHeight': currentTimeSlotHeight,
+      'dyBottom': dyBottom,
+    };
   }
 }
