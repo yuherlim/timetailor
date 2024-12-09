@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_local_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
-import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
+import 'package:timetailor/domain/task_management/providers/task_time_slot_state_provider.dart';
 import 'package:timetailor/domain/task_management/task_manager.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_painter.dart';
 
@@ -21,8 +21,8 @@ class _CalendarWidgetBackgroundState
   void _handleCalendarOnTapUp({
     required TapUpDetails details,
   }) {
-    final calendarStateNotifier =
-        ref.read(calendarStateNotifierProvider.notifier);
+    final taskTimeSlotStateNotifier =
+        ref.read(taskTimeSlotStateNotifierProvider.notifier);
     final localDyNotifier = ref.read(localDyProvider.notifier);
     final localCurrentTimeSlotHeightNotifier =
         ref.read(localCurrentTimeSlotHeightProvider.notifier);
@@ -55,11 +55,11 @@ class _CalendarWidgetBackgroundState
       localCurrentTimeSlotHeightNotifier.state =
           ref.read(defaultTimeSlotHeightProvider);
 
-      calendarStateNotifier.updateDraggableBoxPosition(
+      taskTimeSlotStateNotifier.updateDraggableBoxPosition(
         dx: ref.read(slotStartXProvider),
         dy: ref.read(timeSlotBoundariesProvider)[slotIndex],
       );
-      calendarStateNotifier.updateCurrentTimeSlotHeight(
+      taskTimeSlotStateNotifier.updateCurrentTimeSlotHeight(
           ref.read(defaultTimeSlotHeightProvider)); // Reset height
       ref.read(showDraggableBoxProvider.notifier).state = true;
     }
