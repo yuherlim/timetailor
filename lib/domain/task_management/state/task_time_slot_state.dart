@@ -1,20 +1,20 @@
 import 'package:timetailor/domain/task_management/state/draggable_box_state.dart';
 
-class CalendarState {
+class TaskTimeSlotState {
   final double currentTimeSlotHeight;
   final DraggableBoxState draggableBox;
 
 
-  CalendarState({
+  TaskTimeSlotState({
     required this.currentTimeSlotHeight,
     required this.draggableBox,
   });
 
-  CalendarState copyWith({
+  TaskTimeSlotState copyWith({
     double? currentTimeSlotHeight,
     DraggableBoxState? draggableBox,
   }) {
-    return CalendarState(
+    return TaskTimeSlotState(
       currentTimeSlotHeight:
           currentTimeSlotHeight ?? this.currentTimeSlotHeight,
       draggableBox: draggableBox ?? this.draggableBox,

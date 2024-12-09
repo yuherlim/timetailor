@@ -5,7 +5,7 @@ import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/styled_text.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_local_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
-import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
+import 'package:timetailor/domain/task_management/providers/task_time_slot_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/current_time_position_provider.dart';
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
@@ -38,8 +38,8 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
   }
 
   void _onTaskCreate() {
-    final calendarStateNotifier =
-        ref.read(calendarStateNotifierProvider.notifier);
+    final taskTimeSlotStateNotifier =
+        ref.read(taskTimeSlotStateNotifierProvider.notifier);
     final localDyNotifier = ref.read(localDyProvider.notifier);
     final localCurrentTimeSlotHeightNotifier =
         ref.read(localCurrentTimeSlotHeightProvider.notifier);
@@ -74,11 +74,11 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
     localCurrentTimeSlotHeightNotifier.state =
         ref.read(defaultTimeSlotHeightProvider);
 
-    calendarStateNotifier.updateDraggableBoxPosition(
+    taskTimeSlotStateNotifier.updateDraggableBoxPosition(
       dx: ref.read(slotStartXProvider),
       dy: ref.read(timeSlotBoundariesProvider)[slotIndex],
     );
-    calendarStateNotifier.updateCurrentTimeSlotHeight(
+    taskTimeSlotStateNotifier.updateCurrentTimeSlotHeight(
         ref.read(defaultTimeSlotHeightProvider)); // Reset height
     ref.read(showDraggableBoxProvider.notifier).state = true;
   }

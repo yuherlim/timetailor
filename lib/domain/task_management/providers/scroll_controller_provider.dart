@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_local_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
-import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
+import 'package:timetailor/domain/task_management/providers/task_time_slot_state_provider.dart';
 
 part 'scroll_controller_provider.g.dart'; // Generated file
 
@@ -43,8 +43,8 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
   void startUpwardsAutoScroll() {
     const double scrollAmount = 15;
 
-    final calendarStateNotifier =
-        ref.read(calendarStateNotifierProvider.notifier);
+    final taskTimeSlotStateNotifier =
+        ref.read(taskTimeSlotStateNotifierProvider.notifier);
     final localDyNotifier = ref.read(localDyProvider.notifier);
     final localCurrentTimeSlotHeightNotifier =
         ref.read(localCurrentTimeSlotHeightProvider.notifier);
@@ -72,8 +72,8 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
         localDyNotifier.state = newDy;
         localCurrentTimeSlotHeightNotifier.state = newSize;
 
-        calendarStateNotifier.updateDraggableBoxPosition(dy: newDy);
-        calendarStateNotifier.updateCurrentTimeSlotHeight(newSize);
+        taskTimeSlotStateNotifier.updateDraggableBoxPosition(dy: newDy);
+        taskTimeSlotStateNotifier.updateCurrentTimeSlotHeight(newSize);
       } else {
         stopAutoScroll(); // Stop scrolling if we reach the end
       }
@@ -101,8 +101,8 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
   void startDownwardsAutoScroll() {
     const double scrollAmount = 15;
 
-    final calendarStateNotifier =
-        ref.read(calendarStateNotifierProvider.notifier);
+    final taskTimeSlotStateNotifier =
+        ref.read(taskTimeSlotStateNotifierProvider.notifier);
 
     final localCurrentTimeSlotHeightNotifier =
         ref.read(localCurrentTimeSlotHeightProvider.notifier);
@@ -127,7 +127,7 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
         // update local state
         localCurrentTimeSlotHeightNotifier.state = newSize;
 
-        calendarStateNotifier.updateCurrentTimeSlotHeight(newSize);
+        taskTimeSlotStateNotifier.updateCurrentTimeSlotHeight(newSize);
       } else {
         stopAutoScroll(); // Stop scrolling if we reach the end
       }
@@ -137,8 +137,8 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
   void startUpwardsAutoDrag() {
     const double scrollAmount = 15;
 
-    final calendarStateNotifier =
-        ref.read(calendarStateNotifierProvider.notifier);
+    final taskTimeSlotStateNotifier =
+        ref.read(taskTimeSlotStateNotifierProvider.notifier);
     final localDyNotifier = ref.read(localDyProvider.notifier);
 
     stopAutoScroll(); // Stop any ongoing scroll
@@ -158,7 +158,7 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
         // update local state
         localDyNotifier.state = newDy;
 
-        calendarStateNotifier.updateDraggableBoxPosition(dy: newDy);
+        taskTimeSlotStateNotifier.updateDraggableBoxPosition(dy: newDy);
       } else {
         stopAutoScroll(); // Stop scrolling if we reach the end
       }
@@ -168,8 +168,8 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
   void startDownwardsAutoDrag() {
     const double scrollAmount = 15;
 
-    final calendarStateNotifier =
-        ref.read(calendarStateNotifierProvider.notifier);
+    final taskTimeSlotStateNotifier =
+        ref.read(taskTimeSlotStateNotifierProvider.notifier);
     final localDyNotifier = ref.read(localDyProvider.notifier);
 
     stopAutoScroll(); // Stop any ongoing scroll
@@ -195,7 +195,7 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
         // update local state
         localDyNotifier.state = newDy;
 
-        calendarStateNotifier.updateDraggableBoxPosition(dy: newDy);
+        taskTimeSlotStateNotifier.updateDraggableBoxPosition(dy: newDy);
       } else {
         stopAutoScroll(); // Stop scrolling if we reach the end
       }

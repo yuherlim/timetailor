@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_local_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
-import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
+import 'package:timetailor/domain/task_management/providers/task_time_slot_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
 
 class TopIndicator extends ConsumerStatefulWidget {
@@ -61,8 +61,8 @@ class _TopIndicatorState extends ConsumerState<TopIndicator> {
   }
 
   void _handleTopDragEnd() {
-    final calendarStateNotifier =
-        ref.read(calendarStateNotifierProvider.notifier);
+    final taskTimeSlotStateNotifier =
+        ref.read(taskTimeSlotStateNotifierProvider.notifier);
     final localDyNotifier = ref.read(localDyProvider.notifier);
     final localCurrentTimeSlotHeightNotifier =
         ref.read(localCurrentTimeSlotHeightProvider.notifier);
@@ -101,8 +101,8 @@ class _TopIndicatorState extends ConsumerState<TopIndicator> {
     localCurrentTimeSlotHeightNotifier.state = newSize;
 
     // Update the new position and timeslot height
-    calendarStateNotifier.updateDraggableBoxPosition(dy: newDy);
-    calendarStateNotifier.updateCurrentTimeSlotHeight(newSize);
+    taskTimeSlotStateNotifier.updateDraggableBoxPosition(dy: newDy);
+    taskTimeSlotStateNotifier.updateCurrentTimeSlotHeight(newSize);
   }
 
   @override
