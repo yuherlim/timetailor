@@ -127,7 +127,7 @@ class _BottomIndicatorState extends ConsumerState<BottomIndicator> {
           ),
           child: const Center(
             child: Icon(
-              Icons.arrow_downward,
+              Icons.drag_handle,
               size: 16,
               color: Colors.white,
             ),

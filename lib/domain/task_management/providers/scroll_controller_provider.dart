@@ -57,13 +57,14 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
       final maxTaskHeight = ref.read(maxTaskHeightProvider);
 
       final currentOffset = state.offset;
+      final minScrollExtent = state.position.minScrollExtent;
 
-      if (currentOffset > 0.0) {
+      if (currentOffset > minScrollExtent) {
         state.jumpTo(
-          max(0.0, (currentOffset - scrollAmount)), // Scroll up
+          max(minScrollExtent, (currentOffset - scrollAmount)), // Scroll up
         );
-        final newDy = max(
-            ref.read(calendarWidgetTopBoundaryYProvider), (localDy - scrollAmount));
+        final newDy = max(ref.read(calendarWidgetTopBoundaryYProvider),
+            (localDy - scrollAmount));
         final double newSize = (localCurrentTimeSlotHeight + scrollAmount)
             .clamp(ref.read(snapIntervalHeightProvider), maxTaskHeight);
 
@@ -127,6 +128,74 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
         localCurrentTimeSlotHeightNotifier.state = newSize;
 
         calendarStateNotifier.updateCurrentTimeSlotHeight(newSize);
+      } else {
+        stopAutoScroll(); // Stop scrolling if we reach the end
+      }
+    });
+  }
+
+  void startUpwardsAutoDrag() {
+    const double scrollAmount = 15;
+
+    final calendarStateNotifier =
+        ref.read(calendarStateNotifierProvider.notifier);
+    final localDyNotifier = ref.read(localDyProvider.notifier);
+
+    stopAutoScroll(); // Stop any ongoing scroll
+    _scrollTimer = Timer.periodic(const Duration(milliseconds: 16), (_) {
+      final localDy = ref.read(localDyProvider);
+
+      final currentOffset = state.offset;
+      final minScrollExtent = state.position.minScrollExtent;
+
+      if (currentOffset > minScrollExtent) {
+        state.jumpTo(
+          max(0.0, (currentOffset - scrollAmount)), // Scroll up
+        );
+        final newDy = max(ref.read(calendarWidgetTopBoundaryYProvider),
+            (localDy - scrollAmount));
+
+        // update local state
+        localDyNotifier.state = newDy;
+
+        calendarStateNotifier.updateDraggableBoxPosition(dy: newDy);
+      } else {
+        stopAutoScroll(); // Stop scrolling if we reach the end
+      }
+    });
+  }
+
+  void startDownwardsAutoDrag() {
+    const double scrollAmount = 15;
+
+    final calendarStateNotifier =
+        ref.read(calendarStateNotifierProvider.notifier);
+    final localDyNotifier = ref.read(localDyProvider.notifier);
+
+    stopAutoScroll(); // Stop any ongoing scroll
+    _scrollTimer = Timer.periodic(const Duration(milliseconds: 16), (_) {
+      final localDy = ref.read(localDyProvider);
+      final localCurrentTimeSlotHeight =
+          ref.read(localCurrentTimeSlotHeightProvider);
+      // Ensure that the new dy considers the time slot height.
+      final upperLimit = ref.read(calendarWidgetBottomBoundaryYProvider) -
+          localCurrentTimeSlotHeight;
+
+      final currentOffset = state.offset;
+      final maxScrollExtent = state.position.maxScrollExtent;
+
+      if (currentOffset < maxScrollExtent) {
+        state.jumpTo(
+          (currentOffset + scrollAmount)
+              .clamp(0, maxScrollExtent), // Scroll down
+        );
+
+        final newDy = (localDy + scrollAmount).clamp(0.0, upperLimit);
+
+        // update local state
+        localDyNotifier.state = newDy;
+
+        calendarStateNotifier.updateDraggableBoxPosition(dy: newDy);
       } else {
         stopAutoScroll(); // Stop scrolling if we reach the end
       }

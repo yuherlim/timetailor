@@ -7,127 +7,119 @@ import 'package:timetailor/domain/task_management/providers/calendar_read_only_p
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
 
-class TopIndicator extends ConsumerStatefulWidget {
-  const TopIndicator({
-    super.key,
-  });
+class DragIndicator extends ConsumerStatefulWidget {
+  final bool isRightDragIndicator;
+
+  const DragIndicator({super.key, required this.isRightDragIndicator});
 
   @override
-  ConsumerState<TopIndicator> createState() => _TopIndicatorState();
+  ConsumerState<DragIndicator> createState() => _DragIndicatorState();
 }
 
-class _TopIndicatorState extends ConsumerState<TopIndicator> {
-  void _handleTopDrag({
-    required DragUpdateDetails details,
-  }) {
+class _DragIndicatorState extends ConsumerState<DragIndicator> {
+  void _handleDrag({required DragUpdateDetails details}) {
     final localDyNotifier = ref.read(localDyProvider.notifier);
-    final localCurrentTimeSlotHeightNotifier =
-        ref.read(localCurrentTimeSlotHeightProvider.notifier);
     final isScrolledNotifier = ref.read(isScrolledProvider.notifier);
+    final isScrolledUpNotifier = ref.read(isScrolledUpProvider.notifier);
     final localDy = ref.read(localDyProvider);
     final localCurrentTimeSlotHeight =
         ref.read(localCurrentTimeSlotHeightProvider);
-    final scrollController = ref.read(scrollControllerNotifierProvider);
 
-    final draggableBoxBottomBoundary = (localDy + localCurrentTimeSlotHeight);
-
-    final minDraggableBoxSizeDy =
-        draggableBoxBottomBoundary - ref.read(snapIntervalHeightProvider);
-
-    // Adjust height and position for top resizing
     final newDy = localDy + details.delta.dy;
-    final double newSize = (localCurrentTimeSlotHeight - details.delta.dy)
-        .clamp(ref.read(snapIntervalHeightProvider), double.infinity);
+    // Calculate the bottom position of the draggable box
+    final draggableBoxBottomBoundary = newDy + localCurrentTimeSlotHeight;
 
     if (newDy >= ref.read(calendarWidgetTopBoundaryYProvider) &&
-        newDy < minDraggableBoxSizeDy) {
+        draggableBoxBottomBoundary <= ref.read(calendarWidgetBottomBoundaryYProvider)) {
       localDyNotifier.state = newDy;
-      localCurrentTimeSlotHeightNotifier.state = newSize;
     }
 
-    final scrollOffset = scrollController.offset;
+    // Calculate the visible bottom boundary of the viewport
+    final viewportBottom = ref.read(scrollControllerNotifierProvider).offset +
+        ref.read(scrollControllerNotifierProvider).position.viewportDimension;
 
-    ref.read(maxTaskHeightProvider.notifier).state = localDy -
-        ref.read(calendarWidgetTopBoundaryYProvider) +
-        localCurrentTimeSlotHeight;
-
-    if (localDy < scrollOffset) {
+    // scroll behaviour
+    if (localDy < ref.read(scrollControllerNotifierProvider).offset) {
+      // auto scroll up if exceed top boundary
       ref
           .read(scrollControllerNotifierProvider.notifier)
-          .startUpwardsAutoScroll();
+          .startUpwardsAutoDrag();
       isScrolledNotifier.state = true;
+      isScrolledUpNotifier.state = true;
+    } else if (draggableBoxBottomBoundary > viewportBottom) {
+      // auto scroll down if exceed bottom boundary
+      ref
+          .read(scrollControllerNotifierProvider.notifier)
+          .startDownwardsAutoDrag();
+      isScrolledNotifier.state = true;
+      isScrolledUpNotifier.state = false;
     } else {
       ref.read(scrollControllerNotifierProvider.notifier).stopAutoScroll();
     }
   }
 
-  void _handleTopDragEnd() {
+  void _handleDragEnd() {
     final calendarStateNotifier =
         ref.read(calendarStateNotifierProvider.notifier);
     final localDyNotifier = ref.read(localDyProvider.notifier);
-    final localCurrentTimeSlotHeightNotifier =
-        ref.read(localCurrentTimeSlotHeightProvider.notifier);
     final localDy = ref.read(localDyProvider);
-    final localCurrentTimeSlotHeight =
-        ref.read(localCurrentTimeSlotHeightProvider);
     final isScrolled = ref.read(isScrolledProvider);
+    final isScrolledUp = ref.read(isScrolledUpProvider);
 
     ref.read(scrollControllerNotifierProvider.notifier).stopAutoScroll();
 
     // scroll extra if timeslot drag caused scrolling.
-    if (isScrolled) {
+    if (isScrolled && isScrolledUp) {
       ref
           .read(scrollControllerNotifierProvider.notifier)
-          .scrollUp(scrollAmount: ref.read(defaultTimeSlotHeightProvider));
+          .scrollUp(scrollAmount: ref.read(defaultTimeSlotHeightProvider) / 2);
+    } else if (isScrolled && !isScrolledUp) {
+      ref
+          .read(scrollControllerNotifierProvider.notifier)
+          .scrollDown(scrollAmount: ref.read(defaultTimeSlotHeightProvider) / 2);
     }
 
-    // Adjust for padding before snapping
+    // adjust for padding before snapping
     final adjustedDy = localDy - ref.read(calendarWidgetTopBoundaryYProvider);
 
-    // Snap position to the nearest interval
+    // snap position to the nearest interval
     double newDy = (adjustedDy / ref.read(snapIntervalHeightProvider)).round() *
         ref.read(snapIntervalHeightProvider);
 
     // Reapply the padding offset
     newDy += ref.read(calendarWidgetTopBoundaryYProvider);
 
-    // Snap the height directly (no adjustment needed for height)
-    final double newSize =
-        (localCurrentTimeSlotHeight / ref.read(snapIntervalHeightProvider))
-                .round() *
-            ref.read(snapIntervalHeightProvider);
-
     // Update local state
     localDyNotifier.state = newDy;
-    localCurrentTimeSlotHeightNotifier.state = newSize;
 
     // Update the new position and timeslot height
     calendarStateNotifier.updateDraggableBoxPosition(dy: newDy);
-    calendarStateNotifier.updateCurrentTimeSlotHeight(newSize);
   }
 
   @override
   Widget build(BuildContext context) {
-    final localDy = ref.watch(localDyProvider);
+    double leftPosition = ref.watch(slotStartXProvider) -
+        ref.watch(dragIndicatorWidthProvider) * 0.5;
+    // update left position if the drag indicator is for the right side.
+    leftPosition = (widget.isRightDragIndicator)
+        ? leftPosition + ref.watch(slotWidthProvider)
+        : leftPosition;
 
     return Positioned(
-      left: ref.watch(slotStartXProvider) +
-          ref.watch(slotWidthProvider) * 0.25 -
-          ref.watch(draggableBoxIndicatorWidthProvider) *
-              0.5, // Center horizontally
-      top: localDy -
-          ref.watch(draggableBoxIndicatorHeightProvider) /
-              2, // Above the top edge
+      left: leftPosition,
+      top: ref.watch(localDyProvider) -
+          ref.watch(dragIndicatorHeightProvider) * 0.5 +
+          ref.watch(localCurrentTimeSlotHeightProvider) * 0.5,
       child: GestureDetector(
         onVerticalDragUpdate: (details) {
-          _handleTopDrag(details: details);
+          _handleDrag(details: details);
         },
         onVerticalDragEnd: (_) {
-          _handleTopDragEnd();
+          _handleDragEnd();
         },
         child: Container(
-          width: ref.watch(draggableBoxIndicatorWidthProvider),
-          height: ref.watch(draggableBoxIndicatorHeightProvider),
+          width: ref.watch(dragIndicatorWidthProvider),
+          height: ref.watch(dragIndicatorHeightProvider),
           decoration: BoxDecoration(
             color: AppColors.primaryAccent,
             shape: BoxShape.rectangle,
@@ -135,7 +127,7 @@ class _TopIndicatorState extends ConsumerState<TopIndicator> {
           ),
           child: const Center(
             child: FaIcon(
-              FontAwesomeIcons.upDown,
+              Icons.drag_indicator,
               size: 16,
               color: Colors.white,
             ),

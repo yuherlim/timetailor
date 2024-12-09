@@ -8,6 +8,7 @@ import 'package:timetailor/domain/task_management/providers/scroll_controller_pr
 import 'package:timetailor/screens/task_management/widgets/calendar_widget_background.dart';
 import 'package:timetailor/screens/task_management/widgets/current_time_indicator.dart';
 import 'package:timetailor/screens/task_management/widgets/draggable_box_components/bottom_indicator.dart';
+import 'package:timetailor/screens/task_management/widgets/draggable_box_components/drag_indicator.dart';
 import 'package:timetailor/screens/task_management/widgets/draggable_box_components/draggable_box.dart';
 import 'package:timetailor/screens/task_management/widgets/draggable_box_components/top_indicator.dart';
 
@@ -66,6 +67,12 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
           if (ref.watch(showDraggableBoxProvider)) const TopIndicator(),
           // Bottom Indicator
           if (ref.watch(showDraggableBoxProvider)) const BottomIndicator(),
+          // left drag Indicator
+          if (ref.watch(showDraggableBoxProvider))
+            const DragIndicator(isRightDragIndicator: false),
+          // right drag Indicator
+          if (ref.watch(showDraggableBoxProvider))
+            const DragIndicator(isRightDragIndicator: true),
           // Current Time Indicator
           const CurrentTimeIndicator(),
         ],

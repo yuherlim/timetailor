@@ -19,13 +19,17 @@ class CurrentTimeIndicator extends ConsumerStatefulWidget {
 class _CurrentTimeIndicatorState extends ConsumerState<CurrentTimeIndicator> {
 
   @override
+  void initState() {
+    ref
+        .read(scrollControllerNotifierProvider.notifier)
+        .scrollToCurrentTimeIndicator(position: ref.read(currentTimePositionNotifierProvider), context: context);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final timeIndicatorIconSize = ref.watch(timeIndicatorIconSizeProvider);
     final topPosition = ref.watch(currentTimePositionNotifierProvider);
-
-    ref
-        .read(scrollControllerNotifierProvider.notifier)
-        .scrollToCurrentTimeIndicator(position: topPosition, context: context);
 
     // time indicator position
     final screenWidth = MediaQuery.of(context).size.width;

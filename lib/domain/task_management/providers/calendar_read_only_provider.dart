@@ -69,7 +69,13 @@ List<String> timePeriods(ref) => [
 double timeIndicatorIconSize(ref) => 8;
 
 @riverpod
-double draggableBoxIndicatorWidth(ref) => 80;
+double draggableBoxIndicatorWidth(ref) => 60;
 
 @riverpod
-double draggableBoxIndicatorHeight(ref) => 30;
+double draggableBoxIndicatorHeight(ref) => 20;
+
+@riverpod
+double dragIndicatorWidth(ref) => 15;
+
+@riverpod
+double dragIndicatorHeight(ref) => 25;

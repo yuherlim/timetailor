@@ -5,6 +5,7 @@ final localDyProvider = StateProvider<double>((ref) => 0.0);
 final localCurrentTimeSlotHeightProvider = StateProvider<double>((ref) => 0.0);
 final showDraggableBoxProvider = StateProvider<bool>((ref) => false);
 final isScrolledProvider = StateProvider<bool>((ref) => false);
+final isScrolledUpProvider = StateProvider<bool>((ref) => false);
 final maxTaskHeightProvider = StateProvider<double>((ref) => 0.0);
 final slotStartXProvider = StateProvider<double>((ref) => 0.0);
 final slotWidthProvider = StateProvider<double>((ref) => 0.0);
