@@ -69,10 +69,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
           if (ref.watch(showDraggableBoxProvider)) const BottomIndicator(),
           // left drag Indicator
           if (ref.watch(showDraggableBoxProvider))
-            const DragIndicator(isRightDragIndicator: false),
-          // right drag Indicator
-          if (ref.watch(showDraggableBoxProvider))
-            const DragIndicator(isRightDragIndicator: true),
+            const DragIndicator(),
           // Current Time Indicator
           const CurrentTimeIndicator(),
         ],

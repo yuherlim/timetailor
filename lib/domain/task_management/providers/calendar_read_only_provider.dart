@@ -75,7 +75,13 @@ double draggableBoxIndicatorWidth(ref) => 60;
 double draggableBoxIndicatorHeight(ref) => 20;
 
 @riverpod
-double dragIndicatorWidth(ref) => 15;
+double draggableBoxIndicatorIconSize(ref) => 16;
 
 @riverpod
-double dragIndicatorHeight(ref) => 25;
+double dragIndicatorWidth(ref) => 70;
+
+@riverpod
+double dragIndicatorHeight(ref) => 30;
+
+@riverpod
+double dragIndicatorIconSize(ref) => 16;

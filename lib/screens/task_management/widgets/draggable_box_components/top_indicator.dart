@@ -133,10 +133,10 @@ class _TopIndicatorState extends ConsumerState<TopIndicator> {
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.circular(5),
           ),
-          child: const Center(
-            child: FaIcon(
-              FontAwesomeIcons.upDown,
-              size: 16,
+          child: Center(
+            child: Icon(
+              Icons.drag_handle,
+              size: ref.watch(draggableBoxIndicatorIconSizeProvider),
               color: Colors.white,
             ),
           ),

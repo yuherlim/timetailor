@@ -203,8 +203,27 @@ final draggableBoxIndicatorHeightProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DraggableBoxIndicatorHeightRef = AutoDisposeProviderRef<double>;
+String _$draggableBoxIndicatorIconSizeHash() =>
+    r'207c2738a69304dc60d80f05478a457580f1c561';
+
+/// See also [draggableBoxIndicatorIconSize].
+@ProviderFor(draggableBoxIndicatorIconSize)
+final draggableBoxIndicatorIconSizeProvider =
+    AutoDisposeProvider<double>.internal(
+  draggableBoxIndicatorIconSize,
+  name: r'draggableBoxIndicatorIconSizeProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$draggableBoxIndicatorIconSizeHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef DraggableBoxIndicatorIconSizeRef = AutoDisposeProviderRef<double>;
 String _$dragIndicatorWidthHash() =>
-    r'381c6931149bedc93012c71e337594667481ad06';
+    r'234d29fce6f48132755da1d97ea2fdb526220438';
 
 /// See also [dragIndicatorWidth].
 @ProviderFor(dragIndicatorWidth)
@@ -222,7 +241,7 @@ final dragIndicatorWidthProvider = AutoDisposeProvider<double>.internal(
 // ignore: unused_element
 typedef DragIndicatorWidthRef = AutoDisposeProviderRef<double>;
 String _$dragIndicatorHeightHash() =>
-    r'e53d2e3e754f957d423292683f2fdb5819a5ce0a';
+    r'da6acdc28879e4e0061d2cb58f074f3922c31075';
 
 /// See also [dragIndicatorHeight].
 @ProviderFor(dragIndicatorHeight)
@@ -239,5 +258,23 @@ final dragIndicatorHeightProvider = AutoDisposeProvider<double>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DragIndicatorHeightRef = AutoDisposeProviderRef<double>;
+String _$dragIndicatorIconSizeHash() =>
+    r'2fdd7f917371c045ee9b9a6bc09bb809f8b3853a';
+
+/// See also [dragIndicatorIconSize].
+@ProviderFor(dragIndicatorIconSize)
+final dragIndicatorIconSizeProvider = AutoDisposeProvider<double>.internal(
+  dragIndicatorIconSize,
+  name: r'dragIndicatorIconSizeProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$dragIndicatorIconSizeHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef DragIndicatorIconSizeRef = AutoDisposeProviderRef<double>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

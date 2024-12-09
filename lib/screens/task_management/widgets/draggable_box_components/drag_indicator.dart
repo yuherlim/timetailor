@@ -8,9 +8,7 @@ import 'package:timetailor/domain/task_management/providers/calendar_state_provi
 import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
 
 class DragIndicator extends ConsumerStatefulWidget {
-  final bool isRightDragIndicator;
-
-  const DragIndicator({super.key, required this.isRightDragIndicator});
+  const DragIndicator({super.key});
 
   @override
   ConsumerState<DragIndicator> createState() => _DragIndicatorState();
@@ -30,7 +28,8 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
     final draggableBoxBottomBoundary = newDy + localCurrentTimeSlotHeight;
 
     if (newDy >= ref.read(calendarWidgetTopBoundaryYProvider) &&
-        draggableBoxBottomBoundary <= ref.read(calendarWidgetBottomBoundaryYProvider)) {
+        draggableBoxBottomBoundary <=
+            ref.read(calendarWidgetBottomBoundaryYProvider)) {
       localDyNotifier.state = newDy;
     }
 
@@ -74,9 +73,8 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
           .read(scrollControllerNotifierProvider.notifier)
           .scrollUp(scrollAmount: ref.read(defaultTimeSlotHeightProvider) / 2);
     } else if (isScrolled && !isScrolledUp) {
-      ref
-          .read(scrollControllerNotifierProvider.notifier)
-          .scrollDown(scrollAmount: ref.read(defaultTimeSlotHeightProvider) / 2);
+      ref.read(scrollControllerNotifierProvider.notifier).scrollDown(
+          scrollAmount: ref.read(defaultTimeSlotHeightProvider) / 2);
     }
 
     // adjust for padding before snapping
@@ -98,15 +96,11 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
 
   @override
   Widget build(BuildContext context) {
-    double leftPosition = ref.watch(slotStartXProvider) -
-        ref.watch(dragIndicatorWidthProvider) * 0.5;
-    // update left position if the drag indicator is for the right side.
-    leftPosition = (widget.isRightDragIndicator)
-        ? leftPosition + ref.watch(slotWidthProvider)
-        : leftPosition;
 
     return Positioned(
-      left: leftPosition,
+      left: ref.watch(slotStartXProvider) -
+          ref.watch(dragIndicatorWidthProvider) * 0.5 +
+          ref.watch(slotWidthProvider) * 0.5,
       top: ref.watch(localDyProvider) -
           ref.watch(dragIndicatorHeightProvider) * 0.5 +
           ref.watch(localCurrentTimeSlotHeightProvider) * 0.5,
@@ -125,10 +119,10 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.circular(5),
           ),
-          child: const Center(
-            child: FaIcon(
-              Icons.drag_indicator,
-              size: 16,
+          child: Center(
+            child: Icon(
+              Icons.pan_tool_outlined,
+              size: ref.watch(dragIndicatorIconSizeProvider),
               color: Colors.white,
             ),
           ),
