@@ -3,15 +3,16 @@ import 'package:timetailor/domain/task_management/providers/calendar_local_state
 
 part 'calendar_read_only_provider.g.dart';
 
-const _snapIntervalMinutes = 5;
-
 @riverpod
 double defaultTimeSlotHeight(ref) =>
     ref.watch(screenHeightProvider) <= 800 ? 120 : 144;
 
 @riverpod
+double snapIntervalMinutes(ref) => 5;
+
+@riverpod
 double snapIntervalHeight(ref) =>
-    ref.watch(defaultTimeSlotHeightProvider) / 60 * _snapIntervalMinutes;
+    ref.watch(defaultTimeSlotHeightProvider) / 60 * ref.watch(snapIntervalMinutesProvider);
 
 @riverpod
 double calendarHeight(ref) => ref.watch(defaultTimeSlotHeightProvider) * 24;

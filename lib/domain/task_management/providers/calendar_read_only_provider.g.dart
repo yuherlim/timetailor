@@ -24,8 +24,26 @@ final defaultTimeSlotHeightProvider = AutoDisposeProvider<double>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DefaultTimeSlotHeightRef = AutoDisposeProviderRef<double>;
+String _$snapIntervalMinutesHash() =>
+    r'666676eb61c002096e6444b3e68bbe2510f5e4c1';
+
+/// See also [snapIntervalMinutes].
+@ProviderFor(snapIntervalMinutes)
+final snapIntervalMinutesProvider = AutoDisposeProvider<double>.internal(
+  snapIntervalMinutes,
+  name: r'snapIntervalMinutesProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$snapIntervalMinutesHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef SnapIntervalMinutesRef = AutoDisposeProviderRef<double>;
 String _$snapIntervalHeightHash() =>
-    r'5437bc83219a03c9574afc9c8b9e42aed1f11078';
+    r'80fcd8d18d84f5b4205cf0f6a4aeea0c252326aa';
 
 /// See also [snapIntervalHeight].
 @ProviderFor(snapIntervalHeight)
