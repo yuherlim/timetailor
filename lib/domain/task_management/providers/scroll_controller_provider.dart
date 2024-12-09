@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:timetailor/domain/task_management/providers/calendar_local_state_provider.dart';
+import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 
 part 'scroll_controller_provider.g.dart'; // Generated file
@@ -40,7 +40,7 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
   }
 
   void startUpwardsAutoScroll() {
-    const double scrollAmount = 15;
+    double scrollAmount = ref.read(autoScrollAmountProvider);
 
     final localDyNotifier = ref.read(localDyProvider.notifier);
     final localCurrentTimeSlotHeightNotifier =
@@ -93,7 +93,7 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
   }
 
   void startDownwardsAutoScroll() {
-    const double scrollAmount = 15;
+    double scrollAmount = ref.read(autoScrollAmountProvider);
 
     final localCurrentTimeSlotHeightNotifier =
         ref.read(localCurrentTimeSlotHeightProvider.notifier);
@@ -117,7 +117,6 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
 
         // update local state
         localCurrentTimeSlotHeightNotifier.state = newSize;
-
       } else {
         stopAutoScroll(); // Stop scrolling if we reach the end
       }
@@ -145,7 +144,6 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
 
         // update local state
         localDyNotifier.state = newDy;
-
       } else {
         stopAutoScroll(); // Stop scrolling if we reach the end
       }
