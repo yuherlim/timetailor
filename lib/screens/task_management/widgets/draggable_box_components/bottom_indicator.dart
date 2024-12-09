@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_local_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
-import 'package:timetailor/domain/task_management/providers/task_time_slot_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
 
 class BottomIndicator extends ConsumerStatefulWidget {
@@ -67,8 +66,6 @@ class _BottomIndicatorState extends ConsumerState<BottomIndicator> {
   }
 
   void _handleBottomDragEnd() {
-    final taskTimeSlotStateNotifier =
-        ref.read(taskTimeSlotStateNotifierProvider.notifier);
     final localCurrentTimeSlotHeightNotifier =
         ref.read(localCurrentTimeSlotHeightProvider.notifier);
     final isScrolled = ref.read(isScrolledProvider);
@@ -91,8 +88,6 @@ class _BottomIndicatorState extends ConsumerState<BottomIndicator> {
             ref.read(snapIntervalHeightProvider);
 
     localCurrentTimeSlotHeightNotifier.state = newSize;
-
-    taskTimeSlotStateNotifier.updateCurrentTimeSlotHeight(newSize);
   }
 
   @override

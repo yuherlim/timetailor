@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_local_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
-import 'package:timetailor/domain/task_management/providers/task_time_slot_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
 
 class DragIndicator extends ConsumerStatefulWidget {
@@ -57,8 +56,6 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
   }
 
   void _handleDragEnd() {
-    final taskTimeSlotStateNotifier =
-        ref.read(taskTimeSlotStateNotifierProvider.notifier);
     final localDyNotifier = ref.read(localDyProvider.notifier);
     final localDy = ref.read(localDyProvider);
     final isScrolled = ref.read(isScrolledProvider);
@@ -88,9 +85,6 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
 
     // Update local state
     localDyNotifier.state = newDy;
-
-    // Update the new position and timeslot height
-    taskTimeSlotStateNotifier.updateDraggableBoxPosition(dy: newDy);
   }
 
   @override
