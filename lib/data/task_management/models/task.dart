@@ -8,8 +8,6 @@ class Task {
   final DateTime endTime;
   final bool completed;
   final List<String?> linkedNote; // Linked Note ID (nullable)
-  final double yTop;
-  final double yBottom;
 
   Task({
     required this.id,
@@ -19,8 +17,6 @@ class Task {
     required this.endTime,
     required this.completed,
     required this.linkedNote,
-    required this.yTop,
-    required this.yBottom,
   });
 
   // Map<String, dynamic> toFirestore() {
@@ -64,11 +60,9 @@ final List<Task> tasks = [
     startTime: roundToFiveMinuteInterval(DateTime.now()),
     duration: 60,
     endTime:
-        roundToFiveMinuteInterval(DateTime.now().add(Duration(minutes: 60))),
+        roundToFiveMinuteInterval(DateTime.now().add(const Duration(minutes: 60))),
     completed: false,
     linkedNote: ['note1', 'note2'],
-    yTop: 100.0,
-    yBottom: 160.0,
   ),
   Task(
     id: 'task2',
@@ -80,8 +74,6 @@ final List<Task> tasks = [
         DateTime.now().add(Duration(hours: 1, minutes: 30))),
     completed: false,
     linkedNote: ['note3'],
-    yTop: 170.0,
-    yBottom: 200.0,
   ),
   Task(
     id: 'task3',
@@ -93,8 +85,6 @@ final List<Task> tasks = [
         DateTime.now().add(Duration(hours: 3, minutes: 45))),
     completed: true,
     linkedNote: [],
-    yTop: 210.0,
-    yBottom: 255.0,
   ),
   Task(
     id: 'task4',
@@ -106,7 +96,5 @@ final List<Task> tasks = [
         DateTime.now().add(Duration(hours: 5, minutes: 30))),
     completed: false,
     linkedNote: ['note4'],
-    yTop: 270.0,
-    yBottom: 360.0,
   ),
 ];
