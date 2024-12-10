@@ -7,6 +7,7 @@ import 'package:timetailor/domain/task_management/providers/datebox_animation_pr
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/core/shared/styled_text.dart';
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
+import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 
 class CalendarHeader extends ConsumerWidget {
   const CalendarHeader({
@@ -103,6 +104,7 @@ class CalendarHeader extends ConsumerWidget {
                 ref
                     .read(currentDateNotifierProvider.notifier)
                     .updateDate(date: date);
+                ref.read(tasksNotifierProvider.notifier).cancelTaskCreation();
               },
               borderRadius: BorderRadius.circular(8),
               splashColor: Colors.blue.withOpacity(0.2), // Ripple color

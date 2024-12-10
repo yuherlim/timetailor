@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
+import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 import 'package:timetailor/domain/task_management/task_manager.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_painter.dart';
 
@@ -26,11 +27,7 @@ class _CalendarWidgetBackgroundState
 
     // if draggable box already created, reset state
     if (ref.read(showDraggableBoxProvider)) {
-      ref.read(showDraggableBoxProvider.notifier).state =
-          !ref.read(showDraggableBoxProvider);
-      // reset the bottom sheet extent
-      ref.read(sheetExtentProvider.notifier).state =
-          ref.read(initialBottomSheetExtentProvider);
+      ref.read(tasksNotifierProvider.notifier).cancelTaskCreation();
       localDyNotifier.state = 0;
       localCurrentTimeSlotHeightNotifier.state = 0;
       return;
@@ -55,6 +52,14 @@ class _CalendarWidgetBackgroundState
       localCurrentTimeSlotHeightNotifier.state =
           ref.read(defaultTimeSlotHeightProvider);
       ref.read(showDraggableBoxProvider.notifier).state = true;
+
+      // update local start time and end time with values from draggable box
+      ref
+          .read(tasksNotifierProvider.notifier)
+          .updateTaskTimeStateFromDraggableBox(
+            dy: ref.read(localDyProvider),
+            currentTimeSlotHeight: ref.read(localCurrentTimeSlotHeightProvider),
+          );
     }
   }
 

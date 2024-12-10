@@ -96,7 +96,7 @@ final calendarWidgetTopBoundaryYProvider = AutoDisposeProvider<double>.internal(
 // ignore: unused_element
 typedef CalendarWidgetTopBoundaryYRef = AutoDisposeProviderRef<double>;
 String _$calendarBottomPaddingHash() =>
-    r'57d38aae143b8ed5f65b2c54742e93a5fe5e93f2';
+    r'4356f6e7a88780a81d695f5a066a246028ccba77';
 
 /// See also [calendarBottomPadding].
 @ProviderFor(calendarBottomPadding)

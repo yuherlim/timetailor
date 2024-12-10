@@ -4,6 +4,7 @@ import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
+import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 
 class TopIndicator extends ConsumerStatefulWidget {
   const TopIndicator({
@@ -70,7 +71,7 @@ class _TopIndicatorState extends ConsumerState<TopIndicator> {
     final localCurrentTimeSlotHeight =
         ref.read(localCurrentTimeSlotHeightProvider);
     final isScrolled = ref.read(isScrolledProvider);
-    
+
     ref.read(scrollControllerNotifierProvider.notifier).stopAutoScroll();
 
     // display back bottom sheet when drag end
@@ -102,6 +103,14 @@ class _TopIndicatorState extends ConsumerState<TopIndicator> {
     // Update local state
     localDyNotifier.state = newDy;
     localCurrentTimeSlotHeightNotifier.state = newSize;
+
+    // update local start time and end time with values from draggable box
+    ref
+        .read(tasksNotifierProvider.notifier)
+        .updateTaskTimeStateFromDraggableBox(
+          dy: ref.read(localDyProvider),
+          currentTimeSlotHeight: ref.read(localCurrentTimeSlotHeightProvider),
+        );
   }
 
   @override

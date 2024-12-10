@@ -23,7 +23,7 @@ double calendarHeight(ref) => ref.watch(defaultTimeSlotHeightProvider) * 24;
 double calendarWidgetTopBoundaryY(ref) => 16;
 
 @riverpod
-double calendarBottomPadding(ref) => 120;
+double calendarBottomPadding(ref) => 150;
 
 @riverpod
 double calendarWidgetBottomBoundaryY(ref) =>

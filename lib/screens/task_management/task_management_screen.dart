@@ -36,6 +36,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
       ref
           .read(currentDateNotifierProvider.notifier)
           .updateDate(date: selectedDate);
+      ref.read(tasksNotifierProvider.notifier).cancelTaskCreation();
     }
   }
 
@@ -134,7 +135,9 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                 ? IconButton(
                     icon: const Icon(Icons.arrow_back),
                     onPressed: () {
-                      ref.read(tasksNotifierProvider.notifier).cancelTaskCreation();
+                      ref
+                          .read(tasksNotifierProvider.notifier)
+                          .cancelTaskCreation();
                     },
                   )
                 : IconButton(
@@ -160,6 +163,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
               IconButton(
                 icon: const Icon(Icons.history),
                 onPressed: () {
+                  ref.read(tasksNotifierProvider.notifier).cancelTaskCreation();
                   context.go(
                       RoutePath.taskHistoryPath); // Navigate to task creation
                 },

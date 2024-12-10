@@ -6,6 +6,7 @@ import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
+import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 
 class BottomIndicator extends ConsumerStatefulWidget {
   const BottomIndicator({
@@ -94,6 +95,14 @@ class _BottomIndicatorState extends ConsumerState<BottomIndicator> {
             ref.read(snapIntervalHeightProvider);
 
     localCurrentTimeSlotHeightNotifier.state = newSize;
+
+    // update local start time and end time with values from draggable box
+    ref
+        .read(tasksNotifierProvider.notifier)
+        .updateTaskTimeStateFromDraggableBox(
+          dy: ref.read(localDyProvider),
+          currentTimeSlotHeight: ref.read(localCurrentTimeSlotHeightProvider),
+        );
   }
 
   @override

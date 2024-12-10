@@ -45,6 +45,10 @@ class TasksNotifier extends _$TasksNotifier {
         ref.read(calendarWidgetTopBoundaryYProvider);
     final localDy = dy;
     final localCurrentTimeSlotHeight = currentTimeSlotHeight;
+    final calendarWidgetBottomBoundaryY =
+        ref.read(calendarWidgetBottomBoundaryYProvider);
+    
+    final localDyBottom = localDy + localCurrentTimeSlotHeight;
 
     // Calculate start time
     double topOffsetFromCalendarStart = localDy - calendarWidgetTopBoundaryY;
@@ -55,6 +59,10 @@ class TasksNotifier extends _$TasksNotifier {
             snapIntervalMinutes)
         .toInt();
 
+    // Normalize startMinutes to prevent weird times like "7:60 PM"
+    startHour += startMinutes ~/ 60; // Carry over extra minutes to hours
+    startMinutes %= 60; // Ensure minutes stay within 0-59
+
     // Calculate duration in minutes
     int durationMinutes =
         ((localCurrentTimeSlotHeight / snapIntervalHeight).round() *
@@ -64,6 +72,15 @@ class TasksNotifier extends _$TasksNotifier {
     // Calculate end time
     int endHour = startHour + (durationMinutes ~/ 60);
     int endMinutes = startMinutes + (durationMinutes % 60);
+
+    if (localDyBottom >= calendarWidgetBottomBoundaryY) {
+      endHour = 23; // Set to 11 PM
+      endMinutes = 59; // Set to 59 minutes
+    }
+
+    // Normalize endMinutes to prevent weird times like "7:60 PM"
+    endHour += endMinutes ~/ 60; // Carry over extra minutes to hours
+    endMinutes %= 60; // Ensure minutes stay within 0-59
 
     // Format as "HH:MM AM/PM"
     String formatTime(int hour, int minutes) {

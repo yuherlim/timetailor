@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:timetailor/core/shared/styled_text.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
-import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
+import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/chevron_down_drag_handle.dart';
 import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/chevron_up_drag_handle.dart';
+import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/middle_drag_handle.dart';
+import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/task_creation_header.dart';
 
 class TaskBottomSheet extends ConsumerStatefulWidget {
   const TaskBottomSheet({super.key});
@@ -21,8 +25,10 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
         (MediaQuery.of(context).size.height - statusBarHeight) /
             MediaQuery.of(context).size.height;
     final double currentExtent = ref.watch(sheetExtentProvider);
-    final double initialBottomSheetExtent = ref.watch(initialBottomSheetExtentProvider);
-    final double middleBottomSheetExtent = ref.watch(middleBottomSheetExtentProvider);
+    final double initialBottomSheetExtent =
+        ref.watch(initialBottomSheetExtentProvider);
+    final double middleBottomSheetExtent =
+        ref.watch(middleBottomSheetExtentProvider);
     const double tolerance =
         0.01; // Allowable tolerance for floating-point comparison
 
@@ -34,10 +40,13 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
           print("notificationExtent: $notificationExtent");
 
           // Check for snap sizes with tolerance
-          if ((notificationExtent - initialBottomSheetExtent).abs() < tolerance) {
-            print("notificationExtent after adjust: ${(notificationExtent - initialBottomSheetExtent).abs()}");
+          if ((notificationExtent - initialBottomSheetExtent).abs() <
+              tolerance) {
+            print(
+                "notificationExtent after adjust: ${(notificationExtent - initialBottomSheetExtent).abs()}");
             sheetExtentNotifier.state = initialBottomSheetExtent;
-          } else if ((notificationExtent - middleBottomSheetExtent).abs() < tolerance) {
+          } else if ((notificationExtent - middleBottomSheetExtent).abs() <
+              tolerance) {
             sheetExtentNotifier.state = middleBottomSheetExtent;
           } else if ((notificationExtent - maxExtent).abs() < tolerance) {
             sheetExtentNotifier.state = maxExtent;
@@ -66,54 +75,53 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      if (currentExtent == initialBottomSheetExtent) const ChevronUpDragHandle(),
+                      // Drag handles
+                      if (currentExtent == initialBottomSheetExtent)
+                        const ChevronUpDragHandle(),
 
-                      // normal drag handle
                       if (currentExtent == middleBottomSheetExtent)
-                        Center(
-                          child: Container(
-                            height: 4,
-                            width: 40,
-                            margin: const EdgeInsets.only(top: 12, bottom: 8),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant
-                                  .withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(2),
-                            ),
-                          ),
-                        ),
+                        const MiddleDragHandle(),
 
                       if (currentExtent == maxExtent)
                         const ChevronDownDragHandle(),
 
+                      const SizedBox(height: 16),
+
+                      if (currentExtent == initialBottomSheetExtent)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            AppBarText("Start: ${ref.read(startTimeProvider)}"),
+                            const SizedBox(width: 16),
+                            AppBarText("End: ${ref.read(endTimeProvider)}")
+                          ],
+                        ),
+
                       // Conditionally show Cancel and Save buttons
                       if (currentExtent >= middleBottomSheetExtent)
+                        const TaskCreationHeader(),
+
+                      if (currentExtent == middleBottomSheetExtent)
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 32),
+                          child: Column(
                             children: [
-                              IconButton(
-                                icon: const Icon(Icons.close),
-                                onPressed: () {
-                                  // Close bottom sheet
-                                  ref.read(tasksNotifierProvider.notifier).cancelTaskCreation();
-                                },
+                              const Row(
+                                children: [
+                                  SizedBox(width: 32),
+                                  StyledText("Title"),
+                                ],
                               ),
-                              TextButton(
-                                onPressed: () {
-                                  // Save action
-                                  debugPrint('Save button pressed');
-                                },
-                                child: Text(
-                                  'Save',
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary),
-                                ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  const SizedBox(width: 32),
+                                  StyledText(DateFormat('d MMM').format(
+                                      ref.read(currentDateNotifierProvider))),
+                                  const SizedBox(width: 16),
+                                  StyledText(
+                                      "${ref.read(startTimeProvider)} - ${ref.read(endTimeProvider)}"),
+                                ],
                               ),
                             ],
                           ),

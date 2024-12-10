@@ -11,7 +11,10 @@ class StyledText extends StatelessWidget {
     return Text(
       text,
       style: GoogleFonts.kanit(
-        textStyle: Theme.of(context).textTheme.bodyMedium,
+        textStyle: Theme.of(context).textTheme.titleLarge?.copyWith(
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1,
+        ),
       ),
     );
   }
