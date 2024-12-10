@@ -33,6 +33,9 @@ class _BottomIndicatorState extends ConsumerState<BottomIndicator> {
     final remainingScrollableContentInView =
         scrollController.position.viewportDimension;
 
+    // hide bottom sheet while dragging
+    ref.read(showBottomSheetProvider.notifier).state = false;
+
     // Calculate the maximum height for the task to prevent exceeding the calendar boundary
     ref.read(maxTaskHeightProvider.notifier).state = max(
         (ref.read(calendarWidgetBottomBoundaryYProvider) - localDy),
@@ -73,6 +76,9 @@ class _BottomIndicatorState extends ConsumerState<BottomIndicator> {
         ref.read(localCurrentTimeSlotHeightProvider);
 
     ref.read(scrollControllerNotifierProvider.notifier).stopAutoScroll();
+
+    // display back bottom sheet when drag end
+    ref.read(showBottomSheetProvider.notifier).state = true;
 
     // scroll extra if timeslot drag caused scrolling.
     if (isScrolled) {

@@ -32,6 +32,9 @@ class _TopIndicatorState extends ConsumerState<TopIndicator> {
     final minDraggableBoxSizeDy =
         draggableBoxBottomBoundary - ref.read(snapIntervalHeightProvider);
 
+    // hide bottom sheet while dragging
+    ref.read(showBottomSheetProvider.notifier).state = false;
+
     // Adjust height and position for top resizing
     final newDy = localDy + details.delta.dy;
     final double newSize = (localCurrentTimeSlotHeight - details.delta.dy)
@@ -67,8 +70,11 @@ class _TopIndicatorState extends ConsumerState<TopIndicator> {
     final localCurrentTimeSlotHeight =
         ref.read(localCurrentTimeSlotHeightProvider);
     final isScrolled = ref.read(isScrolledProvider);
-
+    
     ref.read(scrollControllerNotifierProvider.notifier).stopAutoScroll();
+
+    // display back bottom sheet when drag end
+    ref.read(showBottomSheetProvider.notifier).state = true;
 
     // scroll extra if timeslot drag caused scrolling.
     if (isScrolled) {

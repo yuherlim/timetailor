@@ -1,8 +1,5 @@
-import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_widget_background.dart';
@@ -20,31 +17,8 @@ class CalendarWidget extends ConsumerStatefulWidget {
 }
 
 class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
-  @override
-  void initState() {
-    BackButtonInterceptor.add(_backButtonInterceptor);
-    super.initState();
-  }
-
-  bool _backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    final location = GoRouter.of(context).state!.path;
-
-    // only intercept back gesture when the current nav branch is task management
-    if (location == RoutePath.taskManagementPath &&
-        ref.read(showDraggableBoxProvider)) {
-      ref.read(showDraggableBoxProvider.notifier).state = false;
-
-      return true; // Prevents the default back button behavior
-    }
-    return false; // Allows the default back button behavior
-  }
-
-  @override
-  void dispose() {
-    // Clean up
-    BackButtonInterceptor.remove(_backButtonInterceptor);
-    super.dispose();
-  }
+  
+  
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +48,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
           if (ref.watch(showDraggableBoxProvider)) const TopIndicator(),
           // Bottom Indicator
           if (ref.watch(showDraggableBoxProvider)) const BottomIndicator(),
-          // left drag Indicator
+          // drag Indicator
           if (ref.watch(showDraggableBoxProvider)) const DragIndicator(),
           // Current Time Indicator
           const CurrentTimeIndicator(),

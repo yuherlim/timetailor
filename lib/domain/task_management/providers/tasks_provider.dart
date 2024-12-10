@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timetailor/data/task_management/models/task.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
@@ -48,15 +49,17 @@ class TasksNotifier extends _$TasksNotifier {
     // Calculate start time
     double topOffsetFromCalendarStart = localDy - calendarWidgetTopBoundaryY;
     int startHour = (topOffsetFromCalendarStart ~/ defaultTimeSlotHeight);
-    int startMinutes = ((topOffsetFromCalendarStart % defaultTimeSlotHeight) /
-                snapIntervalHeight)
-            .round() *
-        snapIntervalMinutes as int;
+    int startMinutes = (((topOffsetFromCalendarStart % defaultTimeSlotHeight) /
+                    snapIntervalHeight)
+                .round() *
+            snapIntervalMinutes)
+        .toInt();
 
     // Calculate duration in minutes
     int durationMinutes =
-        (localCurrentTimeSlotHeight / snapIntervalHeight).round() *
-            snapIntervalMinutes as int;
+        ((localCurrentTimeSlotHeight / snapIntervalHeight).round() *
+                snapIntervalMinutes)
+            .toInt();
 
     // Calculate end time
     int endHour = startHour + (durationMinutes ~/ 60);
@@ -112,5 +115,13 @@ class TasksNotifier extends _$TasksNotifier {
       'currentTimeSlotHeight': currentTimeSlotHeight,
       'dyBottom': dyBottom,
     };
+  }
+
+  void cancelTaskCreation() {
+    // reset draggableBox show state
+    ref.read(showDraggableBoxProvider.notifier).state = false;
+    // reset bottom sheet extent
+    ref.read(sheetExtentProvider.notifier).state =
+        ref.read(initialBottomSheetExtentProvider);
   }
 }

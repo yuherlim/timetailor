@@ -28,6 +28,9 @@ class _CalendarWidgetBackgroundState
     if (ref.read(showDraggableBoxProvider)) {
       ref.read(showDraggableBoxProvider.notifier).state =
           !ref.read(showDraggableBoxProvider);
+      // reset the bottom sheet extent
+      ref.read(sheetExtentProvider.notifier).state =
+          ref.read(initialBottomSheetExtentProvider);
       localDyNotifier.state = 0;
       localCurrentTimeSlotHeightNotifier.state = 0;
       return;
@@ -54,8 +57,6 @@ class _CalendarWidgetBackgroundState
       ref.read(showDraggableBoxProvider.notifier).state = true;
     }
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
