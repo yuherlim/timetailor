@@ -158,6 +158,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                     ref
                         .read(currentDateNotifierProvider.notifier)
                         .updateToToday();
+                    ref.read(tasksNotifierProvider.notifier).cancelTaskCreation();
                   },
                 ),
               IconButton(

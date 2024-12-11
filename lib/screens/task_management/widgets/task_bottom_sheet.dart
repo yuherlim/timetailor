@@ -91,9 +91,9 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            AppBarText("Start: ${ref.read(startTimeProvider)}"),
+                            StyledTitle("Start: ${ref.read(startTimeProvider)}"),
                             const SizedBox(width: 16),
-                            AppBarText("End: ${ref.read(endTimeProvider)}")
+                            StyledTitle("End: ${ref.read(endTimeProvider)}")
                           ],
                         ),
 
