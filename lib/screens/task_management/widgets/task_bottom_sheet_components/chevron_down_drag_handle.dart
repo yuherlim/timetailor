@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:timetailor/domain/task_management/providers/bottom_sheet_scroll_controller_provider.dart';
 
 class ChevronDownPainter extends CustomPainter {
   final Color color;
@@ -26,21 +28,24 @@ class ChevronDownPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-class ChevronDownDragHandle extends StatelessWidget {
+class ChevronDownDragHandle extends ConsumerWidget {
   const ChevronDownDragHandle({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final Color chevronColor =
         Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5);
 
-    return Center(
-      child: Container(
-        height: 20,
-        width: 60,
-        margin: const EdgeInsets.only(top: 12, bottom: 8),
-        child: CustomPaint(
-          painter: ChevronDownPainter(color: chevronColor),
+    return GestureDetector(
+      onTap: () => ref.read(bottomSheetScrollControllerNotifierProvider.notifier).scrollToMiddleExtent(),
+      child: Center(
+        child: Container(
+          height: 20,
+          width: 60,
+          margin: const EdgeInsets.only(top: 12, bottom: 8),
+          child: CustomPaint(
+            painter: ChevronDownPainter(color: chevronColor),
+          ),
         ),
       ),
     );
