@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:timetailor/core/shared/styled_text.dart';
+import 'package:timetailor/domain/task_management/providers/bottom_sheet_scroll_controller_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
@@ -18,12 +19,29 @@ class TaskBottomSheet extends ConsumerStatefulWidget {
 }
 
 class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
-  @override
-  Widget build(BuildContext context) {
+  void initializeMaxExtent() {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
-    final double maxExtent =
+    final double bottomSheetMaxExtent =
         (MediaQuery.of(context).size.height - statusBarHeight) /
             MediaQuery.of(context).size.height;
+
+    // initialize maxBottomSheetExtent after widget tree finish building
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(maxBottomSheetExtentProvider.notifier).state =
+          bottomSheetMaxExtent;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print("sheetExtent after update: ${ref.watch(sheetExtentProvider)}");
+    final maxExtent = ref.watch(maxBottomSheetExtentProvider);
+
+    if (maxExtent == 0.0) {
+      initializeMaxExtent();
+      return const CircularProgressIndicator(); // Show loading indicator
+    }
+
     final double currentExtent = ref.watch(sheetExtentProvider);
     final double initialBottomSheetExtent =
         ref.watch(initialBottomSheetExtentProvider);
@@ -31,6 +49,8 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
         ref.watch(middleBottomSheetExtentProvider);
     const double tolerance =
         0.01; // Allowable tolerance for floating-point comparison
+    final bottomSheetScrollController =
+        ref.watch(bottomSheetScrollControllerNotifierProvider);
 
     return Positioned.fill(
       child: NotificationListener<DraggableScrollableNotification>(
@@ -62,10 +82,12 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
           snapSizes: [middleBottomSheetExtent],
           builder: (BuildContext context, ScrollController scrollController) {
             return Material(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(28),
-              ),
-              color: Theme.of(context).colorScheme.surface,
+              borderRadius: (currentExtent != maxExtent)
+                  ? const BorderRadius.vertical(
+                      top: Radius.circular(28),
+                    )
+                  : null,
+              color: Theme.of(context).colorScheme.onSecondary,
               elevation: 4,
               child: SafeArea(
                 top:
@@ -85,13 +107,12 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
                       if (currentExtent == maxExtent)
                         const ChevronDownDragHandle(),
 
-                      const SizedBox(height: 16),
-
                       if (currentExtent == initialBottomSheetExtent)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            StyledTitle("Start: ${ref.read(startTimeProvider)}"),
+                            StyledTitle(
+                                "Start: ${ref.read(startTimeProvider)}"),
                             const SizedBox(width: 16),
                             StyledTitle("End: ${ref.read(endTimeProvider)}")
                           ],
@@ -103,7 +124,7 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
 
                       if (currentExtent == middleBottomSheetExtent)
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 32),
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
                           child: Column(
                             children: [
                               const Row(
