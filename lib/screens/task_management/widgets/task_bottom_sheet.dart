@@ -64,17 +64,19 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
               tolerance) {
             print(
                 "notificationExtent after adjust: ${(notificationExtent - initialBottomSheetExtent).abs()}");
-            sheetExtentNotifier.state = initialBottomSheetExtent;
+            sheetExtentNotifier.update(initialBottomSheetExtent);
+            
           } else if ((notificationExtent - middleBottomSheetExtent).abs() <
               tolerance) {
-            sheetExtentNotifier.state = middleBottomSheetExtent;
+            sheetExtentNotifier.update(middleBottomSheetExtent);
           } else if ((notificationExtent - maxExtent).abs() < tolerance) {
-            sheetExtentNotifier.state = maxExtent;
+            sheetExtentNotifier.update(maxExtent);
           }
 
           return true;
         },
         child: DraggableScrollableSheet(
+          controller: bottomSheetScrollController,
           initialChildSize: initialBottomSheetExtent,
           minChildSize: initialBottomSheetExtent,
           maxChildSize: maxExtent,
