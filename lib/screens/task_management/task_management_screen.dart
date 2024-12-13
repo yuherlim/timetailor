@@ -52,8 +52,8 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
     int slotIndex = TaskManager.binarySearchSlotIndex(
         currentTimePosition, ref.read(timeSlotBoundariesProvider));
 
-    debugPrint("currentTimePosition: $currentTimePosition");
-    debugPrint("slotIndex: $slotIndex");
+    // debugPrint("currentTimePosition: $currentTimePosition");
+    // debugPrint("slotIndex: $slotIndex");
 
     // Handle case where the tap is after the last slot
     if (slotIndex == -1 &&
