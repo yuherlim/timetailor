@@ -311,6 +311,24 @@ final autoScrollAmountProvider = AutoDisposeProvider<double>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AutoScrollAmountRef = AutoDisposeProviderRef<double>;
+String _$initialBottomSheetExtentHash() =>
+    r'11f6f5148d4b09a4ff9c3deffeda0ef642a9fce4';
+
+/// See also [initialBottomSheetExtent].
+@ProviderFor(initialBottomSheetExtent)
+final initialBottomSheetExtentProvider = AutoDisposeProvider<double>.internal(
+  initialBottomSheetExtent,
+  name: r'initialBottomSheetExtentProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$initialBottomSheetExtentHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef InitialBottomSheetExtentRef = AutoDisposeProviderRef<double>;
 String _$middleBottomSheetExtentHash() =>
     r'76b0e9b9418e810d658dde317cc02f74781e6d44';
 

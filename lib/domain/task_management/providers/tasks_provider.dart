@@ -137,8 +137,5 @@ class TasksNotifier extends _$TasksNotifier {
   void cancelTaskCreation() {
     // reset draggableBox show state
     ref.read(showDraggableBoxProvider.notifier).state = false;
-    // reset bottom sheet extent
-    ref.read(sheetExtentProvider.notifier).state =
-        ref.read(initialBottomSheetExtentProvider);
   }
 }

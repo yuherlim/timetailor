@@ -92,8 +92,8 @@ double dragIndicatorIconSize(ref) => 16;
 @riverpod
 double autoScrollAmount(ref) => 10;
 
-// @riverpod
-// double initialBottomSheetExtent(ref) => 0.15;
+@riverpod
+double initialBottomSheetExtent(ref) => 0.15;
 
 @riverpod
 double middleBottomSheetExtent(ref) => 0.3;

@@ -23,7 +23,7 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
         ref.read(localCurrentTimeSlotHeightProvider);
 
     // hide bottom sheet while dragging
-    ref.read(showBottomSheetProvider.notifier).state = false;
+    ref.read(sheetExtentProvider.notifier).hideBottomSheet();
 
     final newDy = localDy + details.delta.dy;
     // Calculate the bottom position of the draggable box
@@ -68,7 +68,7 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
     ref.read(scrollControllerNotifierProvider.notifier).stopAutoScroll();
 
     // display back bottom sheet when drag end
-    ref.read(showBottomSheetProvider.notifier).state = true;
+    ref.read(sheetExtentProvider.notifier).redisplayBottomSheet();
 
     // scroll extra if timeslot drag caused scrolling.
     if (isScrolled && isScrolledUp) {

@@ -6,24 +6,7 @@ part of 'calendar_state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$initialBottomSheetExtentHash() =>
-    r'952e2208cdaf89e0b09129b46c1146625d90b926';
-
-/// See also [InitialBottomSheetExtent].
-@ProviderFor(InitialBottomSheetExtent)
-final initialBottomSheetExtentProvider =
-    AutoDisposeNotifierProvider<InitialBottomSheetExtent, double>.internal(
-  InitialBottomSheetExtent.new,
-  name: r'initialBottomSheetExtentProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$initialBottomSheetExtentHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$InitialBottomSheetExtent = AutoDisposeNotifier<double>;
-String _$sheetExtentHash() => r'c3290e05bbd5b52569fa17398fa7282941d4279b';
+String _$sheetExtentHash() => r'86107836a115f1622b4e5ba02f027d0d2a5ea509';
 
 /// See also [SheetExtent].
 @ProviderFor(SheetExtent)
