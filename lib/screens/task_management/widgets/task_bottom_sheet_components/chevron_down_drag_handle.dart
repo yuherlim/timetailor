@@ -39,10 +39,9 @@ class ChevronDownDragHandle extends ConsumerWidget {
     return GestureDetector(
       onTap: () => ref.read(bottomSheetScrollControllerNotifierProvider.notifier).scrollToMiddleExtent(),
       child: Center(
-        child: Container(
+        child: SizedBox(
           height: 20,
           width: 60,
-          margin: const EdgeInsets.only(top: 12, bottom: 8),
           child: CustomPaint(
             painter: ChevronDownPainter(color: chevronColor),
           ),

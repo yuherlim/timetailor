@@ -38,7 +38,6 @@ class ChevronUpDragHandle extends ConsumerWidget {
 
     return GestureDetector(
       onTap: () {
-        print("ontap triggered");
         ref.read(bottomSheetScrollControllerNotifierProvider.notifier).scrollToMiddleExtent();
       },
       child: Center(
