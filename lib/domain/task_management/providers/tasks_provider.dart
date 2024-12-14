@@ -3,6 +3,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timetailor/data/task_management/models/task.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
+import 'package:timetailor/domain/task_management/providers/date_provider.dart';
+import 'package:timetailor/domain/task_management/task_manager.dart';
 
 part 'tasks_provider.g.dart'; // Generated file
 
@@ -47,7 +49,7 @@ class TasksNotifier extends _$TasksNotifier {
     final localCurrentTimeSlotHeight = currentTimeSlotHeight;
     final calendarWidgetBottomBoundaryY =
         ref.read(calendarWidgetBottomBoundaryYProvider);
-    
+
     final localDyBottom = localDy + localCurrentTimeSlotHeight;
 
     // Calculate start time
@@ -82,17 +84,10 @@ class TasksNotifier extends _$TasksNotifier {
     endHour += endMinutes ~/ 60; // Carry over extra minutes to hours
     endMinutes %= 60; // Ensure minutes stay within 0-59
 
-    // Format as "HH:MM AM/PM"
-    String formatTime(int hour, int minutes) {
-      final period = hour >= 12 ? 'PM' : 'AM';
-      final normalizedHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
-      final paddedMinutes = minutes.toString().padLeft(2, '0');
-      return '$normalizedHour:$paddedMinutes $period';
-    }
-
     ref.read(startTimeProvider.notifier).state =
-        formatTime(startHour, startMinutes);
-    ref.read(endTimeProvider.notifier).state = formatTime(endHour, endMinutes);
+        TaskManager.formatTime(startHour, startMinutes);
+    ref.read(endTimeProvider.notifier).state =
+        TaskManager.formatTime(endHour, endMinutes);
   }
 
   // Get the task's position from their start and end time.
@@ -132,6 +127,34 @@ class TasksNotifier extends _$TasksNotifier {
       'currentTimeSlotHeight': currentTimeSlotHeight,
       'dyBottom': dyBottom,
     };
+  }
+
+  DateTime? parseTimeToDateTime(String time) {
+    time = time.trim();
+    // Define a RegExp to match the time in "h:mm am/pm" format
+    final timeRegExp =
+        RegExp(r'^(\d{1,2}):(\d{2})\s?(AM|PM)$', caseSensitive: false);
+    final match = timeRegExp.firstMatch(time);
+
+    if (match != null) {
+      final hour = int.parse(match.group(1)!);
+      final minute = int.parse(match.group(2)!);
+      final period = match.group(3)!.toUpperCase();
+
+      // Convert the hour to 24-hour format
+      final convertedHour = (period == 'PM' && hour != 12)
+          ? hour + 12
+          : (period == 'AM' && hour == 12)
+              ? 0
+              : hour;
+
+      // Combine the parsed time with the current date
+      final now = ref.read(currentDateNotifierProvider);
+      return DateTime(now.year, now.month, now.day, convertedHour, minute);
+    }
+
+    // Return null if the string does not match the expected format
+    return null;
   }
 
   void cancelTaskCreation() {

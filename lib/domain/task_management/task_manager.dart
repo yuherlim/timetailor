@@ -23,4 +23,12 @@ class TaskManager {
     }
     return slotIndex;
   }
+
+  // Format as "HH:MM AM/PM"
+  static String formatTime(int hour, int minutes) {
+    final period = hour >= 12 ? 'PM' : 'AM';
+    final normalizedHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+    final paddedMinutes = minutes.toString().padLeft(2, '0');
+    return '$normalizedHour:$paddedMinutes $period';
+  }
 }

@@ -8,7 +8,9 @@ import 'package:timetailor/domain/task_management/providers/calendar_state_provi
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/chevron_down_drag_handle.dart';
 import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/chevron_up_drag_handle.dart';
+import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/end_time_widget.dart';
 import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/middle_drag_handle.dart';
+import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/start_time_widget.dart';
 import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/task_creation_header.dart';
 
 class TaskBottomSheet extends ConsumerStatefulWidget {
@@ -19,6 +21,7 @@ class TaskBottomSheet extends ConsumerStatefulWidget {
 }
 
 class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
+
   void initializeMaxExtent() {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
     final double bottomSheetMaxExtent =
@@ -34,7 +37,6 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    print("sheetExtent after update: ${ref.watch(sheetExtentProvider)}");
     final maxExtent = ref.watch(maxBottomSheetExtentProvider);
 
     if (maxExtent == 0.0) {
@@ -57,13 +59,10 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
         onNotification: (notification) {
           final notificationExtent = notification.extent;
           final sheetExtentNotifier = ref.read(sheetExtentProvider.notifier);
-          print("notificationExtent: $notificationExtent");
 
           // Check for snap sizes with tolerance
           if ((notificationExtent - initialBottomSheetExtent).abs() <
               tolerance) {
-            print(
-                "notificationExtent after adjust: ${(notificationExtent - initialBottomSheetExtent).abs()}");
             sheetExtentNotifier.update(initialBottomSheetExtent);
             
           } else if ((notificationExtent - middleBottomSheetExtent).abs() <
@@ -110,13 +109,12 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
                         const ChevronDownDragHandle(),
 
                       if (currentExtent == initialBottomSheetExtent)
-                        Row(
+                        const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            StyledTitle(
-                                "Start: ${ref.read(startTimeProvider)}"),
-                            const SizedBox(width: 16),
-                            StyledTitle("End: ${ref.read(endTimeProvider)}")
+                            StartTimeWidget(),
+                            SizedBox(width: 16),
+                            EndTimeWidget(),
                           ],
                         ),
 
