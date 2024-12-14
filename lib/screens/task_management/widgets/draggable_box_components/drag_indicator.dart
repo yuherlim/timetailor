@@ -21,6 +21,7 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
     final localDy = ref.read(localDyProvider);
     final localCurrentTimeSlotHeight =
         ref.read(localCurrentTimeSlotHeightProvider);
+    final defaultTimeSlotHeight = ref.read(defaultTimeSlotHeightProvider);
     final calendarWidgetTopBoundaryY =
         ref.read(calendarWidgetTopBoundaryYProvider);
 
@@ -41,21 +42,33 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
     final viewportBottom = ref.read(scrollControllerNotifierProvider).offset +
         ref.read(scrollControllerNotifierProvider).position.viewportDimension;
 
-    final exceedTopBoundary = localDy < ref.read(scrollControllerNotifierProvider).offset;
-    final exceedBottomBoundary = draggableBoxBottomBoundary > viewportBottom;
+    debugPrint("==========================");
+    debugPrint("debug start");
+    debugPrint("==========================");
+    
+    debugPrint("viewPortBottom: $viewportBottom");
 
-    // scroll behaviour
-    if (exceedTopBoundary && exceedBottomBoundary) {
-      // don't auto scroll, to avoid the scroll glitching.
-      ref.read(scrollControllerNotifierProvider.notifier).stopAutoScroll();
-    } else if (exceedTopBoundary && details.delta.dy < 0) {
+    // the viewport bottom relative to the current screen without accounting for scroll offset.
+    final screenViewportBottom = ref.read(scrollControllerNotifierProvider).position.viewportDimension;
+
+    debugPrint("screenViewportBottom: $screenViewportBottom");
+    debugPrint("bottom boundary of box: $draggableBoxBottomBoundary");
+
+    final boxBottomBoundaryExceedThirtyPercentFromBottom = draggableBoxBottomBoundary < viewportBottom * 0.7;
+    final boxTopBoundaryExceedThirtyPercentFromTop = newDy > screenViewportBottom * 0.3;
+    final exceedCalendarTopBoundary =
+        newDy < ref.read(scrollControllerNotifierProvider).offset;
+    final exceedCalendarBottomBoundary = draggableBoxBottomBoundary > viewportBottom;
+    // final bigTimeSlot = localCurrentTimeSlotHeight > defaultTimeSlotHeight * 3;
+
+    if (exceedCalendarTopBoundary && boxBottomBoundaryExceedThirtyPercentFromBottom) {
       // auto scroll up if exceed top boundary
       ref
           .read(scrollControllerNotifierProvider.notifier)
           .startUpwardsAutoDrag();
       isScrolledNotifier.state = true;
       isScrolledUpNotifier.state = true;
-    } else if (exceedBottomBoundary && details.delta.dy > 0) {
+    } else if (exceedCalendarBottomBoundary && boxTopBoundaryExceedThirtyPercentFromTop) {
       // auto scroll down if exceed bottom boundary
       ref
           .read(scrollControllerNotifierProvider.notifier)
@@ -65,6 +78,26 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
     } else {
       ref.read(scrollControllerNotifierProvider.notifier).stopAutoScroll();
     }
+  }
+
+  void autoScrollWhenBoundariesExceed(DragUpdateDetails details) {
+    if (details.delta.dy < 0) {
+        // auto scroll up if user is dragging upwards.
+        ref
+            .read(scrollControllerNotifierProvider.notifier)
+            .startUpwardsAutoDrag();
+        ref.read(isScrolledProvider.notifier).state = true;
+        ref.read(isScrolledUpProvider.notifier).state = true;
+      } else if (details.delta.dy > 0) {
+        // auto scroll down if user is dragging downards.
+        ref
+            .read(scrollControllerNotifierProvider.notifier)
+            .startDownwardsAutoDrag();
+        ref.read(isScrolledProvider.notifier).state = true;
+        ref.read(isScrolledUpProvider.notifier).state = false;
+      } else {
+        ref.read(scrollControllerNotifierProvider.notifier).stopAutoScroll();
+      }
   }
 
   void _handleDragEnd() {
