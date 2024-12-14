@@ -29,6 +29,10 @@ class CurrentDateNotifier extends _$CurrentDateNotifier {
   bool currentDateIsToday() {
     return state == todayDate();
   }
+
+  bool currentDateMoreThanEqualToday() {
+    return !state.isBefore(todayDate());
+  }
 }
 
 @riverpod

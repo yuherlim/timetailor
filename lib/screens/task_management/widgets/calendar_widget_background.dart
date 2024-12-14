@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
+import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 import 'package:timetailor/domain/task_management/task_manager.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_painter.dart';
@@ -67,7 +68,11 @@ class _CalendarWidgetBackgroundState
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapUp: (details) {
-        _handleCalendarOnTapUp(details: details);
+        if (ref
+            .read(currentDateNotifierProvider.notifier)
+            .currentDateMoreThanEqualToday()) {
+          _handleCalendarOnTapUp(details: details);
+        }
       },
       child: Padding(
         padding:

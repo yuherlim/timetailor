@@ -48,6 +48,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
         ref.read(scrollControllerNotifierProvider.notifier);
     final currentTimePosition = ref.read(currentTimePositionNotifierProvider);
 
+
     // Binary search to find the correct time slot
     int slotIndex = TaskManager.binarySearchSlotIndex(
         currentTimePosition, ref.read(timeSlotBoundariesProvider));
@@ -83,6 +84,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
           currentTimeSlotHeight: ref.read(localCurrentTimeSlotHeightProvider),
         );
 
+    // display draggable box
     ref.read(showDraggableBoxProvider.notifier).state = true;
   }
 
@@ -116,15 +118,15 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
   Widget build(BuildContext context) {
     final currentSelectedDate = ref.watch(currentDateNotifierProvider);
     final currentMonth = ref.watch(currentMonthNotifierProvider);
+    final isValidDate = ref.read(currentDateNotifierProvider.notifier).currentDateMoreThanEqualToday();
 
     return Stack(
       clipBehavior: Clip.none, // Allow children to overflow the bounds
       children: [
         Scaffold(
-          floatingActionButton: !ref.watch(showDraggableBoxProvider)
+          floatingActionButton: !ref.watch(showDraggableBoxProvider) && isValidDate
               ? FloatingActionButton(
                   onPressed: () {
-                    ref.read(showDraggableBoxProvider.notifier).state = true;
                     _onTaskCreate();
                   },
                   child: const Icon(Icons.add),
