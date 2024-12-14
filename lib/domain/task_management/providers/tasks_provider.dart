@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timetailor/data/task_management/models/task.dart';
@@ -37,41 +38,16 @@ class TasksNotifier extends _$TasksNotifier {
     required double dy,
     required double currentTimeSlotHeight,
   }) {
-    // Fetch required providers
-
-    final snapIntervalMinutes = ref.read(snapIntervalMinutesProvider);
-    final snapIntervalHeight = ref.read(snapIntervalHeightProvider);
-
-    final localDy = dy;
-    final localCurrentTimeSlotHeight = currentTimeSlotHeight;
-    final calendarWidgetBottomBoundaryY =
-        ref.read(calendarWidgetBottomBoundaryYProvider);
-
-    final localDyBottom = localDy + localCurrentTimeSlotHeight;
 
     // Calculate start time
     final startTime = calculateStartTime();
     final startHour = startTime["startHour"]!;
     final startMinutes = startTime["startMinutes"]!;
 
-    // Calculate duration in minutes
-    int durationMinutes =
-        ((localCurrentTimeSlotHeight / snapIntervalHeight).round() *
-                snapIntervalMinutes)
-            .toInt();
-
     // Calculate end time
-    int endHour = startHour + (durationMinutes ~/ 60);
-    int endMinutes = startMinutes + (durationMinutes % 60);
-
-    if (localDyBottom >= calendarWidgetBottomBoundaryY) {
-      endHour = 23; // Set to 11 PM
-      endMinutes = 59; // Set to 59 minutes
-    }
-
-    // Normalize endMinutes to prevent weird times like "7:60 PM"
-    endHour += endMinutes ~/ 60; // Carry over extra minutes to hours
-    endMinutes %= 60; // Ensure minutes stay within 0-59
+    final endTime = calculateEndTime();
+    final endHour = endTime["endHour"]!;
+    final endMinutes = endTime["endMinutes"]!;
 
     ref.read(startTimeProvider.notifier).state =
         formatTime(startHour, startMinutes);
@@ -149,6 +125,94 @@ class TasksNotifier extends _$TasksNotifier {
       "startHour": startHour,
       "startMinutes": startMinutes,
     };
+  }
+
+  Map<String, int> calculateEndTime() {
+    final snapIntervalHeight = ref.read(snapIntervalHeightProvider);
+    final calendarWidgetBottomBoundaryY =
+        ref.read(calendarWidgetBottomBoundaryYProvider);
+    final localDyBottom = ref.read(localDyBottomProvider);
+
+// Calculate duration in minutes
+    int durationMinutes = calculateDurationInMinutes();
+    
+    // Calculate start time
+    final startTime = calculateStartTime();
+    final startHour = startTime["startHour"]!;
+    final startMinutes = startTime["startMinutes"]!;
+
+    // Calculate end time
+    int endHour = startHour + (durationMinutes ~/ 60);
+    int endMinutes = startMinutes + (durationMinutes % 60);
+
+    final lastSnapIntervalMidpointDy = calendarWidgetBottomBoundaryY - snapIntervalHeight / 2;
+
+    if (localDyBottom > lastSnapIntervalMidpointDy) {
+      endHour = 23; // Set to 11 PM
+      endMinutes = 59; // Set to 59 minutes
+    }
+
+    // Normalize endMinutes to prevent weird times like "7:60 PM"
+    endHour += endMinutes ~/ 60; // Carry over extra minutes to hours
+    endMinutes %= 60; // Ensure minutes stay within 0-59
+
+    return {
+      "endHour": endHour,
+      "endMinutes": endMinutes,
+    };
+  }
+
+  int calculateDurationInMinutes() {
+    final localCurrentTimeSlotHeight = ref.read(localCurrentTimeSlotHeightProvider);
+    final snapIntervalHeight = ref.read(snapIntervalHeightProvider);
+    final snapIntervalMinutes = ref.read(snapIntervalMinutesProvider);
+
+    return
+        ((localCurrentTimeSlotHeight / snapIntervalHeight).round() *
+                snapIntervalMinutes)
+            .toInt();
+  }
+
+  String formattedDurationString() {
+    final durationMinutes = calculateDurationInMinutes();
+    final hours = durationMinutes ~/ 60;
+    final minutes = durationMinutes % 60;
+
+    final hourStr = "$hours hour(s)";
+    final minuteStr = "$minutes minute(s)";
+
+    String outputStr = "";
+
+    if (hours > 0) {
+      outputStr += hourStr;
+    }
+
+    if (minutes > 0) {
+      outputStr += " $minuteStr";
+    }
+
+    return outputStr;
+  }
+
+  String durationIndicatorString() {
+    final durationMinutes = calculateDurationInMinutes();
+    final hours = durationMinutes ~/ 60;
+    final minutes = durationMinutes % 60;
+
+    final hourStr = "$hours hr(s)";
+    final minuteStr = "$minutes min(s)";
+
+    String outputStr = "";
+
+    if (hours > 0) {
+      outputStr += hourStr;
+    }
+
+    if (minutes > 0) {
+      outputStr += " $minuteStr";
+    }
+
+    return outputStr;
   }
 
   void cancelTaskCreation() {

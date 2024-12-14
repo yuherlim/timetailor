@@ -75,16 +75,16 @@ double timeIndicatorIconSize(ref) => 8;
 double draggableBoxIndicatorWidth(ref) => 60;
 
 @riverpod
-double draggableBoxIndicatorHeight(ref) => 20;
+double draggableBoxIndicatorHeight(ref) => 40;
 
 @riverpod
 double draggableBoxIndicatorIconSize(ref) => 16;
 
 @riverpod
-double dragIndicatorWidth(ref) => 70;
+double defaultDragIndicatorWidth(ref) => 70;
 
 @riverpod
-double dragIndicatorHeight(ref) => 30;
+double defaultDragIndicatorHeight(ref) => 40;
 
 @riverpod
 double dragIndicatorIconSize(ref) => 16;

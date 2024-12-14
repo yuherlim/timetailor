@@ -6,22 +6,22 @@ import 'package:timetailor/domain/task_management/providers/calendar_state_provi
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 import 'package:timetailor/domain/task_management/task_manager.dart';
 
-class TopTimeIndicator extends ConsumerStatefulWidget {
-  const TopTimeIndicator({super.key});
+class BottomTimeIndicator extends ConsumerStatefulWidget {
+  const BottomTimeIndicator({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
-      _TopTimeIndicatorState();
+      _BottomTimeIndicatorState();
 }
 
-class _TopTimeIndicatorState extends ConsumerState<TopTimeIndicator> {
+class _BottomTimeIndicatorState extends ConsumerState<BottomTimeIndicator> {
   double calculateTopPosition({
-    required double dy,
+    required double dyBottom,
     required double textHeight,
   }) {
     final timeSlotBoundaries = ref.read(timeSlotBoundariesProvider);
     // Adjust for padding before snapping
-    final adjustedDy = dy - ref.read(calendarWidgetTopBoundaryYProvider);
+    final adjustedDy = dyBottom - ref.read(calendarWidgetTopBoundaryYProvider);
 
     // Snap position to the nearest interval
     double newDy = (adjustedDy / ref.read(snapIntervalHeightProvider)).round() *
@@ -33,31 +33,39 @@ class _TopTimeIndicatorState extends ConsumerState<TopTimeIndicator> {
     // minor adjustments to center the text and put it inline with the line.
     final finalDy = newDy - textHeight / 2;
 
+    debugPrint("finalDy: $finalDy");
+
     return !timeSlotBoundaries.contains(newDy) ? finalDy : 0.0;
   }
 
   @override
   Widget build(BuildContext context) {
     final sidePadding = ref.watch(sidePaddingProvider);
-    final dy = ref.watch(localDyProvider);
-    final startTime =
-        ref.read(tasksNotifierProvider.notifier).calculateStartTime();
-    final startHour = startTime["startHour"]!;
-    final startMinutes = startTime["startMinutes"]!;
-    final startTimeOutput = ref.read(tasksNotifierProvider.notifier).formatTime(startHour, startMinutes);
-    final textSize = TimeIndicatorText(startTimeOutput).getTextSize(context);
+    final dyBottom = ref.watch(localDyBottomProvider);
+    final endTime =
+        ref.read(tasksNotifierProvider.notifier).calculateEndTime();
+    final endHour = endTime["endHour"]!;
+    final endMinutes = endTime["endMinutes"]!;
+    final endTimeOutput = ref
+        .read(tasksNotifierProvider.notifier)
+        .formatTime(endHour, endMinutes);
+    final textSize = TimeIndicatorText(endTimeOutput).getTextSize(context);
     final topPosition = calculateTopPosition(
-      dy: dy,
+      dyBottom: dyBottom,
       textHeight: textSize.height,
     );
 
-    debugPrint("startTimeOutput: $startTimeOutput");
+    debugPrint("endTime: $endTimeOutput");
+    debugPrint("dyTop: ${ref.read(localDyProvider)}");
+    debugPrint("currentHeight: ${ref.read(localCurrentTimeSlotHeightProvider)}");
+    debugPrint("dyBottom: $dyBottom");
 
+    // only print if it is not the main time slot.
     if (topPosition != 0.0) {
       return Positioned(
         left: sidePadding,
         top: topPosition,
-        child: TimeIndicatorText(TaskManager.addPaddingToTime(startTimeOutput)),
+        child: TimeIndicatorText(TaskManager.addPaddingToTime(endTimeOutput)),
       );
     } else {
       return const SizedBox.shrink();

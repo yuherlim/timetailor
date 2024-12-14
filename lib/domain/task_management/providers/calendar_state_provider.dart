@@ -11,7 +11,7 @@ final maxBottomSheetExtentProvider = StateProvider<double>((ref) => 0.0);
 final localDyProvider = StateProvider<double>((ref) => 0.0);
 final localCurrentTimeSlotHeightProvider = StateProvider<double>((ref) => 0.0);
 final localDyBottomProvider = StateProvider<double>((ref) =>
-    ref.read(localDyProvider) + ref.read(localCurrentTimeSlotHeightProvider));
+    ref.watch(localDyProvider) + ref.watch(localCurrentTimeSlotHeightProvider));
 final showDraggableBoxProvider = StateProvider<bool>((ref) => false);
 final isScrolledProvider = StateProvider<bool>((ref) => false);
 final isScrolledUpProvider = StateProvider<bool>((ref) => false);
@@ -22,6 +22,10 @@ final sidePaddingProvider = StateProvider<double>((ref) => 0.0);
 final textPaddingProvider = StateProvider<double>((ref) => 0.0);
 final startTimeProvider = StateProvider<String>((ref) => "N/A");
 final endTimeProvider = StateProvider<String>((ref) => "N/A");
+final durationProvider = StateProvider<String>((ref) => "N/A");
+
+final dragIndicatorWidthProvider = StateProvider<double>((ref) => ref.watch(slotWidthProvider));
+final dragIndicatorHeightProvider = StateProvider<double>((ref) => ref.watch(localCurrentTimeSlotHeightProvider));
 
 
 @riverpod

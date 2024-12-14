@@ -7,7 +7,7 @@ part of 'date_provider.dart';
 // **************************************************************************
 
 String _$currentDateNotifierHash() =>
-    r'3cb3012d5c37fd91c7faee454d643779d51ed832';
+    r'0520f63631510f9a602a78a1b4d321ec8974eeee';
 
 /// See also [CurrentDateNotifier].
 @ProviderFor(CurrentDateNotifier)

@@ -129,7 +129,7 @@ class TimeIndicatorText extends StatelessWidget {
       text: TextSpan(
         text: text,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: FontWeight.bold,
               letterSpacing: 1,
             ),
@@ -146,10 +146,31 @@ class TimeIndicatorText extends StatelessWidget {
       // text.toUpperCase(),
       text,
       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            fontSize: 12,
+            fontSize: 11,
             fontWeight: FontWeight.bold,
             letterSpacing: 1,
           ),
+    );
+  }
+}
+
+class BottomSheetDurationText extends StatelessWidget {
+  final String text;
+
+  const BottomSheetDurationText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      // text.toUpperCase(),
+      text,
+      style: GoogleFonts.kanit(
+        textStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              letterSpacing: 2,
+            ),
+      ),
     );
   }
 }

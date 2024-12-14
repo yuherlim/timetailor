@@ -8,16 +8,16 @@ import 'package:timetailor/domain/task_management/providers/calendar_read_only_p
 import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 
-class BottomIndicator extends ConsumerStatefulWidget {
-  const BottomIndicator({
+class BottomDragIndicator extends ConsumerStatefulWidget {
+  const BottomDragIndicator({
     super.key,
   });
 
   @override
-  ConsumerState<BottomIndicator> createState() => _BottomIndicatorState();
+  ConsumerState<BottomDragIndicator> createState() => _BottomDragIndicatorState();
 }
 
-class _BottomIndicatorState extends ConsumerState<BottomIndicator> {
+class _BottomDragIndicatorState extends ConsumerState<BottomDragIndicator> {
   void _handleBottomDrag({
     required DragUpdateDetails details,
   }) {

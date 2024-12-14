@@ -4,10 +4,13 @@ import 'package:timetailor/domain/task_management/providers/calendar_state_provi
 import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/calendar_widget_background.dart';
 import 'package:timetailor/screens/task_management/widgets/current_time_indicator.dart';
-import 'package:timetailor/screens/task_management/widgets/draggable_box_components/bottom_indicator.dart';
+import 'package:timetailor/screens/task_management/widgets/draggable_box_components/bottom_drag_indicator.dart';
+import 'package:timetailor/screens/task_management/widgets/draggable_box_components/bottom_duration_indicator.dart';
+import 'package:timetailor/screens/task_management/widgets/draggable_box_components/bottom_time_indicator.dart';
 import 'package:timetailor/screens/task_management/widgets/draggable_box_components/drag_indicator.dart';
 import 'package:timetailor/screens/task_management/widgets/draggable_box_components/draggable_box.dart';
-import 'package:timetailor/screens/task_management/widgets/draggable_box_components/top_indicator.dart';
+import 'package:timetailor/screens/task_management/widgets/draggable_box_components/top_duration_indicator.dart';
+import 'package:timetailor/screens/task_management/widgets/draggable_box_components/top_drag_indicator.dart';
 import 'package:timetailor/screens/task_management/widgets/draggable_box_components/top_time_indicator.dart';
 
 class CalendarWidget extends ConsumerStatefulWidget {
@@ -45,13 +48,18 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
           const CalendarWidgetBackground(),
           // draggable box
           if (ref.watch(showDraggableBoxProvider)) const DraggableBox(),
-          // Top Indicator
-          if (ref.watch(showDraggableBoxProvider)) const TopIndicator(),
-          if (ref.watch(showDraggableBoxProvider)) const TopTimeIndicator(),
-          // Bottom Indicator
-          if (ref.watch(showDraggableBoxProvider)) const BottomIndicator(),
+          // top duration indicator
+          if (ref.watch(showDraggableBoxProvider)) const TopDurationIndicator(),
+          // bottom duration indicator
+          if (ref.watch(showDraggableBoxProvider)) const BottomDurationIndicator(),
           // drag Indicator
           if (ref.watch(showDraggableBoxProvider)) const DragIndicator(),
+          // Top Indicator
+          if (ref.watch(showDraggableBoxProvider)) const TopDragIndicator(),
+          if (ref.watch(showDraggableBoxProvider)) const TopTimeIndicator(),
+          // Bottom Indicator
+          if (ref.watch(showDraggableBoxProvider)) const BottomDragIndicator(),
+          if (ref.watch(showDraggableBoxProvider)) const BottomTimeIndicator(),
           // Current Time Indicator
           const CurrentTimeIndicator(),
         ],

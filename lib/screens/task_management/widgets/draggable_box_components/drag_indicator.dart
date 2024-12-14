@@ -21,6 +21,8 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
     final localDy = ref.read(localDyProvider);
     final localCurrentTimeSlotHeight =
         ref.read(localCurrentTimeSlotHeightProvider);
+    final calendarWidgetTopBoundaryY =
+        ref.read(calendarWidgetTopBoundaryYProvider);
 
     // hide bottom sheet while dragging
     ref.read(sheetExtentProvider.notifier).hideBottomSheet();
@@ -29,7 +31,7 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
     // Calculate the bottom position of the draggable box
     final draggableBoxBottomBoundary = newDy + localCurrentTimeSlotHeight;
 
-    if (newDy >= ref.read(calendarWidgetTopBoundaryYProvider) &&
+    if (newDy >= calendarWidgetTopBoundaryY &&
         draggableBoxBottomBoundary <=
             ref.read(calendarWidgetBottomBoundaryYProvider)) {
       localDyNotifier.state = newDy;
@@ -39,15 +41,21 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
     final viewportBottom = ref.read(scrollControllerNotifierProvider).offset +
         ref.read(scrollControllerNotifierProvider).position.viewportDimension;
 
+    final exceedTopBoundary = localDy < ref.read(scrollControllerNotifierProvider).offset;
+    final exceedBottomBoundary = draggableBoxBottomBoundary > viewportBottom;
+
     // scroll behaviour
-    if (localDy < ref.read(scrollControllerNotifierProvider).offset) {
+    if (exceedTopBoundary && exceedBottomBoundary) {
+      // don't auto scroll, to avoid the scroll glitching.
+      ref.read(scrollControllerNotifierProvider.notifier).stopAutoScroll();
+    } else if (exceedTopBoundary && details.delta.dy < 0) {
       // auto scroll up if exceed top boundary
       ref
           .read(scrollControllerNotifierProvider.notifier)
           .startUpwardsAutoDrag();
       isScrolledNotifier.state = true;
       isScrolledUpNotifier.state = true;
-    } else if (draggableBoxBottomBoundary > viewportBottom) {
+    } else if (exceedBottomBoundary && details.delta.dy > 0) {
       // auto scroll down if exceed bottom boundary
       ref
           .read(scrollControllerNotifierProvider.notifier)
@@ -104,13 +112,33 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
 
   @override
   Widget build(BuildContext context) {
+    final dragIndicatorWidth = ref.watch(dragIndicatorWidthProvider);
+    final defaultDragIndicatorWidth =
+        ref.watch(defaultDragIndicatorWidthProvider);
+    final dragIndicatorHeight = ref.watch(dragIndicatorHeightProvider);
+    final defaultDragIndicatorHeight =
+        ref.watch(defaultDragIndicatorHeightProvider);
+    final snapIntervalHeight = ref.read(snapIntervalHeightProvider);
+
+    final leftPosition = ref.watch(slotStartXProvider) -
+        dragIndicatorWidth * 0.5 +
+        ref.watch(slotWidthProvider) * 0.5;
+    final defaultLeftPosition = ref.watch(slotStartXProvider) -
+        defaultDragIndicatorWidth * 0.5 +
+        ref.watch(slotWidthProvider) * 0.5;
+    final topPosition = ref.watch(localDyProvider) -
+        dragIndicatorHeight * 0.5 +
+        ref.watch(localCurrentTimeSlotHeightProvider) * 0.5;
+    final defaultTopPosition = ref.watch(localDyProvider) -
+        defaultDragIndicatorHeight * 0.5 +
+        ref.watch(localCurrentTimeSlotHeightProvider) * 0.5;
+
+    final draggableBoxSizeIsSmall =
+        dragIndicatorHeight <= snapIntervalHeight * 3;
+
     return Positioned(
-      left: ref.watch(slotStartXProvider) -
-          ref.watch(dragIndicatorWidthProvider) * 0.5 +
-          ref.watch(slotWidthProvider) * 0.5,
-      top: ref.watch(localDyProvider) -
-          ref.watch(dragIndicatorHeightProvider) * 0.5 +
-          ref.watch(localCurrentTimeSlotHeightProvider) * 0.5,
+      left: !draggableBoxSizeIsSmall ? leftPosition : defaultLeftPosition,
+      top: !draggableBoxSizeIsSmall ? topPosition : defaultTopPosition,
       child: GestureDetector(
         onVerticalDragUpdate: (details) {
           _handleDrag(details: details);
@@ -119,10 +147,17 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
           _handleDragEnd();
         },
         child: Container(
-          width: ref.watch(dragIndicatorWidthProvider),
-          height: ref.watch(dragIndicatorHeightProvider),
+          width: !draggableBoxSizeIsSmall
+              ? dragIndicatorWidth
+              : defaultDragIndicatorWidth,
+          height: !draggableBoxSizeIsSmall
+              ? dragIndicatorHeight
+              : defaultDragIndicatorHeight,
           decoration: BoxDecoration(
-            color: AppColors.primaryAccent,
+            color: !draggableBoxSizeIsSmall
+                ? AppColors.primaryAccent.withOpacity(0.2)
+                : AppColors.primaryAccent,
+            // color: Colors.transparent,
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.circular(5),
           ),

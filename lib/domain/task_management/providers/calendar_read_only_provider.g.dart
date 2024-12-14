@@ -203,7 +203,7 @@ final draggableBoxIndicatorWidthProvider = AutoDisposeProvider<double>.internal(
 // ignore: unused_element
 typedef DraggableBoxIndicatorWidthRef = AutoDisposeProviderRef<double>;
 String _$draggableBoxIndicatorHeightHash() =>
-    r'accbf565d1b65f3598b4280fb95f1ad4249e985d';
+    r'6cb6d8914be8379be5ff0102bf55e7b8ff5fe29a';
 
 /// See also [draggableBoxIndicatorHeight].
 @ProviderFor(draggableBoxIndicatorHeight)
@@ -240,42 +240,42 @@ final draggableBoxIndicatorIconSizeProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DraggableBoxIndicatorIconSizeRef = AutoDisposeProviderRef<double>;
-String _$dragIndicatorWidthHash() =>
-    r'234d29fce6f48132755da1d97ea2fdb526220438';
+String _$defaultDragIndicatorWidthHash() =>
+    r'f67a5214a97e0d55d1fb31112f527115c937a18c';
 
-/// See also [dragIndicatorWidth].
-@ProviderFor(dragIndicatorWidth)
-final dragIndicatorWidthProvider = AutoDisposeProvider<double>.internal(
-  dragIndicatorWidth,
-  name: r'dragIndicatorWidthProvider',
+/// See also [defaultDragIndicatorWidth].
+@ProviderFor(defaultDragIndicatorWidth)
+final defaultDragIndicatorWidthProvider = AutoDisposeProvider<double>.internal(
+  defaultDragIndicatorWidth,
+  name: r'defaultDragIndicatorWidthProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$dragIndicatorWidthHash,
+      : _$defaultDragIndicatorWidthHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef DragIndicatorWidthRef = AutoDisposeProviderRef<double>;
-String _$dragIndicatorHeightHash() =>
-    r'da6acdc28879e4e0061d2cb58f074f3922c31075';
+typedef DefaultDragIndicatorWidthRef = AutoDisposeProviderRef<double>;
+String _$defaultDragIndicatorHeightHash() =>
+    r'e80abc2d96fa679d4a56a468ffb1f98e6b51d5a9';
 
-/// See also [dragIndicatorHeight].
-@ProviderFor(dragIndicatorHeight)
-final dragIndicatorHeightProvider = AutoDisposeProvider<double>.internal(
-  dragIndicatorHeight,
-  name: r'dragIndicatorHeightProvider',
+/// See also [defaultDragIndicatorHeight].
+@ProviderFor(defaultDragIndicatorHeight)
+final defaultDragIndicatorHeightProvider = AutoDisposeProvider<double>.internal(
+  defaultDragIndicatorHeight,
+  name: r'defaultDragIndicatorHeightProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$dragIndicatorHeightHash,
+      : _$defaultDragIndicatorHeightHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef DragIndicatorHeightRef = AutoDisposeProviderRef<double>;
+typedef DefaultDragIndicatorHeightRef = AutoDisposeProviderRef<double>;
 String _$dragIndicatorIconSizeHash() =>
     r'2fdd7f917371c045ee9b9a6bc09bb809f8b3853a';
 
