@@ -78,6 +78,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  bottom_picker:
+    dependency: "direct main"
+    description:
+      name: bottom_picker
+      sha256: "5d52cf94cfe41e3cc448101552f9b2e9faa810e3609e18432280431fb7dd676a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.9.0"
   build:
     dependency: transitive
     description:
@@ -262,14 +270,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.7"
-  easy_date_timeline:
-    dependency: "direct main"
-    description:
-      name: easy_date_timeline
-      sha256: "4eecaf2df247f20e1d30899a979590ebbd3954c40cd5426afd3b72b83d9952ac"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.6"
   fake_async:
     dependency: transitive
     description:
@@ -347,11 +347,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
-  flutter_localizations:
-    dependency: transitive
-    description: flutter
-    source: sdk
-    version: "0.0.0"
   flutter_riverpod:
     dependency: "direct main"
     description:

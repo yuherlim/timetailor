@@ -1,4 +1,5 @@
-import 'package:easy_date_timeline/easy_date_timeline.dart';
+import 'package:bottom_picker/bottom_picker.dart';
+import 'package:bottom_picker/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/core/shared/styled_text.dart';
@@ -21,22 +22,48 @@ class _StartTimeWidgetState extends ConsumerState<StartTimeWidget> {
     final tasksNotifier = ref.read(tasksNotifierProvider.notifier);
     final currentStartTimeInDateTimeFormat =
         tasksNotifier.parseTimeToDateTime(ref.read(startTimeProvider));
+    final currentEndTimeInDateTimeFormat =
+        tasksNotifier.parseTimeToDateTime(ref.read(endTimeProvider));
 
-    if (currentStartTimeInDateTimeFormat == null) {
-      debugPrint("incorrect string format for start time.");
+    if (currentStartTimeInDateTimeFormat == null ||
+        currentEndTimeInDateTimeFormat == null) {
+      debugPrint("incorrect string format for start time and end time.");
       return;
     }
 
-    final currentStartTime = currentStartTimeInDateTimeFormat;
-
-    EasyDateTimeLinePicker(
-      focusedDate: currentStartTime,
-      firstDate: DateTime(1900, 1, 1),
-      lastDate: DateTime(2100, 12, 31),
-      onDateChange: (date) {
-        // Handle the selected date.
-      },
+    final currentStartTime = Time(
+      hours: currentStartTimeInDateTimeFormat.hour,
+      minutes: currentStartTimeInDateTimeFormat.minute,
     );
+
+    final maxTime = Time(
+      hours: currentEndTimeInDateTimeFormat.hour,
+      minutes: currentEndTimeInDateTimeFormat.minute - 5,
+    );
+
+    BottomPicker.time(
+      pickerTitle: Text(
+        'Set your next meeting time',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 15,
+          color: Colors.orange,
+        ),
+      ),
+      onSubmit: (selectedTime) {
+        ref.read(startTimeProvider.notifier).state = TaskManager.formatTime(
+          selectedTime.hour,
+          selectedTime.minute,
+        );
+      },
+      onClose: () {
+        print('Picker closed');
+      },
+      bottomPickerTheme: BottomPickerTheme.orange,
+      use24hFormat: false,
+      initialTime: currentStartTime,
+      maxTime: maxTime,
+    ).show(context);
   }
 
   @override

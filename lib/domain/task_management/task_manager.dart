@@ -24,7 +24,7 @@ class TaskManager {
     return slotIndex;
   }
 
-  // Format as "HH:MM AM/PM"
+  // Format as "HH:MM AM/PM" from 24 hour format
   static String formatTime(int hour, int minutes) {
     final period = hour >= 12 ? 'PM' : 'AM';
     final normalizedHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);

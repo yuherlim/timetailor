@@ -6,6 +6,7 @@ import 'package:timetailor/domain/task_management/providers/bottom_sheet_scroll_
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
+import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/chevron_down_drag_handle.dart';
 import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/chevron_up_drag_handle.dart';
 import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/end_time_widget.dart';
@@ -21,7 +22,6 @@ class TaskBottomSheet extends ConsumerStatefulWidget {
 }
 
 class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
-
   void initializeMaxExtent() {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
     final double bottomSheetMaxExtent =
@@ -64,7 +64,6 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
           if ((notificationExtent - initialBottomSheetExtent).abs() <
               tolerance) {
             sheetExtentNotifier.update(initialBottomSheetExtent);
-            
           } else if ((notificationExtent - middleBottomSheetExtent).abs() <
               tolerance) {
             sheetExtentNotifier.update(middleBottomSheetExtent);
@@ -117,6 +116,8 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
                             EndTimeWidget(),
                           ],
                         ),
+
+                      // if (currentExtent == initialBottomSheetExtent)
 
                       // Conditionally show Cancel and Save buttons
                       if (currentExtent >= middleBottomSheetExtent)
