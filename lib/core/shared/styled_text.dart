@@ -12,9 +12,9 @@ class StyledText extends StatelessWidget {
       text,
       style: GoogleFonts.kanit(
         textStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1,
-        ),
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
+            ),
       ),
     );
   }
@@ -49,9 +49,9 @@ class StyledTitle extends StatelessWidget {
       text,
       style: GoogleFonts.kanit(
         textStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-          letterSpacing: 2,
-        ),
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2,
+            ),
       ),
     );
   }
@@ -69,10 +69,10 @@ class AppBarText extends StatelessWidget {
       text,
       style: GoogleFonts.kanit(
         textStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-          letterSpacing: 2,
-        ),
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              letterSpacing: 2,
+            ),
       ),
     );
   }
@@ -90,10 +90,10 @@ class DateDayText extends StatelessWidget {
       text,
       style: GoogleFonts.kanit(
         textStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontWeight: FontWeight.bold,
-          fontSize: 12,
-          letterSpacing: 1,
-        ),
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+              letterSpacing: 1,
+            ),
       ),
     );
   }
@@ -111,10 +111,45 @@ class DateNumberText extends StatelessWidget {
       text,
       style: GoogleFonts.kanit(
         textStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1,
-        ),
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
+            ),
       ),
+    );
+  }
+}
+
+class TimeIndicatorText extends StatelessWidget {
+  final String text;
+
+  const TimeIndicatorText(this.text, {super.key});
+
+  Size getTextSize(BuildContext context) {
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
+            ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout(); // Layout the text to calculate its size
+
+    return textPainter.size; // Returns width and height of the text
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      // text.toUpperCase(),
+      text,
+      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+          ),
     );
   }
 }

@@ -38,30 +38,21 @@ class TasksNotifier extends _$TasksNotifier {
     required double currentTimeSlotHeight,
   }) {
     // Fetch required providers
-    final defaultTimeSlotHeight = ref.read(defaultTimeSlotHeightProvider);
+
     final snapIntervalMinutes = ref.read(snapIntervalMinutesProvider);
     final snapIntervalHeight = ref.read(snapIntervalHeightProvider);
-    final calendarWidgetTopBoundaryY =
-        ref.read(calendarWidgetTopBoundaryYProvider);
+
     final localDy = dy;
     final localCurrentTimeSlotHeight = currentTimeSlotHeight;
     final calendarWidgetBottomBoundaryY =
         ref.read(calendarWidgetBottomBoundaryYProvider);
-    
+
     final localDyBottom = localDy + localCurrentTimeSlotHeight;
 
     // Calculate start time
-    double topOffsetFromCalendarStart = localDy - calendarWidgetTopBoundaryY;
-    int startHour = (topOffsetFromCalendarStart ~/ defaultTimeSlotHeight);
-    int startMinutes = (((topOffsetFromCalendarStart % defaultTimeSlotHeight) /
-                    snapIntervalHeight)
-                .round() *
-            snapIntervalMinutes)
-        .toInt();
-
-    // Normalize startMinutes to prevent weird times like "7:60 PM"
-    startHour += startMinutes ~/ 60; // Carry over extra minutes to hours
-    startMinutes %= 60; // Ensure minutes stay within 0-59
+    final startTime = calculateStartTime();
+    final startHour = startTime["startHour"]!;
+    final startMinutes = startTime["startMinutes"]!;
 
     // Calculate duration in minutes
     int durationMinutes =
@@ -81,14 +72,6 @@ class TasksNotifier extends _$TasksNotifier {
     // Normalize endMinutes to prevent weird times like "7:60 PM"
     endHour += endMinutes ~/ 60; // Carry over extra minutes to hours
     endMinutes %= 60; // Ensure minutes stay within 0-59
-
-    // Format as "HH:MM AM/PM"
-    String formatTime(int hour, int minutes) {
-      final period = hour >= 12 ? 'PM' : 'AM';
-      final normalizedHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
-      final paddedMinutes = minutes.toString().padLeft(2, '0');
-      return '$normalizedHour:$paddedMinutes $period';
-    }
 
     ref.read(startTimeProvider.notifier).state =
         formatTime(startHour, startMinutes);
@@ -131,6 +114,40 @@ class TasksNotifier extends _$TasksNotifier {
       'dyTop': dyTop,
       'currentTimeSlotHeight': currentTimeSlotHeight,
       'dyBottom': dyBottom,
+    };
+  }
+
+  // Format as "HH:MM AM/PM" from a 24 hours format string
+  String formatTime(int hour, int minutes) {
+    final period = hour >= 12 ? 'PM' : 'AM';
+    final normalizedHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+    final paddedMinutes = minutes.toString().padLeft(2, '0');
+    return '$normalizedHour:$paddedMinutes $period';
+  }
+
+  Map<String, int> calculateStartTime() {
+    final defaultTimeSlotHeight = ref.read(defaultTimeSlotHeightProvider);
+    final calendarWidgetTopBoundaryY =
+        ref.read(calendarWidgetTopBoundaryYProvider);
+    final localDy = ref.read(localDyProvider);
+    final snapIntervalHeight = ref.read(snapIntervalHeightProvider);
+    final snapIntervalMinutes = ref.read(snapIntervalMinutesProvider);
+
+    double topOffsetFromCalendarStart = localDy - calendarWidgetTopBoundaryY;
+    int startHour = (topOffsetFromCalendarStart ~/ defaultTimeSlotHeight);
+    int startMinutes = (((topOffsetFromCalendarStart % defaultTimeSlotHeight) /
+                    snapIntervalHeight)
+                .round() *
+            snapIntervalMinutes)
+        .toInt();
+
+    // Normalize startMinutes to prevent weird times like "7:60 PM"
+    startHour += startMinutes ~/ 60; // Carry over extra minutes to hours
+    startMinutes %= 60; // Ensure minutes stay within 0-59
+
+    return {
+      "startHour": startHour,
+      "startMinutes": startMinutes,
     };
   }
 

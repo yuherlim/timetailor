@@ -8,6 +8,7 @@ import 'package:timetailor/screens/task_management/widgets/draggable_box_compone
 import 'package:timetailor/screens/task_management/widgets/draggable_box_components/drag_indicator.dart';
 import 'package:timetailor/screens/task_management/widgets/draggable_box_components/draggable_box.dart';
 import 'package:timetailor/screens/task_management/widgets/draggable_box_components/top_indicator.dart';
+import 'package:timetailor/screens/task_management/widgets/draggable_box_components/top_time_indicator.dart';
 
 class CalendarWidget extends ConsumerStatefulWidget {
   const CalendarWidget({super.key});
@@ -46,6 +47,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
           if (ref.watch(showDraggableBoxProvider)) const DraggableBox(),
           // Top Indicator
           if (ref.watch(showDraggableBoxProvider)) const TopIndicator(),
+          if (ref.watch(showDraggableBoxProvider)) const TopTimeIndicator(),
           // Bottom Indicator
           if (ref.watch(showDraggableBoxProvider)) const BottomIndicator(),
           // drag Indicator

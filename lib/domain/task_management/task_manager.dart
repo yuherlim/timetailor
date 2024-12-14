@@ -23,4 +23,10 @@ class TaskManager {
     }
     return slotIndex;
   }
+
+  static String addPaddingToTime(String time) {
+    final regex = RegExp(
+        r'^(\d):'); // Matches a single digit at the start followed by ':'
+    return time.replaceFirstMapped(regex, (match) => ' ${match[1]}:');
+  }
 }
