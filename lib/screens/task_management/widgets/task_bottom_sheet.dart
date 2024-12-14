@@ -8,6 +8,7 @@ import 'package:timetailor/domain/task_management/providers/calendar_state_provi
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/chevron_down_drag_handle.dart';
 import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/chevron_up_drag_handle.dart';
+import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/initial_extent_content.dart';
 import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/middle_drag_handle.dart';
 import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/task_creation_header.dart';
 
@@ -110,15 +111,7 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
                         const ChevronDownDragHandle(),
 
                       if (currentExtent == initialBottomSheetExtent)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            StyledTitle(
-                                "Start: ${ref.read(startTimeProvider)}"),
-                            const SizedBox(width: 16),
-                            StyledTitle("End: ${ref.read(endTimeProvider)}")
-                          ],
-                        ),
+                        const InitialExtentContent(),
 
                       // Conditionally show Cancel and Save buttons
                       if (currentExtent >= middleBottomSheetExtent)
