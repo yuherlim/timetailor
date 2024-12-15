@@ -19,35 +19,13 @@ class _TaskCompletionHistoryScreenState
   @override
   Widget build(BuildContext context) {
     final completedTasks = ref
-        .read(tasksNotifierProvider.notifier)
+        .watch(tasksNotifierProvider.notifier)
         .getAllCompletedTasksForCurrentDate();
     return Scaffold(
       appBar: AppBar(
         title: const AppBarText("History"),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const StyledHeading("Task Details"),
-            const SizedBox(height: 20),
-            const StyledTitle("Task Details"),
-            const SizedBox(height: 20),
-            const StyledText("Task Details"),
-            const SizedBox(height: 20),
-            StyledButton(
-              onPressed: () {
-                // Navigate back to the previous screen
-                GoRouter.of(context).canPop()
-                    ? {context.pop()}
-                    : context
-                        .go(RoutePath.taskManagementPath); // Fallback to Tasks
-              },
-              child: const StyledTitle("Back"),
-            ),
-          ],
-        ),
-      ),
+      // body: 
     );
   }
 }

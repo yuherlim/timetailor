@@ -21,6 +21,7 @@ SnackBar shortDurationSnackBar({
 }) {
   return SnackBar(
     content: Text(contentString),
+    behavior: SnackBarBehavior.floating,
     duration: const Duration(seconds: 2),
   );
 }

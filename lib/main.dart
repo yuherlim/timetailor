@@ -9,6 +9,8 @@ import 'package:timetailor/core/theme/theme.dart';
 import 'package:timetailor/core/theme/util.dart';
 import 'package:timetailor/firebase_options.dart';
 
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -35,6 +37,7 @@ class MyApp extends StatelessWidget {
     MaterialTheme theme = MaterialTheme(textTheme);
 
     return MaterialApp.router(
+      scaffoldMessengerKey: scaffoldMessengerKey,
       routerConfig: appRouter,
       title: 'TimeTailor',
       theme: theme.dark(),

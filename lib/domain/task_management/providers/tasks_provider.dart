@@ -1,8 +1,10 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:timetailor/core/shared/custom_snackbars.dart';
 import 'package:timetailor/data/task_management/models/task.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
+import 'package:timetailor/main.dart';
 
 part 'tasks_provider.g.dart'; // Generated file
 
@@ -48,10 +50,33 @@ class TasksNotifier extends _$TasksNotifier {
 
   //fetchTasksOnce
 
+  void undoTaskCompletion({
+    required Task taskToUndo,
+    required double dyTop,
+    required double dyBottom,
+  }) {
+
+    if (checkAddTaskValidity(dyTop: dyTop, dyBottom: dyBottom)) {
+      updateTask(taskToUndo);
+
+      scaffoldMessengerKey.currentState?.showSnackBar(
+        shortDurationSnackBar(
+            contentString: "Undo task completion successful!"),
+      );
+    } else {
+      scaffoldMessengerKey.currentState?.showSnackBar(
+        shortDurationSnackBar(
+            contentString: "Undo task completion failed! Overlapping tasks."),
+      );
+    }
+  }
+
   bool checkAddTaskValidity({
     required double dyTop,
     required double dyBottom,
   }) {
+    final currentDate = ref.read(currentDateNotifierProvider);
+
     return !state.any(
       (task) {
         final taskDimensions = calculateTimeSlotFromTaskTime(
@@ -59,8 +84,11 @@ class TasksNotifier extends _$TasksNotifier {
         final taskDyTop = taskDimensions['dyTop']!;
         final taskDyBottom = taskDimensions['dyBottom']!;
 
-        // Check if the current task overlaps with any existing uncompleted task
-        return dyBottom > taskDyTop && dyTop < taskDyBottom && !task.isCompleted;
+        // Check if the current task overlaps with any existing uncompleted task for the currentDate
+        return dyBottom > taskDyTop &&
+            dyTop < taskDyBottom &&
+            !task.isCompleted &&
+            task.date.isAtSameMomentAs(currentDate);
       },
     );
   }

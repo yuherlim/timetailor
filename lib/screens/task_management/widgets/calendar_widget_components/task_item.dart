@@ -22,15 +22,15 @@ class TaskItem extends ConsumerStatefulWidget {
 class _TaskItemState extends ConsumerState<TaskItem> {
   void completeTask({required double dyTop, required double dyBottom}) {
     debugPrint("update task's isCompleted, prompt snackbar with undo option.");
-
+    final taskNotifier = ref.read(tasksNotifierProvider.notifier);
     final currentTask = widget.task;
     final updatedTask = widget.task.copyWith(isCompleted: true);
-    ref.read(tasksNotifierProvider.notifier).updateTask(updatedTask);
+    taskNotifier.updateTask(updatedTask);
 
     // Show the SnackBar
     ScaffoldMessenger.of(context).showSnackBar(
       longDurationSnackBarWithAction(
-        onPressed: () => undoTaskCompletion(
+        onPressed: () => taskNotifier.undoTaskCompletion(
           taskToUndo: currentTask,
           dyTop: dyTop,
           dyBottom: dyBottom,
@@ -41,28 +41,6 @@ class _TaskItemState extends ConsumerState<TaskItem> {
     );
   }
 
-  void undoTaskCompletion({
-    required Task taskToUndo,
-    required double dyTop,
-    required double dyBottom,
-  }) {
-    final taskNotifier = ref.read(tasksNotifierProvider.notifier);
-
-    if (taskNotifier.checkAddTaskValidity(dyTop: dyTop, dyBottom: dyBottom)) {
-      ref.read(tasksNotifierProvider.notifier).updateTask(taskToUndo);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        shortDurationSnackBar(
-            contentString: "Undo task completion successful!"),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        shortDurationSnackBar(
-            contentString: "Undo task completion failed! Overlapping tasks."),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final Map<String, double> taskDimensions =
@@ -70,9 +48,6 @@ class _TaskItemState extends ConsumerState<TaskItem> {
               startTime: widget.task.startTime,
               endTime: widget.task.endTime,
             );
-
-    // debugPrint("dyBottom: ${taskDimensions['dyBottom']}");
-    // debugPrint("dyBottomCalculated: ${taskDimensions['currentTimeSlotHeight']! + taskDimensions['dyTop']!}");
 
     final topPosition = taskDimensions['dyTop']!;
     final slotHeight = taskDimensions['currentTimeSlotHeight']! - 1;
