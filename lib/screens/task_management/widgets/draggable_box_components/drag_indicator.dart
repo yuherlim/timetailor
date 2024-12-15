@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
@@ -14,7 +16,38 @@ class DragIndicator extends ConsumerStatefulWidget {
 }
 
 class _DragIndicatorState extends ConsumerState<DragIndicator> {
-  void _handleDrag({required DragUpdateDetails details}) {
+  bool _hasTriggeredTopHapticFeedback = false;
+  bool _hasTriggeredBottomHapticFeedback = false;
+
+  void topBoundaryHapticFeedback(double newDy) {
+    const double tolerance = 3.0;
+    final calendarTopBoundary = ref.read(calendarWidgetTopBoundaryYProvider);
+    if ((newDy - calendarTopBoundary).abs() <= tolerance) {
+      if (!_hasTriggeredTopHapticFeedback) {
+        HapticFeedback.mediumImpact();
+        _hasTriggeredTopHapticFeedback = true; // Trigger only once
+      }
+    } else {
+      _hasTriggeredTopHapticFeedback = false; // Reset when moving away
+    }
+  }
+
+  void bottomBoundaryHapticFeedback(double draggableBoxBottomBoundary) {
+    const double tolerance = 1.0;
+    final calendarBottomBoundary =
+        ref.read(calendarWidgetBottomBoundaryYProvider);
+    if ((draggableBoxBottomBoundary - calendarBottomBoundary).abs() <=
+        tolerance) {
+      if (!_hasTriggeredBottomHapticFeedback) {
+        HapticFeedback.mediumImpact();
+        _hasTriggeredBottomHapticFeedback = true; // Trigger only once
+      }
+    } else {
+      _hasTriggeredBottomHapticFeedback = false; // Reset when moving away
+    }
+  }
+
+  void _handleDrag({required Offset delta}) {
     final localDyNotifier = ref.read(localDyProvider.notifier);
     final isScrolledNotifier = ref.read(isScrolledProvider.notifier);
     final isScrolledUpNotifier = ref.read(isScrolledUpProvider.notifier);
@@ -31,7 +64,7 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
     // hide bottom sheet while dragging
     ref.read(sheetExtentProvider.notifier).hideBottomSheet();
 
-    final newDy = localDy + details.delta.dy;
+    final newDy = localDy + delta.dy;
 
     final draggableBoxBottomBoundary = newDy + localCurrentTimeSlotHeight;
     final draggableBoxTopBoundary = newDy;
@@ -41,21 +74,14 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
       localDyNotifier.state = newDy;
     }
 
+    // trigger haptic feedback on topmost and bottommost
+    topBoundaryHapticFeedback(draggableBoxTopBoundary);
+    bottomBoundaryHapticFeedback(draggableBoxBottomBoundary);
+
     // the viewport bottom relative to the current screen without accounting for scroll offset.
     final screenViewportBottom = scrollController.position.viewportDimension;
     // Calculate the visible bottom boundary of the viewport considering scroll offset
     final contentViewportBottom = scrollOffset + screenViewportBottom;
-
-    debugPrint("==========================");
-    debugPrint("debug start");
-    debugPrint("==========================");
-
-    debugPrint("viewPortBottom: $contentViewportBottom");
-    debugPrint("calendarBottomBoundary: $calendarWidgetBottomBoundaryY");
-
-    debugPrint("screenViewportBottom: $screenViewportBottom");
-    debugPrint("bottom boundary of box: $draggableBoxBottomBoundary");
-    debugPrint("scrollOffset: $scrollOffset");
 
     final contentOffsetFromTop = scrollOffset + screenViewportBottom * 0.3;
     final contentOffsetFromBottom = scrollOffset + screenViewportBottom * 0.7;
@@ -151,6 +177,21 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
         );
   }
 
+  Offset computeDelta({required LongPressMoveUpdateDetails details}) {
+    // Read the last known offset
+    final lastOffset = ref.read(lastLongPressOffsetProvider);
+
+    // Current offsetFromOrigin provided by the gesture
+    final currentOffset = details.offsetFromOrigin;
+
+    // Update the stored offset to the current one,
+    // so next move update can compute a new delta
+    ref.read(lastLongPressOffsetProvider.notifier).state = currentOffset;
+
+    // Compute delta as difference from last offset
+    return currentOffset - lastOffset;
+  }
+
   @override
   Widget build(BuildContext context) {
     final dragIndicatorWidth = ref.watch(dragIndicatorWidthProvider);
@@ -177,15 +218,25 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
     final draggableBoxSizeIsSmall =
         dragIndicatorHeight <= snapIntervalHeight * 3;
 
+    final isLongPressed = ref.watch(isDraggableBoxLongPressedProvider);
+
     return Positioned(
       left: !draggableBoxSizeIsSmall ? leftPosition : defaultLeftPosition,
       top: !draggableBoxSizeIsSmall ? topPosition : defaultTopPosition,
       child: GestureDetector(
-        onVerticalDragUpdate: (details) {
-          _handleDrag(details: details);
+        onLongPressStart: (details) {
+          HapticFeedback.mediumImpact();
+          // Reset the last offset to zero at the start of a long press
+          ref.read(isDraggableBoxLongPressedProvider.notifier).state = true;
+          ref.read(lastLongPressOffsetProvider.notifier).state = Offset.zero;
         },
-        onVerticalDragEnd: (_) {
+        onLongPressMoveUpdate: (details) {
+          _handleDrag(delta: computeDelta(details: details));
+        },
+        onLongPressEnd: (_) {
+          HapticFeedback.mediumImpact();
           _handleDragEnd();
+          ref.read(isDraggableBoxLongPressedProvider.notifier).state = false;
         },
         child: Container(
           width: !draggableBoxSizeIsSmall
@@ -204,7 +255,9 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
           ),
           child: Center(
             child: Icon(
-              Icons.pan_tool_outlined,
+              isLongPressed
+                  ? Symbols.expand_all_rounded
+                  : Symbols.touch_long_rounded,
               size: ref.watch(dragIndicatorIconSizeProvider),
               color: Colors.white,
             ),

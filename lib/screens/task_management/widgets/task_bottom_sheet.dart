@@ -35,7 +35,6 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    print("sheetExtent after update: ${ref.watch(sheetExtentProvider)}");
     final maxExtent = ref.watch(maxBottomSheetExtentProvider);
 
     if (maxExtent == 0.0) {
@@ -58,13 +57,10 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
         onNotification: (notification) {
           final notificationExtent = notification.extent;
           final sheetExtentNotifier = ref.read(sheetExtentProvider.notifier);
-          print("notificationExtent: $notificationExtent");
 
           // Check for snap sizes with tolerance
           if ((notificationExtent - initialBottomSheetExtent).abs() <
               tolerance) {
-            print(
-                "notificationExtent after adjust: ${(notificationExtent - initialBottomSheetExtent).abs()}");
             sheetExtentNotifier.update(initialBottomSheetExtent);
             
           } else if ((notificationExtent - middleBottomSheetExtent).abs() <

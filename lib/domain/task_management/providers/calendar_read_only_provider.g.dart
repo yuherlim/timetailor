@@ -277,7 +277,7 @@ final defaultDragIndicatorHeightProvider = AutoDisposeProvider<double>.internal(
 // ignore: unused_element
 typedef DefaultDragIndicatorHeightRef = AutoDisposeProviderRef<double>;
 String _$dragIndicatorIconSizeHash() =>
-    r'2fdd7f917371c045ee9b9a6bc09bb809f8b3853a';
+    r'15a09393e06754abed4ad78f01d9d9652f3842ab';
 
 /// See also [dragIndicatorIconSize].
 @ProviderFor(dragIndicatorIconSize)

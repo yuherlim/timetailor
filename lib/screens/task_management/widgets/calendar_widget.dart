@@ -9,6 +9,8 @@ import 'package:timetailor/screens/task_management/widgets/draggable_box_compone
 import 'package:timetailor/screens/task_management/widgets/draggable_box_components/bottom_time_indicator.dart';
 import 'package:timetailor/screens/task_management/widgets/draggable_box_components/drag_indicator.dart';
 import 'package:timetailor/screens/task_management/widgets/draggable_box_components/draggable_box.dart';
+import 'package:timetailor/screens/task_management/widgets/draggable_box_components/dragging_status_indicator.dart';
+import 'package:timetailor/screens/task_management/widgets/draggable_box_components/resizing_status_indicator.dart';
 import 'package:timetailor/screens/task_management/widgets/draggable_box_components/top_duration_indicator.dart';
 import 'package:timetailor/screens/task_management/widgets/draggable_box_components/top_drag_indicator.dart';
 import 'package:timetailor/screens/task_management/widgets/draggable_box_components/top_time_indicator.dart';
@@ -21,9 +23,6 @@ class CalendarWidget extends ConsumerStatefulWidget {
 }
 
 class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
-  
-  
-
   @override
   Widget build(BuildContext context) {
     final screenHeight = ref.watch(screenHeightProvider);
@@ -51,9 +50,20 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
           // top duration indicator
           if (ref.watch(showDraggableBoxProvider)) const TopDurationIndicator(),
           // bottom duration indicator
-          if (ref.watch(showDraggableBoxProvider)) const BottomDurationIndicator(),
+          if (ref.watch(showDraggableBoxProvider))
+            const BottomDurationIndicator(),
           // drag Indicator
           if (ref.watch(showDraggableBoxProvider)) const DragIndicator(),
+          // dragging status indicator
+          if (ref.watch(showDraggableBoxProvider))
+            const DraggingStatusIndicator(isTopDraggingIndicator: true),
+          if (ref.watch(showDraggableBoxProvider))
+            const DraggingStatusIndicator(isTopDraggingIndicator: false),
+          // resizing status indicator
+          if (ref.watch(showDraggableBoxProvider))
+            const ResizingStatusIndicator(isTopResizingIndicator: true),
+          if (ref.watch(showDraggableBoxProvider))
+            const ResizingStatusIndicator(isTopResizingIndicator: false),
           // Top Indicator
           if (ref.watch(showDraggableBoxProvider)) const TopDragIndicator(),
           if (ref.watch(showDraggableBoxProvider)) const TopTimeIndicator(),

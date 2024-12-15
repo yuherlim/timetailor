@@ -87,7 +87,7 @@ double defaultDragIndicatorWidth(ref) => 70;
 double defaultDragIndicatorHeight(ref) => 40;
 
 @riverpod
-double dragIndicatorIconSize(ref) => 16;
+double dragIndicatorIconSize(ref) => 20;
 
 @riverpod
 double autoScrollAmount(ref) => 10;

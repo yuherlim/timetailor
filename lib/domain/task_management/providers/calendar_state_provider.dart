@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
@@ -13,8 +14,14 @@ final localCurrentTimeSlotHeightProvider = StateProvider<double>((ref) => 0.0);
 final localDyBottomProvider = StateProvider<double>((ref) =>
     ref.watch(localDyProvider) + ref.watch(localCurrentTimeSlotHeightProvider));
 final showDraggableBoxProvider = StateProvider<bool>((ref) => false);
+
+final isDraggableBoxLongPressedProvider = StateProvider<bool>((ref) => false);
+final lastLongPressOffsetProvider = StateProvider<Offset>((ref) => Offset.zero);
+final isResizingProvider = StateProvider<bool>((ref) => false);
+
 final isScrolledProvider = StateProvider<bool>((ref) => false);
 final isScrolledUpProvider = StateProvider<bool>((ref) => false);
+
 final maxTaskHeightProvider = StateProvider<double>((ref) => 0.0);
 final slotStartXProvider = StateProvider<double>((ref) => 0.0);
 final slotWidthProvider = StateProvider<double>((ref) => 0.0);

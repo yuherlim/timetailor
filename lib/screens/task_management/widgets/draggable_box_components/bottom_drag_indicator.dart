@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
@@ -14,10 +15,28 @@ class BottomDragIndicator extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<BottomDragIndicator> createState() => _BottomDragIndicatorState();
+  ConsumerState<BottomDragIndicator> createState() =>
+      _BottomDragIndicatorState();
 }
 
 class _BottomDragIndicatorState extends ConsumerState<BottomDragIndicator> {
+  bool _hasTriggeredBottomHapticFeedback = false;
+
+  void bottomBoundaryHapticFeedback(double draggableBoxBottomBoundary) {
+    const double tolerance = 1.0;
+    final calendarBottomBoundary =
+        ref.read(calendarWidgetBottomBoundaryYProvider);
+    if ((draggableBoxBottomBoundary - calendarBottomBoundary).abs() <=
+        tolerance) {
+      if (!_hasTriggeredBottomHapticFeedback) {
+        HapticFeedback.mediumImpact();
+        _hasTriggeredBottomHapticFeedback = true; // Trigger only once
+      }
+    } else {
+      _hasTriggeredBottomHapticFeedback = false; // Reset when moving away
+    }
+  }
+
   void _handleBottomDrag({
     required DragUpdateDetails details,
   }) {
@@ -34,6 +53,8 @@ class _BottomDragIndicatorState extends ConsumerState<BottomDragIndicator> {
     final remainingScrollableContentInView =
         scrollController.position.viewportDimension;
 
+    // state updates
+    ref.read(isResizingProvider.notifier).state = true;
     // hide bottom sheet while dragging
     ref.read(sheetExtentProvider.notifier).hideBottomSheet();
 
@@ -54,6 +75,9 @@ class _BottomDragIndicatorState extends ConsumerState<BottomDragIndicator> {
 
     // Calculate the bottom position of the draggable box
     final draggableBoxBottomBoundary = localDy + localCurrentTimeSlotHeight;
+
+    // Trigger haptic feedback when the bottom boundary is reached
+    bottomBoundaryHapticFeedback(draggableBoxBottomBoundary);
 
     // Calculate the visible bottom boundary of the viewport
     final viewportBottom = scrollOffset + remainingScrollableContentInView;
@@ -78,6 +102,8 @@ class _BottomDragIndicatorState extends ConsumerState<BottomDragIndicator> {
 
     ref.read(scrollControllerNotifierProvider.notifier).stopAutoScroll();
 
+    // state updates
+    ref.read(isResizingProvider.notifier).state = false;
     // display back bottom sheet when drag end
     ref.read(sheetExtentProvider.notifier).redisplayBottomSheet();
 
@@ -121,11 +147,13 @@ class _BottomDragIndicatorState extends ConsumerState<BottomDragIndicator> {
           ref.watch(draggableBoxIndicatorHeightProvider) /
               2, // Below the bottom edge
       child: GestureDetector(
+        onVerticalDragStart: (details) => HapticFeedback.lightImpact(),
         onVerticalDragUpdate: (details) {
           _handleBottomDrag(details: details);
         },
         onVerticalDragEnd: (_) {
           _handleBottomDragEnd();
+          HapticFeedback.lightImpact();
         },
         child: Container(
           width: ref.watch(draggableBoxIndicatorWidthProvider),

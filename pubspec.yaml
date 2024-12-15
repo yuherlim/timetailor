@@ -46,6 +46,7 @@ dependencies:
   font_awesome_flutter: ^10.8.0
   flutter_launcher_icons: ^0.14.2
   rename_app: ^1.6.1
+  material_symbols_icons: ^4.2801.0
 
 dev_dependencies:
   flutter_test:

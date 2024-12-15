@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
@@ -16,6 +17,21 @@ class TopDragIndicator extends ConsumerStatefulWidget {
 }
 
 class _TopDragIndicatorState extends ConsumerState<TopDragIndicator> {
+  bool _hasTriggeredHapticFeedback = false;
+
+  void topBoundaryHapticFeedback(double newDy) {
+    const double tolerance = 3.0;
+    final calendarTopBoundary = ref.read(calendarWidgetTopBoundaryYProvider);
+    if ((newDy - calendarTopBoundary).abs() <= tolerance) {
+      if (!_hasTriggeredHapticFeedback) {
+        HapticFeedback.mediumImpact();
+        _hasTriggeredHapticFeedback = true; // Trigger only once
+      }
+    } else {
+      _hasTriggeredHapticFeedback = false; // Reset when moving away
+    }
+  }
+
   void _handleTopDrag({
     required DragUpdateDetails details,
   }) {
@@ -27,12 +43,12 @@ class _TopDragIndicatorState extends ConsumerState<TopDragIndicator> {
     final localCurrentTimeSlotHeight =
         ref.read(localCurrentTimeSlotHeightProvider);
     final scrollController = ref.read(scrollControllerNotifierProvider);
-
     final draggableBoxBottomBoundary = (localDy + localCurrentTimeSlotHeight);
-
     final minDraggableBoxSizeDy =
         draggableBoxBottomBoundary - ref.read(snapIntervalHeightProvider);
 
+    // state updates
+    ref.read(isResizingProvider.notifier).state = true;
     // hide bottom sheet while dragging
     ref.read(sheetExtentProvider.notifier).hideBottomSheet();
 
@@ -46,6 +62,9 @@ class _TopDragIndicatorState extends ConsumerState<TopDragIndicator> {
       localDyNotifier.state = newDy;
       localCurrentTimeSlotHeightNotifier.state = newSize;
     }
+
+    // Trigger haptic feedback when the top boundary is reached
+    topBoundaryHapticFeedback(newDy);
 
     final scrollOffset = scrollController.offset;
 
@@ -74,6 +93,8 @@ class _TopDragIndicatorState extends ConsumerState<TopDragIndicator> {
 
     ref.read(scrollControllerNotifierProvider.notifier).stopAutoScroll();
 
+    // state updates
+    ref.read(isResizingProvider.notifier).state = false;
     // display back bottom sheet when drag end
     ref.read(sheetExtentProvider.notifier).redisplayBottomSheet();
 
@@ -126,11 +147,13 @@ class _TopDragIndicatorState extends ConsumerState<TopDragIndicator> {
           ref.watch(draggableBoxIndicatorHeightProvider) /
               2, // Above the top edge
       child: GestureDetector(
+        onVerticalDragStart: (details) => HapticFeedback.lightImpact(),
         onVerticalDragUpdate: (details) {
           _handleTopDrag(details: details);
         },
         onVerticalDragEnd: (_) {
           _handleTopDragEnd();
+          HapticFeedback.lightImpact();
         },
         child: Container(
           width: ref.watch(draggableBoxIndicatorWidthProvider),

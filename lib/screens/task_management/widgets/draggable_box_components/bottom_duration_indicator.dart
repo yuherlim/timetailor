@@ -31,7 +31,7 @@ class _BottomDurationIndicatorState
 
     return Positioned(
       left: leftPosition,
-      top: !draggableBoxSizeIsSmall ? topPosition : topPosition - 8,
+      top: !draggableBoxSizeIsSmall ? topPosition : topPosition + 8,
       child: TimeIndicatorText(durationOutput),
     );
   }
