@@ -235,6 +235,24 @@ class SmallTaskNameText extends StatelessWidget {
   }
 }
 
+class CurrentDateInHistoryText extends StatelessWidget {
+  final String text;
+
+  const CurrentDateInHistoryText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      // text.toUpperCase(),
+      text,
+      style: GoogleFonts.kanit(
+        textStyle: Theme.of(context).textTheme.headlineSmall,
+        fontSize: 20
+      ),
+    );
+  }
+}
+
 // class TimeperiodTextStyle extends StatelessWidget {
 
 //   const TimeperiodTextStyle({super.key});
