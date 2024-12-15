@@ -5,6 +5,7 @@ import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/styled_button.dart';
 import 'package:timetailor/core/shared/styled_text.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
+import 'package:timetailor/screens/task_management/widgets/task_completion_history_screen/completed_task_list_item.dart';
 
 class TaskCompletionHistoryScreen extends ConsumerStatefulWidget {
   const TaskCompletionHistoryScreen({super.key});
@@ -18,8 +19,9 @@ class _TaskCompletionHistoryScreenState
     extends ConsumerState<TaskCompletionHistoryScreen> {
   @override
   Widget build(BuildContext context) {
+    ref.watch(tasksNotifierProvider);
     final completedTasks = ref
-        .watch(tasksNotifierProvider.notifier)
+        .read(tasksNotifierProvider.notifier)
         .getAllCompletedTasksForCurrentDate();
     return Scaffold(
       appBar: AppBar(

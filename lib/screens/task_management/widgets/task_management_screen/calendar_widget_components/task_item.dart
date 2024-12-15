@@ -5,6 +5,7 @@ import 'package:timetailor/core/shared/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/data/task_management/models/task.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
+import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 
 class TaskItem extends ConsumerStatefulWidget {
@@ -58,6 +59,7 @@ class _TaskItemState extends ConsumerState<TaskItem> {
         widget.task.startTime.hour, widget.task.startTime.minute);
     final endTime = taskProviderNotifier.formatTime(
         widget.task.endTime.hour, widget.task.endTime.minute);
+    final currentDateNotifier = ref.read(currentDateNotifierProvider.notifier);
 
     return Positioned(
       left: slotStartX,
@@ -102,7 +104,7 @@ class _TaskItemState extends ConsumerState<TaskItem> {
                     ],
                   ),
                 ),
-                if (!(widget.task.duration <= 25))
+                if (!(widget.task.duration <= 25) && currentDateNotifier.currentDateIsToday())
                   IconButton(
                     icon: const Icon(Icons.check_circle_outline_rounded),
                     onPressed: () {

@@ -23,7 +23,7 @@ class TasksNotifier extends _$TasksNotifier {
         .toList();
   }
 
-  List<Task>? getAllCompletedTasksForCurrentDate() {
+  List<Task> getAllCompletedTasksForCurrentDate() {
     final currentDate = ref.read(currentDateNotifierProvider);
     return state
         .where((task) =>
