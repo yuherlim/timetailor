@@ -48,6 +48,23 @@ class TasksNotifier extends _$TasksNotifier {
 
   //fetchTasksOnce
 
+  bool checkAddTaskValidity({
+    required double dyTop,
+    required double dyBottom,
+  }) {
+    return !state.any(
+      (task) {
+        final taskDimensions = calculateTimeSlotFromTaskTime(
+            startTime: task.startTime, endTime: task.endTime);
+        final taskDyTop = taskDimensions['dyTop']!;
+        final taskDyBottom = taskDimensions['dyBottom']!;
+
+        // Check if the current task overlaps with any existing uncompleted task
+        return dyBottom > taskDyTop && dyTop < taskDyBottom && !task.isCompleted;
+      },
+    );
+  }
+
   // Converts dy and height into start and end times.
   void updateTaskTimeStateFromDraggableBox({
     required double dy,

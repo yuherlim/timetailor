@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:timetailor/core/shared/custom_snackbars.dart';
 import 'package:timetailor/core/shared/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/data/task_management/models/task.dart';
@@ -19,34 +20,47 @@ class TaskItem extends ConsumerStatefulWidget {
 }
 
 class _TaskItemState extends ConsumerState<TaskItem> {
-  void completeTask() {
+  void completeTask({required double dyTop, required double dyBottom}) {
     debugPrint("update task's isCompleted, prompt snackbar with undo option.");
+
     final currentTask = widget.task;
     final updatedTask = widget.task.copyWith(isCompleted: true);
     ref.read(tasksNotifierProvider.notifier).updateTask(updatedTask);
 
     // Show the SnackBar
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text("Task completed."),
-        action: SnackBarAction(
-          label: "Undo",
-          onPressed: () {
-            // Handle undo action
-            ref.read(tasksNotifierProvider.notifier).updateTask(currentTask);
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Undo task completion successful!"),
-                duration: Duration(seconds: 2),
-              ),
-            );
-          },
+      longDurationSnackBarWithAction(
+        onPressed: () => undoTaskCompletion(
+          taskToUndo: currentTask,
+          dyTop: dyTop,
+          dyBottom: dyBottom,
         ),
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 4),
+        contentString: "Task completed.",
+        actionText: "Undo",
       ),
     );
+  }
+
+  void undoTaskCompletion({
+    required Task taskToUndo,
+    required double dyTop,
+    required double dyBottom,
+  }) {
+    final taskNotifier = ref.read(tasksNotifierProvider.notifier);
+
+    if (taskNotifier.checkAddTaskValidity(dyTop: dyTop, dyBottom: dyBottom)) {
+      ref.read(tasksNotifierProvider.notifier).updateTask(taskToUndo);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        shortDurationSnackBar(
+            contentString: "Undo task completion successful!"),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        shortDurationSnackBar(
+            contentString: "Undo task completion failed! Overlapping tasks."),
+      );
+    }
   }
 
   @override
@@ -56,8 +70,10 @@ class _TaskItemState extends ConsumerState<TaskItem> {
               startTime: widget.task.startTime,
               endTime: widget.task.endTime,
             );
-    // final topPosition = taskDimensions['dyTop']! + 3;
-    // final slotHeight = taskDimensions['currentTimeSlotHeight']! - 7;
+
+    // debugPrint("dyBottom: ${taskDimensions['dyBottom']}");
+    // debugPrint("dyBottomCalculated: ${taskDimensions['currentTimeSlotHeight']! + taskDimensions['dyTop']!}");
+
     final topPosition = taskDimensions['dyTop']!;
     final slotHeight = taskDimensions['currentTimeSlotHeight']! - 1;
     final slotStartX = ref.watch(slotStartXProvider);
@@ -116,7 +132,10 @@ class _TaskItemState extends ConsumerState<TaskItem> {
                     icon: const Icon(Icons.check_circle_outline_rounded),
                     onPressed: () {
                       debugPrint("complete task.");
-                      completeTask();
+                      completeTask(
+                        dyTop: taskDimensions['dyTop']!,
+                        dyBottom: taskDimensions['dyBottom']!,
+                      );
                     },
                   ),
               ],
