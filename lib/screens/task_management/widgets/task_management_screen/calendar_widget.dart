@@ -5,19 +5,19 @@ import 'package:timetailor/domain/task_management/providers/calendar_state_provi
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
-import 'package:timetailor/screens/task_management/widgets/calendar_widget_components/calendar_widget_background.dart';
-import 'package:timetailor/screens/task_management/widgets/calendar_widget_components/current_time_indicator.dart';
-import 'package:timetailor/screens/task_management/widgets/calendar_widget_components/draggable_box_components/bottom_drag_indicator.dart';
-import 'package:timetailor/screens/task_management/widgets/calendar_widget_components/draggable_box_components/bottom_duration_indicator.dart';
-import 'package:timetailor/screens/task_management/widgets/calendar_widget_components/draggable_box_components/bottom_time_indicator.dart';
-import 'package:timetailor/screens/task_management/widgets/calendar_widget_components/draggable_box_components/drag_indicator.dart';
-import 'package:timetailor/screens/task_management/widgets/calendar_widget_components/draggable_box_components/draggable_box.dart';
-import 'package:timetailor/screens/task_management/widgets/calendar_widget_components/draggable_box_components/dragging_status_indicator.dart';
-import 'package:timetailor/screens/task_management/widgets/calendar_widget_components/draggable_box_components/resizing_status_indicator.dart';
-import 'package:timetailor/screens/task_management/widgets/calendar_widget_components/draggable_box_components/top_duration_indicator.dart';
-import 'package:timetailor/screens/task_management/widgets/calendar_widget_components/draggable_box_components/top_drag_indicator.dart';
-import 'package:timetailor/screens/task_management/widgets/calendar_widget_components/draggable_box_components/top_time_indicator.dart';
-import 'package:timetailor/screens/task_management/widgets/calendar_widget_components/task_item.dart';
+import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/calendar_widget_background.dart';
+import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/current_time_indicator.dart';
+import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/draggable_box_components/bottom_drag_indicator.dart';
+import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/draggable_box_components/bottom_duration_indicator.dart';
+import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/draggable_box_components/bottom_time_indicator.dart';
+import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/draggable_box_components/drag_indicator.dart';
+import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/draggable_box_components/draggable_box.dart';
+import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/draggable_box_components/dragging_status_indicator.dart';
+import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/draggable_box_components/resizing_status_indicator.dart';
+import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/draggable_box_components/top_duration_indicator.dart';
+import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/draggable_box_components/top_drag_indicator.dart';
+import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/draggable_box_components/top_time_indicator.dart';
+import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/task_item.dart';
 
 class CalendarWidget extends ConsumerStatefulWidget {
   const CalendarWidget({super.key});

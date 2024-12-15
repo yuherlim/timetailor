@@ -6,11 +6,11 @@ import 'package:timetailor/domain/task_management/providers/bottom_sheet_scroll_
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
-import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/chevron_down_drag_handle.dart';
-import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/chevron_up_drag_handle.dart';
-import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/initial_extent_content.dart';
-import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/middle_drag_handle.dart';
-import 'package:timetailor/screens/task_management/widgets/task_bottom_sheet_components/task_creation_header.dart';
+import 'package:timetailor/screens/task_management/widgets/task_management_screen/task_bottom_sheet_components/chevron_down_drag_handle.dart';
+import 'package:timetailor/screens/task_management/widgets/task_management_screen/task_bottom_sheet_components/chevron_up_drag_handle.dart';
+import 'package:timetailor/screens/task_management/widgets/task_management_screen/task_bottom_sheet_components/initial_extent_content.dart';
+import 'package:timetailor/screens/task_management/widgets/task_management_screen/task_bottom_sheet_components/middle_drag_handle.dart';
+import 'package:timetailor/screens/task_management/widgets/task_management_screen/task_bottom_sheet_components/task_creation_header.dart';
 
 class TaskBottomSheet extends ConsumerStatefulWidget {
   const TaskBottomSheet({super.key});

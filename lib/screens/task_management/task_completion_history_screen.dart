@@ -25,7 +25,20 @@ class _TaskCompletionHistoryScreenState
       appBar: AppBar(
         title: const AppBarText("History"),
       ),
-      // body: 
+      body: completedTasks.isEmpty
+          ? Center(
+              child: Text(
+                "No completed tasks for today.",
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            )
+          : ListView.builder(
+              itemCount: completedTasks.length,
+              itemBuilder: (context, index) {
+                final task = completedTasks[index];
+                return CompletedTaskListItem(task: task);
+              },
+            ),
     );
   }
 }
