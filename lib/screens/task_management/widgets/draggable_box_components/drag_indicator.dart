@@ -21,54 +21,62 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
     final localDy = ref.read(localDyProvider);
     final localCurrentTimeSlotHeight =
         ref.read(localCurrentTimeSlotHeightProvider);
-    final defaultTimeSlotHeight = ref.read(defaultTimeSlotHeightProvider);
     final calendarWidgetTopBoundaryY =
         ref.read(calendarWidgetTopBoundaryYProvider);
+    final calendarWidgetBottomBoundaryY =
+        ref.read(calendarWidgetBottomBoundaryYProvider);
+    final scrollController = ref.read(scrollControllerNotifierProvider);
+    final scrollOffset = scrollController.offset;
 
     // hide bottom sheet while dragging
     ref.read(sheetExtentProvider.notifier).hideBottomSheet();
 
     final newDy = localDy + details.delta.dy;
-    // Calculate the bottom position of the draggable box
+
     final draggableBoxBottomBoundary = newDy + localCurrentTimeSlotHeight;
+    final draggableBoxTopBoundary = newDy;
 
     if (newDy >= calendarWidgetTopBoundaryY &&
-        draggableBoxBottomBoundary <=
-            ref.read(calendarWidgetBottomBoundaryYProvider)) {
+        draggableBoxBottomBoundary <= calendarWidgetBottomBoundaryY) {
       localDyNotifier.state = newDy;
     }
 
-    // Calculate the visible bottom boundary of the viewport
-    final viewportBottom = ref.read(scrollControllerNotifierProvider).offset +
-        ref.read(scrollControllerNotifierProvider).position.viewportDimension;
+    // the viewport bottom relative to the current screen without accounting for scroll offset.
+    final screenViewportBottom = scrollController.position.viewportDimension;
+    // Calculate the visible bottom boundary of the viewport considering scroll offset
+    final contentViewportBottom = scrollOffset + screenViewportBottom;
 
     debugPrint("==========================");
     debugPrint("debug start");
     debugPrint("==========================");
-    
-    debugPrint("viewPortBottom: $viewportBottom");
 
-    // the viewport bottom relative to the current screen without accounting for scroll offset.
-    final screenViewportBottom = ref.read(scrollControllerNotifierProvider).position.viewportDimension;
+    debugPrint("viewPortBottom: $contentViewportBottom");
+    debugPrint("calendarBottomBoundary: $calendarWidgetBottomBoundaryY");
 
     debugPrint("screenViewportBottom: $screenViewportBottom");
     debugPrint("bottom boundary of box: $draggableBoxBottomBoundary");
+    debugPrint("scrollOffset: $scrollOffset");
 
-    final boxBottomBoundaryExceedThirtyPercentFromBottom = draggableBoxBottomBoundary < viewportBottom * 0.7;
-    final boxTopBoundaryExceedThirtyPercentFromTop = newDy > screenViewportBottom * 0.3;
-    final exceedCalendarTopBoundary =
-        newDy < ref.read(scrollControllerNotifierProvider).offset;
-    final exceedCalendarBottomBoundary = draggableBoxBottomBoundary > viewportBottom;
+    final contentOffsetFromTop = scrollOffset + screenViewportBottom * 0.3;
+    final contentOffsetFromBottom = scrollOffset + screenViewportBottom * 0.7;
+    final boxBottomBoundaryExceedOffsetFromBottom =
+        draggableBoxBottomBoundary < contentOffsetFromBottom;
+    final boxTopBoundaryExceedOffsetFromTop =
+        draggableBoxTopBoundary > contentOffsetFromTop;
+    final exceedContentTopBoundary = draggableBoxTopBoundary < scrollOffset;
+    final exceedContentBottomBoundary =
+        draggableBoxBottomBoundary > contentViewportBottom;
     // final bigTimeSlot = localCurrentTimeSlotHeight > defaultTimeSlotHeight * 3;
 
-    if (exceedCalendarTopBoundary && boxBottomBoundaryExceedThirtyPercentFromBottom) {
+    if (exceedContentTopBoundary && boxBottomBoundaryExceedOffsetFromBottom) {
       // auto scroll up if exceed top boundary
       ref
           .read(scrollControllerNotifierProvider.notifier)
           .startUpwardsAutoDrag();
       isScrolledNotifier.state = true;
       isScrolledUpNotifier.state = true;
-    } else if (exceedCalendarBottomBoundary && boxTopBoundaryExceedThirtyPercentFromTop) {
+    } else if (exceedContentBottomBoundary &&
+        boxTopBoundaryExceedOffsetFromTop) {
       // auto scroll down if exceed bottom boundary
       ref
           .read(scrollControllerNotifierProvider.notifier)
@@ -82,22 +90,22 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
 
   void autoScrollWhenBoundariesExceed(DragUpdateDetails details) {
     if (details.delta.dy < 0) {
-        // auto scroll up if user is dragging upwards.
-        ref
-            .read(scrollControllerNotifierProvider.notifier)
-            .startUpwardsAutoDrag();
-        ref.read(isScrolledProvider.notifier).state = true;
-        ref.read(isScrolledUpProvider.notifier).state = true;
-      } else if (details.delta.dy > 0) {
-        // auto scroll down if user is dragging downards.
-        ref
-            .read(scrollControllerNotifierProvider.notifier)
-            .startDownwardsAutoDrag();
-        ref.read(isScrolledProvider.notifier).state = true;
-        ref.read(isScrolledUpProvider.notifier).state = false;
-      } else {
-        ref.read(scrollControllerNotifierProvider.notifier).stopAutoScroll();
-      }
+      // auto scroll up if user is dragging upwards.
+      ref
+          .read(scrollControllerNotifierProvider.notifier)
+          .startUpwardsAutoDrag();
+      ref.read(isScrolledProvider.notifier).state = true;
+      ref.read(isScrolledUpProvider.notifier).state = true;
+    } else if (details.delta.dy > 0) {
+      // auto scroll down if user is dragging downards.
+      ref
+          .read(scrollControllerNotifierProvider.notifier)
+          .startDownwardsAutoDrag();
+      ref.read(isScrolledProvider.notifier).state = true;
+      ref.read(isScrolledUpProvider.notifier).state = false;
+    } else {
+      ref.read(scrollControllerNotifierProvider.notifier).stopAutoScroll();
+    }
   }
 
   void _handleDragEnd() {
