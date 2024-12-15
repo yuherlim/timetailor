@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timetailor/data/task_management/models/task.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
+import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 
 part 'tasks_provider.g.dart'; // Generated file
 
@@ -12,15 +13,31 @@ class TasksNotifier extends _$TasksNotifier {
     return tasks;
   }
 
+  List<Task>? getAllTasksForCurrentDate() {
+    final currentDate = ref.read(currentDateNotifierProvider);
+    return state
+        .where((task) =>
+            currentDate.isAtSameMomentAs(task.date) && !task.isCompleted)
+        .toList();
+  }
+
+  List<Task>? getAllCompletedTasksForCurrentDate() {
+    final currentDate = ref.read(currentDateNotifierProvider);
+    return state
+        .where((task) =>
+            currentDate.isAtSameMomentAs(task.date) && task.isCompleted)
+        .toList();
+  }
+
   void addTask(Task task) {
     state = [...state, task];
   }
 
-  void updateTask(Task task) {
-    state = state.map((currentTask) {
-      // Replace the task with the updatedTask if the IDs match
-      return task.id == currentTask.id ? task : currentTask;
-    }).toList();
+  void updateTask(Task updatedTask) {
+    state = state
+        .map((currentTask) =>
+            currentTask.id == updatedTask.id ? updatedTask : currentTask)
+        .toList();
   }
 
   void removeTask(Task task) {
@@ -36,7 +53,6 @@ class TasksNotifier extends _$TasksNotifier {
     required double dy,
     required double currentTimeSlotHeight,
   }) {
-
     // Calculate start time
     final startTime = calculateStartTime();
     final startHour = startTime["startHour"]!;
@@ -133,7 +149,7 @@ class TasksNotifier extends _$TasksNotifier {
 
 // Calculate duration in minutes
     int durationMinutes = calculateDurationInMinutes();
-    
+
     // Calculate start time
     final startTime = calculateStartTime();
     final startHour = startTime["startHour"]!;
@@ -143,7 +159,8 @@ class TasksNotifier extends _$TasksNotifier {
     int endHour = startHour + (durationMinutes ~/ 60);
     int endMinutes = startMinutes + (durationMinutes % 60);
 
-    final lastSnapIntervalMidpointDy = calendarWidgetBottomBoundaryY - snapIntervalHeight / 2;
+    final lastSnapIntervalMidpointDy =
+        calendarWidgetBottomBoundaryY - snapIntervalHeight / 2;
 
     if (localDyBottom > lastSnapIntervalMidpointDy) {
       endHour = 23; // Set to 11 PM
@@ -161,14 +178,14 @@ class TasksNotifier extends _$TasksNotifier {
   }
 
   int calculateDurationInMinutes() {
-    final localCurrentTimeSlotHeight = ref.read(localCurrentTimeSlotHeightProvider);
+    final localCurrentTimeSlotHeight =
+        ref.read(localCurrentTimeSlotHeightProvider);
     final snapIntervalHeight = ref.read(snapIntervalHeightProvider);
     final snapIntervalMinutes = ref.read(snapIntervalMinutesProvider);
 
-    return
-        ((localCurrentTimeSlotHeight / snapIntervalHeight).round() *
-                snapIntervalMinutes)
-            .toInt();
+    return ((localCurrentTimeSlotHeight / snapIntervalHeight).round() *
+            snapIntervalMinutes)
+        .toInt();
   }
 
   String formattedDurationString() {

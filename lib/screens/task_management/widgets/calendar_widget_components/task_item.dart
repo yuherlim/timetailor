@@ -1,0 +1,130 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:timetailor/core/shared/styled_text.dart';
+import 'package:timetailor/core/theme/custom_theme.dart';
+import 'package:timetailor/data/task_management/models/task.dart';
+import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
+import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
+
+class TaskItem extends ConsumerStatefulWidget {
+  final Task task;
+
+  const TaskItem({
+    super.key,
+    required this.task,
+  });
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _TaskItemState();
+}
+
+class _TaskItemState extends ConsumerState<TaskItem> {
+  void completeTask() {
+    debugPrint("update task's isCompleted, prompt snackbar with undo option.");
+    final currentTask = widget.task;
+    final updatedTask = widget.task.copyWith(isCompleted: true);
+    ref.read(tasksNotifierProvider.notifier).updateTask(updatedTask);
+
+    // Show the SnackBar
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text("Task completed."),
+        action: SnackBarAction(
+          label: "Undo",
+          onPressed: () {
+            // Handle undo action
+            ref.read(tasksNotifierProvider.notifier).updateTask(currentTask);
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Undo task completion successful!"),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          },
+        ),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 4),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Map<String, double> taskDimensions =
+        ref.read(tasksNotifierProvider.notifier).calculateTimeSlotFromTaskTime(
+              startTime: widget.task.startTime,
+              endTime: widget.task.endTime,
+            );
+    // final topPosition = taskDimensions['dyTop']! + 3;
+    // final slotHeight = taskDimensions['currentTimeSlotHeight']! - 7;
+    final topPosition = taskDimensions['dyTop']!;
+    final slotHeight = taskDimensions['currentTimeSlotHeight']! - 1;
+    final slotStartX = ref.watch(slotStartXProvider);
+    final slotWidth = ref.watch(slotWidthProvider);
+    final taskProviderNotifier = ref.read(tasksNotifierProvider.notifier);
+    final startTime = taskProviderNotifier.formatTime(
+        widget.task.startTime.hour, widget.task.startTime.minute);
+    final endTime = taskProviderNotifier.formatTime(
+        widget.task.endTime.hour, widget.task.endTime.minute);
+
+    return Positioned(
+      left: slotStartX,
+      top: topPosition,
+      child: Stack(
+        children: [
+          Container(
+            width: slotWidth, // Fixed width
+            height: slotHeight,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: AppColors.primaryColor,
+              border: Border.all(
+                color: AppColors.secondaryColor, // Border color
+                width: 1.0, // Border thickness
+              ),
+            ),
+          ),
+          SizedBox(
+            width: slotWidth,
+            height: slotHeight,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (widget.task.duration <= 5)
+                        MiniTaskNameText(widget.task.name),
+                      if (!(widget.task.duration <= 5) &&
+                          widget.task.duration <= 10)
+                        SmallTaskNameText(widget.task.name),
+                      if (!(widget.task.duration <= 25))
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: TaskNameText(widget.task.name),
+                        ),
+                      if (!(widget.task.duration <= 25))
+                        TaskNameText("$startTime - $endTime"),
+                    ],
+                  ),
+                ),
+                if (!(widget.task.duration <= 25))
+                  IconButton(
+                    icon: const Icon(Icons.check_circle_outline_rounded),
+                    onPressed: () {
+                      debugPrint("complete task.");
+                      completeTask();
+                    },
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+    ;
+  }
+}

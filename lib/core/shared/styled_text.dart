@@ -175,6 +175,66 @@ class BottomSheetDurationText extends StatelessWidget {
   }
 }
 
+class TaskNameText extends StatelessWidget {
+  final String text;
+
+  const TaskNameText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      // text.toUpperCase(),
+      text,
+      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+          ),
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+}
+
+class MiniTaskNameText extends StatelessWidget {
+  final String text;
+
+  const MiniTaskNameText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      // text.toUpperCase(),
+      text,
+      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            fontSize: 6,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+          ),
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+}
+
+class SmallTaskNameText extends StatelessWidget {
+  final String text;
+
+  const SmallTaskNameText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      // text.toUpperCase(),
+      text,
+      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+          ),
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+}
+
 // class TimeperiodTextStyle extends StatelessWidget {
 
 //   const TimeperiodTextStyle({super.key});

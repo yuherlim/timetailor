@@ -23,7 +23,8 @@ class DraggableBox extends ConsumerWidget {
         width: slotWidth,// Fixed width
         height: localCurrentTimeSlotHeight, // Dynamically adjusted height.
         decoration: BoxDecoration(
-          color: AppColors.primaryAccent.withOpacity(0.2),
+          // color: AppColors.primaryColor.withOpacity(0.2),
+          color: Colors.transparent,
           border: Border.all(
             color: AppColors.primaryAccent, // Border color
             width: 2.0, // Border thickness
