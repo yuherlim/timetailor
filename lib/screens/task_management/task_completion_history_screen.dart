@@ -39,7 +39,7 @@ class _TaskCompletionHistoryScreenState
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 16.0),
-              child: CurrentDateInHistoryText(formattedDate),
+              child: TitleTextInHistory(formattedDate),
             ),
             const Padding(
               padding: EdgeInsets.only(top: 16.0),
@@ -50,12 +50,13 @@ class _TaskCompletionHistoryScreenState
               ),
             ),
             completedTasks.isEmpty
-                ? Center(
-                    child: Text(
-                      "No completed tasks for today.",
-                      style: Theme.of(context).textTheme.bodyLarge,
+                ? const Expanded(
+                  child: Center(
+                      child: TitleTextInHistory(
+                        "No completed tasks for today.",
+                      ),
                     ),
-                  )
+                )
                 : Expanded(
                   child: ListView.builder(
                       itemCount: completedTasks.length,

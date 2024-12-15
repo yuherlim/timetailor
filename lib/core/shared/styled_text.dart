@@ -235,10 +235,10 @@ class SmallTaskNameText extends StatelessWidget {
   }
 }
 
-class CurrentDateInHistoryText extends StatelessWidget {
+class TitleTextInHistory extends StatelessWidget {
   final String text;
 
-  const CurrentDateInHistoryText(this.text, {super.key});
+  const TitleTextInHistory(this.text, {super.key});
 
   @override
   Widget build(BuildContext context) {
