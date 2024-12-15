@@ -33,8 +33,6 @@ class _BottomTimeIndicatorState extends ConsumerState<BottomTimeIndicator> {
     // minor adjustments to center the text and put it inline with the line.
     final finalDy = newDy - textHeight / 2;
 
-    debugPrint("finalDy: $finalDy");
-
     return !timeSlotBoundaries.contains(newDy) ? finalDy : 0.0;
   }
 
@@ -54,11 +52,6 @@ class _BottomTimeIndicatorState extends ConsumerState<BottomTimeIndicator> {
       dyBottom: dyBottom,
       textHeight: textSize.height,
     );
-
-    debugPrint("endTime: $endTimeOutput");
-    debugPrint("dyTop: ${ref.read(localDyProvider)}");
-    debugPrint("currentHeight: ${ref.read(localCurrentTimeSlotHeightProvider)}");
-    debugPrint("dyBottom: $dyBottom");
 
     // only print if it is not the main time slot.
     if (topPosition != 0.0) {

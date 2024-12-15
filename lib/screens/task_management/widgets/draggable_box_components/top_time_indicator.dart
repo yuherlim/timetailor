@@ -51,8 +51,6 @@ class _TopTimeIndicatorState extends ConsumerState<TopTimeIndicator> {
       textHeight: textSize.height,
     );
 
-    debugPrint("startTimeOutput: $startTimeOutput");
-
     if (topPosition != 0.0) {
       return Positioned(
         left: sidePadding,
