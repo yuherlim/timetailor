@@ -119,6 +119,9 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
     final currentSelectedDate = ref.watch(currentDateNotifierProvider);
     final currentMonth = ref.watch(currentMonthNotifierProvider);
     final isValidDate = ref.read(currentDateNotifierProvider.notifier).currentDateMoreThanEqualToday();
+    final dyTop = ref.read(localDyProvider);
+    final dyBottom = ref.read(localDyBottomProvider);
+    final isTaskNotOverlapping = ref.read(tasksNotifierProvider.notifier).checkAddTaskValidity(dyTop: dyTop, dyBottom: dyBottom);
 
     return Stack(
       clipBehavior: Clip.none, // Allow children to overflow the bounds
@@ -186,7 +189,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
           ),
         ),
         if (ref.watch(showDraggableBoxProvider) &&
-            ref.watch(showBottomSheetProvider))
+            ref.watch(showBottomSheetProvider) && isTaskNotOverlapping)
           const TaskBottomSheet(),
       ],
     );
