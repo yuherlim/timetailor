@@ -24,8 +24,10 @@ class _BottomTimeIndicatorState extends ConsumerState<BottomTimeIndicator> {
     final adjustedDy = dyBottom - ref.read(calendarWidgetTopBoundaryYProvider);
 
     // Snap position to the nearest interval
-    double newDy = (adjustedDy / ref.read(snapIntervalHeightProvider)).round() *
-        ref.read(snapIntervalHeightProvider);
+    double newDy = double.parse(
+        ((adjustedDy / ref.read(snapIntervalHeightProvider)).round() *
+                ref.read(snapIntervalHeightProvider))
+            .toStringAsFixed(2));
 
     // Reapply the padding offset
     newDy += ref.read(calendarWidgetTopBoundaryYProvider);
@@ -40,8 +42,7 @@ class _BottomTimeIndicatorState extends ConsumerState<BottomTimeIndicator> {
   Widget build(BuildContext context) {
     final sidePadding = ref.watch(sidePaddingProvider);
     final dyBottom = ref.watch(localDyBottomProvider);
-    final endTime =
-        ref.read(tasksNotifierProvider.notifier).calculateEndTime();
+    final endTime = ref.read(tasksNotifierProvider.notifier).calculateEndTime();
     final endHour = endTime["endHour"]!;
     final endMinutes = endTime["endMinutes"]!;
     final endTimeOutput = ref

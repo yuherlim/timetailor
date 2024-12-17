@@ -24,14 +24,17 @@ class _TopTimeIndicatorState extends ConsumerState<TopTimeIndicator> {
     final adjustedDy = dy - ref.read(calendarWidgetTopBoundaryYProvider);
 
     // Snap position to the nearest interval
-    double newDy = (adjustedDy / ref.read(snapIntervalHeightProvider)).round() *
-        ref.read(snapIntervalHeightProvider);
+    double newDy = double.parse(((adjustedDy / ref.read(snapIntervalHeightProvider)).round() *
+        ref.read(snapIntervalHeightProvider)).toStringAsFixed(2));
 
     // Reapply the padding offset
     newDy += ref.read(calendarWidgetTopBoundaryYProvider);
 
     // minor adjustments to center the text and put it inline with the line.
     final finalDy = newDy - textHeight / 2;
+
+    
+  
 
     return !timeSlotBoundaries.contains(newDy) ? finalDy : 0.0;
   }
