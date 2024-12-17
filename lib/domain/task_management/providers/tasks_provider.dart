@@ -4,6 +4,7 @@ import 'package:timetailor/data/task_management/models/task.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
+import 'package:timetailor/domain/task_management/providers/task_form_controller_provider.dart';
 import 'package:timetailor/main.dart';
 
 part 'tasks_provider.g.dart'; // Generated file
@@ -55,7 +56,6 @@ class TasksNotifier extends _$TasksNotifier {
     required double dyTop,
     required double dyBottom,
   }) {
-
     if (checkAddTaskValidity(dyTop: dyTop, dyBottom: dyBottom)) {
       updateTask(taskToUndo);
 
@@ -278,5 +278,9 @@ class TasksNotifier extends _$TasksNotifier {
   void cancelTaskCreation() {
     // reset draggableBox show state
     ref.read(showDraggableBoxProvider.notifier).state = false;
+
+    Future.microtask(() {
+      ref.invalidate(taskTitleControllerProvider); // Reset controller state
+    });
   }
 }

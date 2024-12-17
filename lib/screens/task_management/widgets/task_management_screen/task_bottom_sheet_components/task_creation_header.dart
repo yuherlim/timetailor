@@ -22,6 +22,7 @@ class TaskCreationHeader extends ConsumerWidget {
           FilledButton.tonal(
             onPressed: () {
               // Save action
+              FocusScope.of(context).unfocus();
               debugPrint('Save button pressed');
             },
             child: const Text(
