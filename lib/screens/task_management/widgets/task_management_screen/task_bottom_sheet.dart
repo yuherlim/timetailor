@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-import 'package:timetailor/core/shared/styled_text.dart';
 import 'package:timetailor/domain/task_management/providers/bottom_sheet_scroll_controller_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
-import 'package:timetailor/domain/task_management/providers/date_provider.dart';
-import 'package:timetailor/screens/task_management/widgets/task_management_screen/task_bottom_sheet_components/chevron_down_drag_handle.dart';
+import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/task_bottom_sheet_components/initial_extent_content.dart';
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/task_bottom_sheet_components/max_extent_content.dart';
-import 'package:timetailor/screens/task_management/widgets/task_management_screen/task_bottom_sheet_components/middle_drag_handle.dart';
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/task_bottom_sheet_components/middle_extent_content.dart';
-import 'package:timetailor/screens/task_management/widgets/task_management_screen/task_bottom_sheet_components/task_creation_header.dart';
 
 class TaskBottomSheet extends ConsumerStatefulWidget {
   const TaskBottomSheet({super.key});
@@ -46,6 +41,7 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
     final double currentExtent = ref.watch(sheetExtentProvider);
     final double initialBottomSheetExtent =
         ref.watch(initialBottomSheetExtentProvider);
+    final double minBottomSheetExtent = ref.read(minBottomSheetExtentProvider);
     final double middleBottomSheetExtent =
         ref.watch(middleBottomSheetExtentProvider);
     const double tolerance =
@@ -58,6 +54,12 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
         onNotification: (notification) {
           final notificationExtent = notification.extent;
           final sheetExtentNotifier = ref.read(sheetExtentProvider.notifier);
+
+          // Detect if swiped to the minimum extent, if yes, cancel task creation.
+          if (notificationExtent == minBottomSheetExtent) {
+            ref.read(tasksNotifierProvider.notifier).cancelTaskCreation();
+            return true;
+          }
 
           // Check for snap sizes with tolerance
           if ((notificationExtent - initialBottomSheetExtent).abs() <
@@ -75,10 +77,10 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
         child: DraggableScrollableSheet(
           controller: bottomSheetScrollController,
           initialChildSize: initialBottomSheetExtent,
-          minChildSize: initialBottomSheetExtent,
+          minChildSize: minBottomSheetExtent,
           maxChildSize: maxExtent,
           snap: true,
-          snapSizes: [middleBottomSheetExtent],
+          snapSizes: [initialBottomSheetExtent, middleBottomSheetExtent],
           builder: (BuildContext context, ScrollController scrollController) {
             return Material(
               borderRadius: (currentExtent != maxExtent)
@@ -97,10 +99,8 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
                     children: <Widget>[
                       if (currentExtent == initialBottomSheetExtent)
                         const InitialExtentContent(),
-
                       if (currentExtent == middleBottomSheetExtent)
                         const MiddleExtentContent(),
-
                       if (currentExtent == maxExtent) const MaxExtentContent(),
                     ],
                   ),

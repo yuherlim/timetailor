@@ -103,4 +103,7 @@ double autoScrollAmount(ref) => 10;
 double initialBottomSheetExtent(ref) => 0.15;
 
 @riverpod
-double middleBottomSheetExtent(ref) => 0.3;
+double minBottomSheetExtent(ref) => 0.10;
+
+@riverpod
+double middleBottomSheetExtent(ref) => 0.5;

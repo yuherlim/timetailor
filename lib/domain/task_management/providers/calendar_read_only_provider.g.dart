@@ -365,8 +365,26 @@ final initialBottomSheetExtentProvider = AutoDisposeProvider<double>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef InitialBottomSheetExtentRef = AutoDisposeProviderRef<double>;
+String _$minBottomSheetExtentHash() =>
+    r'f26698cd2883d623612b0081291c4af759698576';
+
+/// See also [minBottomSheetExtent].
+@ProviderFor(minBottomSheetExtent)
+final minBottomSheetExtentProvider = AutoDisposeProvider<double>.internal(
+  minBottomSheetExtent,
+  name: r'minBottomSheetExtentProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$minBottomSheetExtentHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef MinBottomSheetExtentRef = AutoDisposeProviderRef<double>;
 String _$middleBottomSheetExtentHash() =>
-    r'76b0e9b9418e810d658dde317cc02f74781e6d44';
+    r'607cef96342244f52e47839dd6bd7c98c1cc1f0a';
 
 /// See also [middleBottomSheetExtent].
 @ProviderFor(middleBottomSheetExtent)
