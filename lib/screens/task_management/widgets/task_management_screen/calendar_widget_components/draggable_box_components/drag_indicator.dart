@@ -83,8 +83,8 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
     // Calculate the visible bottom boundary of the viewport considering scroll offset
     final contentViewportBottom = scrollOffset + screenViewportBottom;
 
-    final contentOffsetFromTop = scrollOffset + screenViewportBottom * 0.3;
-    final contentOffsetFromBottom = scrollOffset + screenViewportBottom * 0.7;
+    final contentOffsetFromTop = scrollOffset + screenViewportBottom * 0.4;
+    final contentOffsetFromBottom = scrollOffset + screenViewportBottom * 0.6;
     final boxBottomBoundaryExceedOffsetFromBottom =
         draggableBoxBottomBoundary < contentOffsetFromBottom;
     final boxTopBoundaryExceedOffsetFromTop =
@@ -109,26 +109,6 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
           .startDownwardsAutoDrag();
       isScrolledNotifier.state = true;
       isScrolledUpNotifier.state = false;
-    } else {
-      ref.read(scrollControllerNotifierProvider.notifier).stopAutoScroll();
-    }
-  }
-
-  void autoScrollWhenBoundariesExceed(DragUpdateDetails details) {
-    if (details.delta.dy < 0) {
-      // auto scroll up if user is dragging upwards.
-      ref
-          .read(scrollControllerNotifierProvider.notifier)
-          .startUpwardsAutoDrag();
-      ref.read(isScrolledProvider.notifier).state = true;
-      ref.read(isScrolledUpProvider.notifier).state = true;
-    } else if (details.delta.dy > 0) {
-      // auto scroll down if user is dragging downards.
-      ref
-          .read(scrollControllerNotifierProvider.notifier)
-          .startDownwardsAutoDrag();
-      ref.read(isScrolledProvider.notifier).state = true;
-      ref.read(isScrolledUpProvider.notifier).state = false;
     } else {
       ref.read(scrollControllerNotifierProvider.notifier).stopAutoScroll();
     }

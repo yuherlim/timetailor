@@ -43,6 +43,7 @@ class _BottomDragIndicatorState extends ConsumerState<BottomDragIndicator> {
     final localCurrentTimeSlotHeightNotifier =
         ref.read(localCurrentTimeSlotHeightProvider.notifier);
     final isScrolledNotifier = ref.read(isScrolledProvider.notifier);
+    final isScrolledUpNotifier = ref.read(isScrolledUpProvider.notifier);
     final localDy = ref.read(localDyProvider);
     final localCurrentTimeSlotHeight =
         ref.read(localCurrentTimeSlotHeightProvider);
@@ -88,6 +89,13 @@ class _BottomDragIndicatorState extends ConsumerState<BottomDragIndicator> {
           .read(scrollControllerNotifierProvider.notifier)
           .startDownwardsAutoScroll();
       isScrolledNotifier.state = true;
+      isScrolledUpNotifier.state = false;
+    } else if (draggableBoxBottomBoundary < scrollOffset) {
+      ref
+          .read(scrollControllerNotifierProvider.notifier)
+          .startBottomBoundaryUpwardsAutoScroll();
+      isScrolledNotifier.state = true;
+      isScrolledUpNotifier.state = true;
     } else {
       ref.read(scrollControllerNotifierProvider.notifier).stopAutoScroll();
     }
@@ -97,6 +105,7 @@ class _BottomDragIndicatorState extends ConsumerState<BottomDragIndicator> {
     final localCurrentTimeSlotHeightNotifier =
         ref.read(localCurrentTimeSlotHeightProvider.notifier);
     final isScrolled = ref.read(isScrolledProvider);
+    final isScrolledUp = ref.read(isScrolledUpProvider);
     final localCurrentTimeSlotHeight =
         ref.read(localCurrentTimeSlotHeightProvider);
 
@@ -108,10 +117,14 @@ class _BottomDragIndicatorState extends ConsumerState<BottomDragIndicator> {
     ref.read(sheetExtentProvider.notifier).redisplayBottomSheet();
 
     // scroll extra if timeslot drag caused scrolling.
-    if (isScrolled) {
+    if (isScrolled && isScrolledUp) {
       ref
           .read(scrollControllerNotifierProvider.notifier)
-          .scrollDown(scrollAmount: ref.read(defaultTimeSlotHeightProvider));
+          .scrollUp(scrollAmount: ref.read(defaultTimeSlotHeightProvider) / 2);
+    } else if (isScrolled && !isScrolledUp) {
+      ref
+          .read(scrollControllerNotifierProvider.notifier)
+          .scrollDown(scrollAmount: ref.read(defaultTimeSlotHeightProvider) / 2);
     }
 
     // Snap height to the nearest interval after dragging

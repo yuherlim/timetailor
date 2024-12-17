@@ -39,6 +39,7 @@ class _TopDragIndicatorState extends ConsumerState<TopDragIndicator> {
     final localCurrentTimeSlotHeightNotifier =
         ref.read(localCurrentTimeSlotHeightProvider.notifier);
     final isScrolledNotifier = ref.read(isScrolledProvider.notifier);
+    final isScrolledUpNotifier = ref.read(isScrolledUpProvider.notifier);
     final localDy = ref.read(localDyProvider);
     final localCurrentTimeSlotHeight =
         ref.read(localCurrentTimeSlotHeightProvider);
@@ -67,6 +68,10 @@ class _TopDragIndicatorState extends ConsumerState<TopDragIndicator> {
     topBoundaryHapticFeedback(newDy);
 
     final scrollOffset = scrollController.offset;
+    final remainingScrollableContentInView =
+        scrollController.position.viewportDimension;
+    // Calculate the visible bottom boundary of the viewport
+    final viewportBottom = scrollOffset + remainingScrollableContentInView;
 
     ref.read(maxTaskHeightProvider.notifier).state = localDy -
         ref.read(calendarWidgetTopBoundaryYProvider) +
@@ -77,6 +82,13 @@ class _TopDragIndicatorState extends ConsumerState<TopDragIndicator> {
           .read(scrollControllerNotifierProvider.notifier)
           .startUpwardsAutoScroll();
       isScrolledNotifier.state = true;
+      isScrolledUpNotifier.state = true;
+    } else if (localDy > viewportBottom) {
+      ref
+          .read(scrollControllerNotifierProvider.notifier)
+          .startTopBoundaryDownwardsAutoScroll();
+      isScrolledNotifier.state = true;
+      isScrolledUpNotifier.state = false;
     } else {
       ref.read(scrollControllerNotifierProvider.notifier).stopAutoScroll();
     }
@@ -90,6 +102,7 @@ class _TopDragIndicatorState extends ConsumerState<TopDragIndicator> {
     final localCurrentTimeSlotHeight =
         ref.read(localCurrentTimeSlotHeightProvider);
     final isScrolled = ref.read(isScrolledProvider);
+    final isScrolledUp = ref.read(isScrolledUpProvider);
 
     ref.read(scrollControllerNotifierProvider.notifier).stopAutoScroll();
 
@@ -99,10 +112,14 @@ class _TopDragIndicatorState extends ConsumerState<TopDragIndicator> {
     ref.read(sheetExtentProvider.notifier).redisplayBottomSheet();
 
     // scroll extra if timeslot drag caused scrolling.
-    if (isScrolled) {
+    if (isScrolled && isScrolledUp) {
       ref
           .read(scrollControllerNotifierProvider.notifier)
-          .scrollUp(scrollAmount: ref.read(defaultTimeSlotHeightProvider));
+          .scrollUp(scrollAmount: ref.read(defaultTimeSlotHeightProvider) / 2);
+    } else if (isScrolled && !isScrolledUp) {
+      ref
+          .read(scrollControllerNotifierProvider.notifier)
+          .scrollDown(scrollAmount: ref.read(defaultTimeSlotHeightProvider));
     }
 
     // Adjust for padding before snapping

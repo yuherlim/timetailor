@@ -74,6 +74,39 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
     });
   }
 
+  void startBottomBoundaryUpwardsAutoScroll() {
+    double scrollAmount = ref.read(autoScrollAmountProvider);
+
+    final localCurrentTimeSlotHeightNotifier =
+        ref.read(localCurrentTimeSlotHeightProvider.notifier);
+
+    stopAutoScroll(); // Stop any ongoing scroll
+    _scrollTimer = Timer.periodic(const Duration(milliseconds: 16), (_) {
+      final localDy = ref.read(localDyProvider);
+      final localCurrentTimeSlotHeight =
+          ref.read(localCurrentTimeSlotHeightProvider);
+      final maxTaskHeight = ref.read(maxTaskHeightProvider);
+      final snapIntervalHeight = ref.read(snapIntervalHeightProvider);
+
+      final currentOffset = state.offset;
+      final minScrollExtent = state.position.minScrollExtent;
+
+      if (currentOffset > minScrollExtent) {
+        state.jumpTo(
+          max(localDy + snapIntervalHeight,
+              (currentOffset - scrollAmount)), // Scroll up
+        );
+        final double newSize = (localCurrentTimeSlotHeight - scrollAmount)
+            .clamp(ref.read(snapIntervalHeightProvider), maxTaskHeight);
+
+        // update local state
+        localCurrentTimeSlotHeightNotifier.state = newSize;
+      } else {
+        stopAutoScroll(); // Stop scrolling if we reach the end
+      }
+    });
+  }
+
   void scrollDown({required double scrollAmount}) {
     final isScrolledNotifier = ref.read(isScrolledProvider.notifier);
 
@@ -116,6 +149,42 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
             .clamp(ref.read(snapIntervalHeightProvider), maxTaskHeight);
 
         // update local state
+        localCurrentTimeSlotHeightNotifier.state = newSize;
+      } else {
+        stopAutoScroll(); // Stop scrolling if we reach the end
+      }
+    });
+  }
+
+  void startTopBoundaryDownwardsAutoScroll() {
+    double scrollAmount = ref.read(autoScrollAmountProvider);
+
+    final localCurrentTimeSlotHeightNotifier =
+        ref.read(localCurrentTimeSlotHeightProvider.notifier);
+    final localDyNotifier = ref.read(localDyProvider.notifier);
+
+    stopAutoScroll(); // Stop any ongoing scroll
+    _scrollTimer = Timer.periodic(const Duration(milliseconds: 16), (_) {
+      final localCurrentTimeSlotHeight =
+          ref.read(localCurrentTimeSlotHeightProvider);
+      final dyTop = ref.read(localDyProvider);
+      final dyBottom = ref.read(localDyBottomProvider);
+      final snapIntervalHeight = ref.read(snapIntervalHeightProvider);
+      final currentOffset = state.offset;
+      final maxScrollExtent = state.position.maxScrollExtent;
+      final minTimeSlotDy = dyBottom - snapIntervalHeight;
+
+      if (currentOffset < maxScrollExtent) {
+        state.jumpTo(
+          (currentOffset + scrollAmount)
+              .clamp(0, minTimeSlotDy), // Scroll down
+        );
+        final double newDy = min(dyTop + scrollAmount, minTimeSlotDy);
+        final double newSize = (localCurrentTimeSlotHeight - scrollAmount)
+            .clamp(snapIntervalHeight, double.infinity);
+
+        // update local state
+        localDyNotifier.state = newDy;
         localCurrentTimeSlotHeightNotifier.state = newSize;
       } else {
         stopAutoScroll(); // Stop scrolling if we reach the end
