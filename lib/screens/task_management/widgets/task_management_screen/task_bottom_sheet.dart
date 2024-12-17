@@ -48,66 +48,89 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
         0.01; // Allowable tolerance for floating-point comparison
     final bottomSheetScrollController =
         ref.watch(bottomSheetScrollControllerNotifierProvider);
+    final dyTop = ref.read(localDyProvider);
+    final dyBottom = ref.read(localDyBottomProvider);
+    final isTaskNotOverlapping = ref
+        .read(tasksNotifierProvider.notifier)
+        .checkAddTaskValidity(dyTop: dyTop, dyBottom: dyBottom);
 
     return Positioned.fill(
-      child: NotificationListener<DraggableScrollableNotification>(
-        onNotification: (notification) {
-          final notificationExtent = notification.extent;
-          final sheetExtentNotifier = ref.read(sheetExtentProvider.notifier);
+      child: Offstage(
+        offstage: !ref.watch(showBottomSheetProvider) || !isTaskNotOverlapping,
+        child: NotificationListener<DraggableScrollableNotification>(
+          onNotification: (notification) {
+            FocusScope.of(context).unfocus();
 
-          // Detect if swiped to the minimum extent, if yes, cancel task creation.
-          if (notificationExtent == minBottomSheetExtent) {
-            ref.read(tasksNotifierProvider.notifier).cancelTaskCreation();
+            final notificationExtent = notification.extent;
+            final sheetExtentNotifier = ref.read(sheetExtentProvider.notifier);
+
+            // Detect if swiped to the minimum extent, if yes, cancel task creation.
+            if (notificationExtent == minBottomSheetExtent) {
+              ref.read(tasksNotifierProvider.notifier).cancelTaskCreation();
+              return true;
+            }
+
+            // Check for snap sizes with tolerance
+            if ((notificationExtent - initialBottomSheetExtent).abs() <
+                tolerance) {
+              sheetExtentNotifier.update(initialBottomSheetExtent);
+            } else if ((notificationExtent - middleBottomSheetExtent).abs() <
+                tolerance) {
+              sheetExtentNotifier.update(middleBottomSheetExtent);
+            } else if ((notificationExtent - maxExtent).abs() < tolerance) {
+              sheetExtentNotifier.update(maxExtent);
+            }
+
             return true;
-          }
-
-          // Check for snap sizes with tolerance
-          if ((notificationExtent - initialBottomSheetExtent).abs() <
-              tolerance) {
-            sheetExtentNotifier.update(initialBottomSheetExtent);
-          } else if ((notificationExtent - middleBottomSheetExtent).abs() <
-              tolerance) {
-            sheetExtentNotifier.update(middleBottomSheetExtent);
-          } else if ((notificationExtent - maxExtent).abs() < tolerance) {
-            sheetExtentNotifier.update(maxExtent);
-          }
-
-          return true;
-        },
-        child: DraggableScrollableSheet(
-          controller: bottomSheetScrollController,
-          initialChildSize: initialBottomSheetExtent,
-          minChildSize: minBottomSheetExtent,
-          maxChildSize: maxExtent,
-          snap: true,
-          snapSizes: [initialBottomSheetExtent, middleBottomSheetExtent],
-          builder: (BuildContext context, ScrollController scrollController) {
-            return Material(
-              borderRadius: (currentExtent != maxExtent)
-                  ? const BorderRadius.vertical(
-                      top: Radius.circular(28),
-                    )
-                  : null,
-              color: Theme.of(context).colorScheme.onSecondary,
-              elevation: 4,
-              child: SafeArea(
-                top:
-                    false, // Prevent SafeArea from adding unnecessary top padding
-                child: SingleChildScrollView(
-                  controller: scrollController,
-                  child: Column(
-                    children: <Widget>[
-                      if (currentExtent == initialBottomSheetExtent)
-                        const InitialExtentContent(),
-                      if (currentExtent == middleBottomSheetExtent)
-                        const MiddleExtentContent(),
-                      if (currentExtent == maxExtent) const MaxExtentContent(),
-                    ],
-                  ),
-                ),
-              ),
-            );
           },
+          child: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: DraggableScrollableSheet(
+              controller: bottomSheetScrollController,
+              initialChildSize: initialBottomSheetExtent,
+              minChildSize: minBottomSheetExtent,
+              maxChildSize: maxExtent,
+              snap: true,
+              snapSizes: [initialBottomSheetExtent, middleBottomSheetExtent],
+              builder:
+                  (BuildContext context, ScrollController scrollController) {
+                return Material(
+                  borderRadius: (currentExtent != maxExtent)
+                      ? const BorderRadius.vertical(
+                          top: Radius.circular(28),
+                        )
+                      : null,
+                  color: Theme.of(context).colorScheme.onSecondary,
+                  elevation: 4,
+                  child: SafeArea(
+                    top:
+                        false, // Prevent SafeArea from adding unnecessary top padding
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      child: Column(
+                        children: <Widget>[
+                          Offstage(
+                            offstage:
+                                currentExtent != initialBottomSheetExtent,
+                            child: const InitialExtentContent(),
+                          ),
+                          Offstage(
+                            offstage:
+                                currentExtent != middleBottomSheetExtent,
+                            child: const MiddleExtentContent(),
+                          ),
+                          Offstage(
+                            offstage: currentExtent != maxExtent,
+                            child: const MaxExtentContent(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
         ),
       ),
     );

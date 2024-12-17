@@ -48,7 +48,6 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
         ref.read(scrollControllerNotifierProvider.notifier);
     final currentTimePosition = ref.read(currentTimePositionNotifierProvider);
 
-
     // Binary search to find the correct time slot
     int slotIndex = TaskManager.binarySearchSlotIndex(
         currentTimePosition, ref.read(timeSlotBoundariesProvider));
@@ -118,23 +117,23 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
   Widget build(BuildContext context) {
     final currentSelectedDate = ref.watch(currentDateNotifierProvider);
     final currentMonth = ref.watch(currentMonthNotifierProvider);
-    final isValidDate = ref.read(currentDateNotifierProvider.notifier).currentDateMoreThanEqualToday();
-    final dyTop = ref.read(localDyProvider);
-    final dyBottom = ref.read(localDyBottomProvider);
-    final isTaskNotOverlapping = ref.read(tasksNotifierProvider.notifier).checkAddTaskValidity(dyTop: dyTop, dyBottom: dyBottom);
+    final isValidDate = ref
+        .read(currentDateNotifierProvider.notifier)
+        .currentDateMoreThanEqualToday();
 
     return Stack(
       clipBehavior: Clip.none, // Allow children to overflow the bounds
       children: [
         Scaffold(
-          floatingActionButton: !ref.watch(showDraggableBoxProvider) && isValidDate
-              ? FloatingActionButton(
-                  onPressed: () {
-                    _onTaskCreate();
-                  },
-                  child: const Icon(Icons.add),
-                )
-              : null,
+          floatingActionButton:
+              !ref.watch(showDraggableBoxProvider) && isValidDate
+                  ? FloatingActionButton(
+                      onPressed: () {
+                        _onTaskCreate();
+                      },
+                      child: const Icon(Icons.add),
+                    )
+                  : null,
           appBar: AppBar(
             leading: ref.watch(showDraggableBoxProvider)
                 ? IconButton(
@@ -163,7 +162,9 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                     ref
                         .read(currentDateNotifierProvider.notifier)
                         .updateToToday();
-                    ref.read(tasksNotifierProvider.notifier).cancelTaskCreation();
+                    ref
+                        .read(tasksNotifierProvider.notifier)
+                        .cancelTaskCreation();
                   },
                 ),
               IconButton(
@@ -188,9 +189,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
             ],
           ),
         ),
-        if (ref.watch(showDraggableBoxProvider) &&
-            ref.watch(showBottomSheetProvider) && isTaskNotOverlapping)
-          const TaskBottomSheet(),
+        if (ref.watch(showDraggableBoxProvider)) const TaskBottomSheet()
       ],
     );
   }

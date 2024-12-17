@@ -7,33 +7,30 @@ part 'task_form_provider.g.dart';
 class TaskFormNotifier extends _$TaskFormNotifier {
   @override
   TaskFormState build() {
-    return TaskFormState(name: '', description: '');
+    return TaskFormState();
   }
 
-  // Update title value and validate
-  void updateName(String value) {
-    state = state.copyWith(name: value, nameError: null);
-  }
-
-  // Update description value and validate
-  void updateDescription(String value) {
-    state = state.copyWith(description: value);
-  }
-
-  // Validate form fields
-  bool validate() {
-    bool isValid = true;
-
-    isValid = validateTaskName();
-
-    return isValid;
-  }
-
-  bool validateTaskName() {
-    if (state.name.trim().isEmpty) {
-      state = state.copyWith(nameError: 'Title cannot be empty');
-      return false;
+  void updateTaskName(String value) {
+    if (value.trim().isEmpty) {
+      state = state.copyWith(
+        taskName: value,
+        errorText: "Title cannot be empty",
+        isFormValid: false,
+      );
+    } else {
+      state = state.copyWith(
+        taskName: value.trim(),
+        errorText: null,
+        isFormValid: true,
+      );
     }
-    return true;
+  }
+
+  void clearTaskName() {
+    state = TaskFormState(
+      taskName: "",
+      errorText: "Title cannot be empty",
+      isFormValid: false,
+    );
   }
 }
