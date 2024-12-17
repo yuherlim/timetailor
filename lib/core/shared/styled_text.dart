@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 
 class StyledText extends StatelessWidget {
   final String text;
@@ -175,10 +177,10 @@ class BottomSheetDurationText extends StatelessWidget {
   }
 }
 
-class TaskNameText extends StatelessWidget {
+class NormalTaskNameText extends StatelessWidget {
   final String text;
 
-  const TaskNameText(this.text, {super.key});
+  const NormalTaskNameText(this.text, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -195,18 +197,20 @@ class TaskNameText extends StatelessWidget {
   }
 }
 
-class MiniTaskNameText extends StatelessWidget {
+class MiniTaskNameText extends ConsumerWidget {
   final String text;
 
   const MiniTaskNameText(this.text, {super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isBigScreen = ref.watch(defaultTimeSlotHeightProvider) == ref.watch(bigScreenTimeSlotHeightProvider);
+
     return Text(
       // text.toUpperCase(),
       text,
       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            fontSize: 6,
+            fontSize: isBigScreen ? 10 : 8,
             fontWeight: FontWeight.bold,
             letterSpacing: 1,
           ),
@@ -227,6 +231,26 @@ class SmallTaskNameText extends StatelessWidget {
       text,
       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
             fontSize: 12,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+          ),
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+}
+
+class SmallTaskTimeText extends StatelessWidget {
+  final String text;
+
+  const SmallTaskTimeText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      // text.toUpperCase(),
+      text,
+      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            fontSize: 10,
             fontWeight: FontWeight.bold,
             letterSpacing: 1,
           ),

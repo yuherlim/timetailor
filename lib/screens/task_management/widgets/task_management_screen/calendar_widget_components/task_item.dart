@@ -42,6 +42,81 @@ class _TaskItemState extends ConsumerState<TaskItem> {
     );
   }
 
+  // Determine the task display type based on duration
+  String getTaskDisplayType(int duration) {
+    if (duration <= 5) {
+      return 'mini';
+    } else if (duration < 20) {
+      return 'small';
+    } else {
+      return 'normal';
+    }
+  }
+
+  Row buildTaskRow({
+    required String taskName,
+    required int duration,
+    required String startTime,
+    required String endTime,
+    required Map<String, double> taskDimensions,
+  }) {
+    final currentDateNotifier = ref.read(currentDateNotifierProvider.notifier);
+    const double sidePadding = 16;
+
+    if (getTaskDisplayType(duration) == 'mini') {
+      return Row(
+        children: [
+          const SizedBox(width: sidePadding),
+          Expanded(flex: 5, child: MiniTaskNameText(taskName)),
+          const Expanded(flex: 1, child: SizedBox()),
+          Expanded(flex: 4, child: MiniTaskNameText("$startTime - $endTime")),
+          const SizedBox(width: sidePadding),
+        ],
+      );
+    } else if (getTaskDisplayType(duration) == 'small') {
+      return Row(
+        children: [
+          const SizedBox(width: sidePadding),
+          Expanded(flex: 5, child: SmallTaskNameText(taskName)),
+          const Expanded(flex: 1, child: SizedBox()),
+          Expanded(flex: 4, child: SmallTaskTimeText("$startTime - $endTime")),
+          const SizedBox(width: sidePadding),
+        ],
+      );
+    } else {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(width: sidePadding),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 4.0),
+                  child: NormalTaskNameText(taskName),
+                ),
+                NormalTaskNameText("$startTime - $endTime"),
+              ],
+            ),
+          ),
+          const SizedBox(width: sidePadding),
+          if (currentDateNotifier.currentDateIsToday())
+            IconButton(
+              icon: const Icon(Icons.check_circle_outline_rounded),
+              onPressed: () {
+                debugPrint("complete task.");
+                completeTask(
+                  dyTop: taskDimensions['dyTop']!,
+                  dyBottom: taskDimensions['dyBottom']!,
+                );
+              },
+            ),
+        ],
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Map<String, double> taskDimensions =
@@ -59,7 +134,6 @@ class _TaskItemState extends ConsumerState<TaskItem> {
         widget.task.startTime.hour, widget.task.startTime.minute);
     final endTime = taskProviderNotifier.formatTime(
         widget.task.endTime.hour, widget.task.endTime.minute);
-    final currentDateNotifier = ref.read(currentDateNotifierProvider.notifier);
 
     return Positioned(
       left: slotStartX,
@@ -81,46 +155,15 @@ class _TaskItemState extends ConsumerState<TaskItem> {
           SizedBox(
             width: slotWidth,
             height: slotHeight,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (widget.task.duration <= 5)
-                        MiniTaskNameText(widget.task.name),
-                      if (!(widget.task.duration <= 5) &&
-                          widget.task.duration <= 10)
-                        SmallTaskNameText(widget.task.name),
-                      if (!(widget.task.duration <= 25))
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4.0),
-                          child: TaskNameText(widget.task.name),
-                        ),
-                      if (!(widget.task.duration <= 25))
-                        TaskNameText("$startTime - $endTime"),
-                    ],
-                  ),
-                ),
-                if (!(widget.task.duration <= 25) && currentDateNotifier.currentDateIsToday())
-                  IconButton(
-                    icon: const Icon(Icons.check_circle_outline_rounded),
-                    onPressed: () {
-                      debugPrint("complete task.");
-                      completeTask(
-                        dyTop: taskDimensions['dyTop']!,
-                        dyBottom: taskDimensions['dyBottom']!,
-                      );
-                    },
-                  ),
-              ],
-            ),
+            child: buildTaskRow(
+                duration: widget.task.duration,
+                endTime: endTime,
+                startTime: startTime,
+                taskDimensions: taskDimensions,
+                taskName: widget.task.name),
           ),
         ],
       ),
     );
-    ;
   }
 }

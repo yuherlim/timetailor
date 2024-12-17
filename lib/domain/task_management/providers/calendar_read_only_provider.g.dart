@@ -6,8 +6,44 @@ part of 'calendar_read_only_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+String _$smallScreenTimeSlotHeightHash() =>
+    r'7a2fd308f885e3f87abec0de79fe4de2fff6013e';
+
+/// See also [smallScreenTimeSlotHeight].
+@ProviderFor(smallScreenTimeSlotHeight)
+final smallScreenTimeSlotHeightProvider = AutoDisposeProvider<double>.internal(
+  smallScreenTimeSlotHeight,
+  name: r'smallScreenTimeSlotHeightProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$smallScreenTimeSlotHeightHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef SmallScreenTimeSlotHeightRef = AutoDisposeProviderRef<double>;
+String _$bigScreenTimeSlotHeightHash() =>
+    r'f4094498a519095e1ddc2facd69e16b2744b145c';
+
+/// See also [bigScreenTimeSlotHeight].
+@ProviderFor(bigScreenTimeSlotHeight)
+final bigScreenTimeSlotHeightProvider = AutoDisposeProvider<double>.internal(
+  bigScreenTimeSlotHeight,
+  name: r'bigScreenTimeSlotHeightProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$bigScreenTimeSlotHeightHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef BigScreenTimeSlotHeightRef = AutoDisposeProviderRef<double>;
 String _$defaultTimeSlotHeightHash() =>
-    r'33ac5ca1bdf75c87a6251f0a084dc23c63d220c6';
+    r'6135b9c15c83f6c67c95b654670b9999f0b93cc8';
 
 /// See also [defaultTimeSlotHeight].
 @ProviderFor(defaultTimeSlotHeight)

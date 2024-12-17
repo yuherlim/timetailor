@@ -4,8 +4,15 @@ import 'package:timetailor/domain/task_management/providers/calendar_state_provi
 part 'calendar_read_only_provider.g.dart';
 
 @riverpod
-double defaultTimeSlotHeight(ref) =>
-    ref.watch(screenHeightProvider) <= 800 ? 120.0 : 144.0;
+double smallScreenTimeSlotHeight(ref) => 170.0;
+
+@riverpod
+double bigScreenTimeSlotHeight(ref) => 200.0;
+
+@riverpod
+double defaultTimeSlotHeight(ref) => ref.watch(screenHeightProvider) <= 800
+    ? ref.watch(smallScreenTimeSlotHeightProvider)
+    : ref.watch(bigScreenTimeSlotHeightProvider);
 
 @riverpod
 double snapIntervalMinutes(ref) => 5;

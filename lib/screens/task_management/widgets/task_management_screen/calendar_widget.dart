@@ -54,38 +54,29 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
       child: Stack(
         children: [
           const CalendarWidgetBackground(),
+
           // current tasks
-          if (alltasks != null)
-            ...alltasks.map(
-              (task) {
-                return TaskItem(task: task);
-              },
-            ),
-          // draggable box
-          if (ref.watch(showDraggableBoxProvider)) const DraggableBox(),
-          // top duration indicator
-          if (ref.watch(showDraggableBoxProvider)) const TopDurationIndicator(),
-          // bottom duration indicator
-          if (ref.watch(showDraggableBoxProvider))
+          if (alltasks != null) ...alltasks.map((task) => TaskItem(task: task)),
+
+          if (ref.watch(showDraggableBoxProvider)) ...[
+            const DraggableBox(),
+            const TopDurationIndicator(),
             const BottomDurationIndicator(),
-          // drag Indicator
-          if (ref.watch(showDraggableBoxProvider)) const DragIndicator(),
-          // dragging status indicator
-          if (ref.watch(showDraggableBoxProvider))
+            const DragIndicator(),
             const DraggingStatusIndicator(isTopDraggingIndicator: true),
-          if (ref.watch(showDraggableBoxProvider))
             const DraggingStatusIndicator(isTopDraggingIndicator: false),
-          // resizing status indicator
-          if (ref.watch(showDraggableBoxProvider))
             const ResizingStatusIndicator(isTopResizingIndicator: true),
-          if (ref.watch(showDraggableBoxProvider))
             const ResizingStatusIndicator(isTopResizingIndicator: false),
-          // Top Indicator
-          if (ref.watch(showDraggableBoxProvider)) const TopDragIndicator(),
-          if (ref.watch(showDraggableBoxProvider)) const TopTimeIndicator(),
-          // Bottom Indicator
-          if (ref.watch(showDraggableBoxProvider)) const BottomDragIndicator(),
-          if (ref.watch(showDraggableBoxProvider)) const BottomTimeIndicator(),
+
+            // Top Indicator
+            const TopDragIndicator(),
+            const TopTimeIndicator(),
+
+            // Bottom Indicator
+            const BottomDragIndicator(),
+            const BottomTimeIndicator(),
+          ],
+
           // Current Time Indicator
           const CurrentTimeIndicator(),
         ],

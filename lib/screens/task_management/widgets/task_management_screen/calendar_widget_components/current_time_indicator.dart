@@ -34,8 +34,8 @@ class _CurrentTimeIndicatorState extends ConsumerState<CurrentTimeIndicator> {
 
     // time indicator position
     final screenWidth = MediaQuery.of(context).size.width;
-    final indicatorSidePadding = ref.read(sidePaddingProvider);
-    final textPadding = ref.read(textPaddingProvider);
+    final indicatorSidePadding = ref.watch(sidePaddingProvider);
+    final textPadding = ref.watch(textPaddingProvider);
     final timeIndicatorStartX = indicatorSidePadding +
         screenWidth * 0.1 +
         textPadding -
