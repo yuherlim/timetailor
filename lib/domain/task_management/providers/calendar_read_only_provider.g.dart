@@ -7,7 +7,7 @@ part of 'calendar_read_only_provider.dart';
 // **************************************************************************
 
 String _$smallScreenTimeSlotHeightHash() =>
-    r'7a2fd308f885e3f87abec0de79fe4de2fff6013e';
+    r'226718fe667122ebe009aee4172783ee6de0175e';
 
 /// See also [smallScreenTimeSlotHeight].
 @ProviderFor(smallScreenTimeSlotHeight)
@@ -25,7 +25,7 @@ final smallScreenTimeSlotHeightProvider = AutoDisposeProvider<double>.internal(
 // ignore: unused_element
 typedef SmallScreenTimeSlotHeightRef = AutoDisposeProviderRef<double>;
 String _$bigScreenTimeSlotHeightHash() =>
-    r'f4094498a519095e1ddc2facd69e16b2744b145c';
+    r'3eeaed59a6293927b408c84e63a20e240cdd88fb';
 
 /// See also [bigScreenTimeSlotHeight].
 @ProviderFor(bigScreenTimeSlotHeight)
