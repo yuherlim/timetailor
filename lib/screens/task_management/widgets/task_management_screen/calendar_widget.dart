@@ -13,6 +13,7 @@ import 'package:timetailor/screens/task_management/widgets/task_management_scree
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/draggable_box_components/drag_indicator.dart';
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/draggable_box_components/draggable_box.dart';
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/draggable_box_components/dragging_status_indicator.dart';
+import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/draggable_box_components/overlapping_status_indicator.dart';
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/draggable_box_components/resizing_status_indicator.dart';
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/draggable_box_components/top_duration_indicator.dart';
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/draggable_box_components/top_drag_indicator.dart';
@@ -67,6 +68,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
             const DraggingStatusIndicator(isTopDraggingIndicator: false),
             const ResizingStatusIndicator(isTopResizingIndicator: true),
             const ResizingStatusIndicator(isTopResizingIndicator: false),
+            const OverlappingStatusIndicator(),
 
             // Top Indicator
             const TopDragIndicator(),

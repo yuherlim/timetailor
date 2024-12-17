@@ -136,6 +136,10 @@ class _BottomDragIndicatorState extends ConsumerState<BottomDragIndicator> {
     final localDy = ref.watch(localDyProvider);
     final localCurrentTimeSlotHeight =
         ref.watch(localCurrentTimeSlotHeightProvider);
+    final localDyBottom = ref.watch(localDyBottomProvider);
+    final isTaskNotOverlapping = ref
+        .read(tasksNotifierProvider.notifier)
+        .checkAddTaskValidity(dyTop: localDy, dyBottom: localDyBottom);
 
     return Positioned(
       left: ref.watch(slotStartXProvider) +
@@ -159,7 +163,7 @@ class _BottomDragIndicatorState extends ConsumerState<BottomDragIndicator> {
           width: ref.watch(draggableBoxIndicatorWidthProvider),
           height: ref.watch(draggableBoxIndicatorHeightProvider),
           decoration: BoxDecoration(
-            color: AppColors.primaryAccent,
+            color: isTaskNotOverlapping ? AppColors.primaryAccent : Colors.red,
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.circular(5),
           ),

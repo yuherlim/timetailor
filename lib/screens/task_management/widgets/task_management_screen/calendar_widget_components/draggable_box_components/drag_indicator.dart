@@ -219,6 +219,9 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
         dragIndicatorHeight <= snapIntervalHeight * 3;
 
     final isLongPressed = ref.watch(isDraggableBoxLongPressedProvider);
+    final dyTop = ref.watch(localDyProvider);
+    final dyBottom = ref.watch(localDyBottomProvider);
+    final isTaskNotOverlapping = ref.read(tasksNotifierProvider.notifier).checkAddTaskValidity(dyTop: dyTop, dyBottom: dyBottom);
 
     return Positioned(
       left: !draggableBoxSizeIsSmall ? leftPosition : defaultLeftPosition,
@@ -247,8 +250,8 @@ class _DragIndicatorState extends ConsumerState<DragIndicator> {
               : defaultDragIndicatorHeight,
           decoration: BoxDecoration(
             color: !draggableBoxSizeIsSmall
-                ? AppColors.primaryAccent.withOpacity(0.2)
-                : AppColors.primaryAccent,
+                ? isTaskNotOverlapping ? AppColors.primaryAccent.withOpacity(0.2) : Colors.red.withOpacity(0.5)
+                : isTaskNotOverlapping ? AppColors.primaryAccent : Colors.red,
             // color: Colors.transparent,
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.circular(5),

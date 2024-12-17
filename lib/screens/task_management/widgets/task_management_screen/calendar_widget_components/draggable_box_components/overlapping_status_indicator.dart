@@ -5,34 +5,30 @@ import 'package:timetailor/domain/task_management/providers/calendar_read_only_p
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 
-class ResizingStatusIndicator extends ConsumerWidget {
-  final bool isTopResizingIndicator;
-
-  const ResizingStatusIndicator({super.key, required this.isTopResizingIndicator});
+class OverlappingStatusIndicator extends ConsumerWidget {
+  const OverlappingStatusIndicator({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final slotStartX = ref.watch(slotStartXProvider);
     final slotWidth = ref.watch(slotWidthProvider);
     final dy = ref.watch(localDyProvider);
-    final dyBottom = ref.watch(localDyBottomProvider);
-    const resizingOutput = "Resizing...";
-    final textSize = const TimeIndicatorText(resizingOutput).getTextSize(context);
-    final topPosition = isTopResizingIndicator ? dy: dyBottom - textSize.height;
+    const resizingOutput = "Overlapping...";
+    final textSize =
+        const TimeIndicatorText(resizingOutput).getTextSize(context);
     final leftPosition = slotStartX + slotWidth / 2 - textSize.width / 2;
-    final isResizing = ref.watch(isResizingProvider);
-    final draggableBoxSizeIsSmall = ref.watch(dragIndicatorHeightProvider) <
-    ref.watch(snapIntervalHeightProvider) * 6;
+    final topPosition = dy - textSize.height;
+    final dyBottom = ref.watch(localDyBottomProvider);
     final isTaskNotOverlapping = ref
         .read(tasksNotifierProvider.notifier)
         .checkAddTaskValidity(dyTop: dy, dyBottom: dyBottom);
+    final draggableBoxSizeIsSmall = ref.watch(dragIndicatorHeightProvider) <
+        ref.watch(snapIntervalHeightProvider) * 6;
 
-    if (isResizing && draggableBoxSizeIsSmall && !isTaskNotOverlapping && isTopResizingIndicator) {
-      return const SizedBox.shrink();
-    } else if (isResizing) {
+    if (!isTaskNotOverlapping) {
       return Positioned(
         left: leftPosition,
-        top: !draggableBoxSizeIsSmall ? topPosition : isTopResizingIndicator ? topPosition - 32 : topPosition + 32,
+        top: !draggableBoxSizeIsSmall ? topPosition : topPosition - 16,
         child: const TimeIndicatorText(resizingOutput),
       );
     } else {
