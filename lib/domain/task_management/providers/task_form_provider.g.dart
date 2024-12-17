@@ -1,26 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'tasks_provider.dart';
+part of 'task_form_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$tasksNotifierHash() => r'b3aa5f23fd378085672bf4b200eb90e4060dc370';
+String _$taskFormNotifierHash() => r'775270bc18e65b61b7077893b43292c6b563456a';
 
-/// See also [TasksNotifier].
-@ProviderFor(TasksNotifier)
-final tasksNotifierProvider =
-    AutoDisposeNotifierProvider<TasksNotifier, List<Task>>.internal(
-  TasksNotifier.new,
-  name: r'tasksNotifierProvider',
+/// See also [TaskFormNotifier].
+@ProviderFor(TaskFormNotifier)
+final taskFormNotifierProvider =
+    AutoDisposeNotifierProvider<TaskFormNotifier, TaskFormState>.internal(
+  TaskFormNotifier.new,
+  name: r'taskFormNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$tasksNotifierHash,
+      : _$taskFormNotifierHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$TasksNotifier = AutoDisposeNotifier<List<Task>>;
+typedef _$TaskFormNotifier = AutoDisposeNotifier<TaskFormState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
