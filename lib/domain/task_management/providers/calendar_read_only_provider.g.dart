@@ -330,7 +330,7 @@ final dragIndicatorIconSizeProvider = AutoDisposeProvider<double>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DragIndicatorIconSizeRef = AutoDisposeProviderRef<double>;
-String _$autoScrollAmountHash() => r'8fc64ce4095e37dbfd55773414d0d488b168374d';
+String _$autoScrollAmountHash() => r'719603513af01578399c8afed24c5533d1d98144';
 
 /// See also [autoScrollAmount].
 @ProviderFor(autoScrollAmount)

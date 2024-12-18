@@ -49,6 +49,7 @@ dependencies:
   material_symbols_icons: ^4.2801.0
   flutter_hooks: ^0.20.5
   hooks_riverpod: ^2.6.1
+  uuid: ^4.5.1
 
 dev_dependencies:
   flutter_test:

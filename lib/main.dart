@@ -5,12 +5,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timetailor/core/config/routes.dart';
+import 'package:timetailor/core/shared/custom_snackbars.dart';
 import 'package:timetailor/core/theme/theme.dart';
 import 'package:timetailor/core/theme/util.dart';
 import 'package:timetailor/firebase_options.dart';
 
-final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
-    GlobalKey<ScaffoldMessengerState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

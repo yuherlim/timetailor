@@ -1,23 +1,23 @@
 class TaskFormState {
-  final String taskName;
-  final String? errorText;
-  final bool isFormValid;
+  final String name;
+  final String? nameError;
+  final String description;
 
   TaskFormState({
-    this.taskName = "",
-    this.errorText,
-    this.isFormValid = false,
+    required this.name,
+    this.nameError,
+    required this.description,
   });
 
   TaskFormState copyWith({
-    String? taskName,
-    String? errorText,
-    bool? isFormValid,
+    String? name,
+    String? nameError,
+    String? description,
   }) {
     return TaskFormState(
-      taskName: taskName ?? this.taskName,
-      errorText: errorText,
-      isFormValid: isFormValid ?? this.isFormValid,
+      name: name ?? this.name,
+      nameError: nameError,
+      description: description ?? this.description,
     );
   }
 }

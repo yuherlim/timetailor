@@ -29,15 +29,13 @@ class _TaskItemState extends ConsumerState<TaskItem> {
     taskNotifier.updateTask(updatedTask);
 
     // Show the SnackBar
-    ScaffoldMessenger.of(context).showSnackBar(
-      longDurationSnackBarWithAction(
-        onPressed: () => taskNotifier.undoTaskCompletion(
-          taskToUndo: currentTask,
-          dyTop: dyTop,
-          dyBottom: dyBottom,
-        ),
-        contentString: "Task completed.",
-        actionText: "Undo",
+    CustomSnackbars.longDurationSnackBarWithAction(
+      contentString: "Task completed.",
+      actionText: "Undo",
+      onPressed: () => taskNotifier.undoTaskCompletion(
+        taskToUndo: currentTask,
+        dyTop: dyTop,
+        dyBottom: dyBottom,
       ),
     );
   }

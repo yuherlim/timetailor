@@ -27,41 +27,17 @@ class _MiddleExtentContentState extends ConsumerState<MiddleExtentContent> {
     final formNotifier = ref.read(taskFormNotifierProvider.notifier);
 
     // Persist TextEditingController using flutter_hooks
-    final titleController = useTextEditingController(text: formState.taskName);
-
-    // Local state for form validation/error handling
-    // final errorText = useState<String?>(null);
-    // final isTextEmpty = useState<bool>(true);
-    // final isFormValid = useState<bool>(false);
-    // final charCount = useState<int>(titleController.text.length);
-    // final taskName = useState<String>("");
+    final titleController = useTextEditingController(text: formState.name);
 
     // Keep Riverpod state in sync with the controller
     useEffect(() {
       void listener() {
-        formNotifier.updateTaskName(titleController.text);
+        formNotifier.updateName(titleController.text);
       }
 
       titleController.addListener(listener);
       return () => titleController.removeListener(listener); // Cleanup listener
     }, [titleController]);
-
-    // void validateTaskName(String value) {
-    //   if (value.trim().isEmpty) {
-    //     errorText.value = "Title cannot be empty";
-    //     isFormValid.value = false;
-    //   } else {
-    //     errorText.value = null;
-    //     isFormValid.value = true;
-    //   }
-    // }
-
-    // void clearTaskNameTextField() {
-    //   titleController.clear();
-    //   isTextEmpty.value = true;
-    //   errorText.value = "Title cannot be empty";
-    //   charCount.value = 0; // Reset char count
-    // }
 
     return Column(
       children: [
@@ -76,9 +52,9 @@ class _MiddleExtentContentState extends ConsumerState<MiddleExtentContent> {
                 children: [
                   const SizedBox(width: 32),
                   Flexible(
-                      child: StyledText(formState.taskName.isEmpty
+                      child: StyledText(formState.name.isEmpty
                           ? "(No Title)"
-                          : formState.taskName)),
+                          : formState.name)),
                 ],
               ),
               const SizedBox(height: 8),
@@ -103,7 +79,7 @@ class _MiddleExtentContentState extends ConsumerState<MiddleExtentContent> {
                       ? IconButton(
                           icon: const Icon(Icons.clear),
                           onPressed: () {
-                            formNotifier.clearTaskName();
+                            formNotifier.clearName();
                             titleController.clear();
                           },
                         )
@@ -115,17 +91,22 @@ class _MiddleExtentContentState extends ConsumerState<MiddleExtentContent> {
                       color: titleController.text.length == 50
                           ? AppColors.highlightColor
                           : AppColors.textColor),
-                  errorText: formState.errorText,
+                  errorText: formState.nameError,
                   errorStyle:
                       TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
                 cursorErrorColor: Theme.of(context).colorScheme.error,
                 onChanged: (value) {
-                  formNotifier.updateTaskName(value);
+                  if (formNotifier.validate()) {
+                    formNotifier.updateName(value);
+                  }
                 },
                 onFieldSubmitted: (value) {
                   FocusScope.of(context).unfocus();
-                  formNotifier.updateTaskName(value);
+
+                  if (formNotifier.validate()) {
+                    formNotifier.updateName(value);
+                  }
                 },
                 inputFormatters: [
                   LengthLimitingTextInputFormatter(

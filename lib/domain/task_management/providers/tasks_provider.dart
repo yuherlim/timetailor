@@ -58,16 +58,9 @@ class TasksNotifier extends _$TasksNotifier {
   }) {
     if (checkAddTaskValidity(dyTop: dyTop, dyBottom: dyBottom)) {
       updateTask(taskToUndo);
-
-      scaffoldMessengerKey.currentState?.showSnackBar(
-        shortDurationSnackBar(
-            contentString: "Undo task completion successful!"),
-      );
+      CustomSnackbars.shortDurationSnackBar(contentString: "Undo task completion successful!");
     } else {
-      scaffoldMessengerKey.currentState?.showSnackBar(
-        shortDurationSnackBar(
-            contentString: "Undo task completion failed! Overlapping tasks."),
-      );
+      CustomSnackbars.shortDurationSnackBar(contentString: "Undo task completion failed! Overlapping tasks.");
     }
   }
 
@@ -158,6 +151,41 @@ class TasksNotifier extends _$TasksNotifier {
     final normalizedHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
     final paddedMinutes = minutes.toString().padLeft(2, '0');
     return '$normalizedHour:$paddedMinutes $period';
+  }
+
+  Map<String, DateTime> getStartTimeEndTimeInDateTime() {
+    final currentDate = ref.read(currentDateNotifierProvider);
+
+    // Calculate start time
+    final startTime = calculateStartTime();
+    final startHour = startTime["startHour"]!;
+    final startMinutes = startTime["startMinutes"]!;
+
+    // Calculate end time
+    final endTime = calculateEndTime();
+    final endHour = endTime["endHour"]!;
+    final endMinutes = endTime["endMinutes"]!;
+
+    final startTimeDateTime = DateTime(
+      currentDate.year,
+      currentDate.month,
+      currentDate.day,
+      startHour,
+      startMinutes,
+    );
+
+    final endTimeDateTime = DateTime(
+      currentDate.year,
+      currentDate.month,
+      currentDate.day,
+      endHour,
+      endMinutes,
+    );
+
+    return {
+      "startTime" : startTimeDateTime,
+      "endTime" : endTimeDateTime,
+    };
   }
 
   Map<String, int> calculateStartTime() {
@@ -278,9 +306,5 @@ class TasksNotifier extends _$TasksNotifier {
   void cancelTaskCreation() {
     // reset draggableBox show state
     ref.read(showDraggableBoxProvider.notifier).state = false;
-
-    Future.microtask(() {
-      ref.invalidate(taskTitleControllerProvider); // Reset controller state
-    });
   }
 }
