@@ -45,22 +45,41 @@ class TasksNotifier extends _$TasksNotifier {
 
   void removeTask(Task task) {
     state = state.where((currentTask) => currentTask != task).toList();
+    CustomSnackbars.longDurationSnackBarWithAction(
+      contentString: "Task deletion successful!",
+      actionText: "Undo",
+      onPressed: () => undoTaskHistoryDeletion(
+        taskToUndo: task,
+      ),
+    );
   }
 
   // these methods are to be converted to use firestore later.
 
   //fetchTasksOnce
 
-  void undoTaskCompletion({
+  // for undo deleted task in the history screen
+  void undoTaskHistoryDeletion({
+    required Task taskToUndo,
+  }) {
+    addTask(taskToUndo);
+    CustomSnackbars.shortDurationSnackBar(
+        contentString: "Undo task deletion successful!");
+  }
+
+  // for undo completed task and deleted task
+  void undoTaskStatusChange({
     required Task taskToUndo,
     required double dyTop,
     required double dyBottom,
+    required String successMessage,
+    required String failureMessage,
   }) {
     if (checkAddTaskValidity(dyTop: dyTop, dyBottom: dyBottom)) {
       updateTask(taskToUndo);
-      CustomSnackbars.shortDurationSnackBar(contentString: "Undo task completion successful!");
+      CustomSnackbars.shortDurationSnackBar(contentString: successMessage);
     } else {
-      CustomSnackbars.shortDurationSnackBar(contentString: "Undo task completion failed! Overlapping tasks.");
+      CustomSnackbars.shortDurationSnackBar(contentString: failureMessage);
     }
   }
 
@@ -183,8 +202,8 @@ class TasksNotifier extends _$TasksNotifier {
     );
 
     return {
-      "startTime" : startTimeDateTime,
-      "endTime" : endTimeDateTime,
+      "startTime": startTimeDateTime,
+      "endTime": endTimeDateTime,
     };
   }
 
