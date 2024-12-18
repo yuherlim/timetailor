@@ -32,10 +32,12 @@ class _TaskItemState extends ConsumerState<TaskItem> {
     CustomSnackbars.longDurationSnackBarWithAction(
       contentString: "Task completed.",
       actionText: "Undo",
-      onPressed: () => taskNotifier.undoTaskCompletion(
+      onPressed: () => taskNotifier.undoTaskStatusChange(
         taskToUndo: currentTask,
         dyTop: dyTop,
         dyBottom: dyBottom,
+        successMessage: "Undo task completion successful!",
+        failureMessage: "Undo task completion failed! Overlapping tasks.",
       ),
     );
   }
@@ -60,6 +62,7 @@ class _TaskItemState extends ConsumerState<TaskItem> {
   }) {
     final currentDateNotifier = ref.read(currentDateNotifierProvider.notifier);
     const double sidePadding = 16;
+    const double topPadding = 8;
 
     if (getTaskDisplayType(duration) == 'mini') {
       return Row(
@@ -91,6 +94,7 @@ class _TaskItemState extends ConsumerState<TaskItem> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: topPadding),
                 NormalTaskNameText(taskName),
                 NormalTaskNameText("$startTime - $endTime"),
               ],
