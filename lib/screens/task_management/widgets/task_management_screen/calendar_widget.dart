@@ -33,6 +33,8 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
     ref.watch(currentDateNotifierProvider);
     ref.watch(tasksNotifierProvider);
     final screenHeight = ref.watch(screenHeightProvider);
+    final isCurrentDateToday =
+        ref.read(currentDateNotifierProvider.notifier).currentDateIsToday();
 
     // initialize screen height after screen finish rendering
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -80,7 +82,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
           ],
 
           // Current Time Indicator
-          const CurrentTimeIndicator(),
+          if (isCurrentDateToday) const CurrentTimeIndicator(),
         ],
       ),
     );
