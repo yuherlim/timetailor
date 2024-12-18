@@ -193,7 +193,7 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
   }
 
   void startUpwardsAutoDrag() {
-    const double scrollAmount = 15;
+    double scrollAmount = ref.read(autoScrollAmountProvider);
 
     final localDyNotifier = ref.read(localDyProvider.notifier);
 
@@ -220,7 +220,7 @@ class ScrollControllerNotifier extends _$ScrollControllerNotifier {
   }
 
   void startDownwardsAutoDrag() {
-    const double scrollAmount = 15;
+    double scrollAmount = ref.read(autoScrollAmountProvider);
 
     final localDyNotifier = ref.read(localDyProvider.notifier);
 
