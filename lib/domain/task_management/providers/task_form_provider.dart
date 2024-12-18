@@ -11,7 +11,11 @@ class TaskFormNotifier extends _$TaskFormNotifier {
   }
 
   void clearName() {
-    state = state.copyWith(name: '', description: '');
+    state = state.copyWith(name: '');
+  }
+
+  void clearDescription() {
+    state = state.copyWith(description: '');
   }
 
   // Update title value and validate

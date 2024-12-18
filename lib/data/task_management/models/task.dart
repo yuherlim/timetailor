@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Task {
   final String id;
   final String name;
+  final String description;
   final DateTime date;
   final DateTime startTime;
   final int duration; // Duration in minutes
@@ -13,6 +14,7 @@ class Task {
   Task({
     required this.id,
     required this.name,
+    required this.description,
     required this.date,
     required this.startTime,
     required this.duration,
@@ -24,6 +26,7 @@ class Task {
   Task copyWith({
     String? id,
     String? name,
+    String? description,
     DateTime? date,
     DateTime? startTime,
     int? duration,
@@ -34,6 +37,7 @@ class Task {
     return Task(
       id: id ?? this.id,
       name: name ?? this.name,
+      description: description ?? this.description,
       date: date ?? this.date,
       startTime: startTime ?? this.startTime,
       duration: duration ?? this.duration,
@@ -46,13 +50,13 @@ class Task {
   // Map<String, dynamic> toFirestore() {
   //   return {
   //     "name": name,
+  //     "description": description,
+  //     "date": Timestamp.fromDate(date),
   //     "startTime": Timestamp.fromDate(startTime),
   //     "duration": duration,
   //     "endTime": Timestamp.fromDate(endTime),
-  //     "completed": completed,
+  //     "isCompleted": isCompleted,
   //     "linkedNote": linkedNote,
-  //     "yTop": yTop,
-  //     "yBottom": yBottom,
   //   };
   // }
 
@@ -62,9 +66,12 @@ class Task {
   //   final data = snapshot.data()!;
   //   return Task(
   //     name: data["name"],
+  //     description: data["description"],
+  //     date: data["date"],
   //     startTime: data["startTime"],
   //     duration: data["duration"],
-  //     completed: data["completed"],
+  //     endTime: data["endTime"],
+  //     isCompleted: data["isCompleted"],
   //     linkedNote: data["linkedNote"],
   //     id: snapshot.id,
   //   );
@@ -81,6 +88,7 @@ final List<Task> tasks = [
   Task(
     id: 'task1',
     name: 'Team Meeting',
+    description: "Team Meeting with the team.",
     date:
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
     startTime: roundToFiveMinuteInterval(DateTime.now()),
@@ -93,6 +101,7 @@ final List<Task> tasks = [
   Task(
     id: 'task2',
     name: 'Write Project Report',
+    description: "",
     date:
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
     startTime:
@@ -106,6 +115,7 @@ final List<Task> tasks = [
   Task(
     id: 'task3',
     name: 'Workout this is a very long sentence, testing testing,t testing',
+    description: "",
     date: DateTime(
         DateTime.now().year, DateTime.now().month, DateTime.now().day - 1),
     startTime:
@@ -119,6 +129,7 @@ final List<Task> tasks = [
   Task(
     id: 'task4',
     name: 'Prepare Presentation',
+    description: "",
     date: DateTime(
         DateTime.now().year, DateTime.now().month, DateTime.now().day - 1),
     startTime:
@@ -132,6 +143,7 @@ final List<Task> tasks = [
   Task(
     id: 'task5',
     name: 'Mini text testing',
+    description: "",
     date:
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
     startTime:
@@ -145,6 +157,7 @@ final List<Task> tasks = [
   Task(
     id: 'task6',
     name: 'Text testing',
+    description: "",
     date:
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
     startTime: roundToFiveMinuteInterval(

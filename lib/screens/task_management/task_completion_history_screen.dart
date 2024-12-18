@@ -50,7 +50,6 @@ class _TaskCompletionHistoryScreenState
   @override
   Widget build(BuildContext context) {
     ref.watch(tasksNotifierProvider);
-    final taskNotifier = ref.read(tasksNotifierProvider.notifier);
     final completedTasks = ref
         .read(tasksNotifierProvider.notifier)
         .getAllCompletedTasksForCurrentDate();

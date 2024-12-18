@@ -20,6 +20,7 @@ class TaskCreationHeader extends ConsumerWidget {
     final taskFormState = ref.watch(taskFormNotifierProvider);
     final startTimeEndTime = taskNotifier.getStartTimeEndTimeInDateTime();
     final name = taskFormState.name;
+    final description = taskFormState.description;
     final date = ref.watch(currentDateNotifierProvider);
     final duration = taskNotifier.calculateDurationInMinutes();
     final startTime = startTimeEndTime["startTime"]!;
@@ -53,6 +54,7 @@ class TaskCreationHeader extends ConsumerWidget {
               final taskToSave = Task(
                 id: uuid.v4(),
                 name: name,
+                description: description,
                 date: date,
                 startTime: startTime,
                 duration: duration,
