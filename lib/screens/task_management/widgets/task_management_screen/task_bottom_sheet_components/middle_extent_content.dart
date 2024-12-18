@@ -66,7 +66,6 @@ class _MiddleExtentContentState extends ConsumerState<MiddleExtentContent> {
     return Column(
       children: [
         const MiddleDragHandle(),
-        // Conditionally show Cancel and Save buttons
         const TaskCreationHeader(),
         const SizedBox(height: 8),
         Padding(

@@ -46,7 +46,7 @@ class _TaskItemState extends ConsumerState<TaskItem> {
   String getTaskDisplayType(int duration) {
     if (duration <= 5) {
       return 'mini';
-    } else if (duration < 20) {
+    } else if (duration < 15) {
       return 'small';
     } else {
       return 'normal';
@@ -89,23 +89,20 @@ class _TaskItemState extends ConsumerState<TaskItem> {
         children: [
           const SizedBox(width: sidePadding),
           Expanded(
+            flex: 8,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 4.0),
-                  child: NormalTaskNameText(taskName),
-                ),
+                NormalTaskNameText(taskName),
                 NormalTaskNameText("$startTime - $endTime"),
               ],
             ),
           ),
           const SizedBox(width: sidePadding),
-          if (currentDateNotifier.currentDateIsToday())
+          if (currentDateNotifier.currentDateMoreThanEqualToday())
             IconButton(
               icon: const Icon(Icons.check_circle_outline_rounded),
               onPressed: () {
-                debugPrint("complete task.");
                 completeTask(
                   dyTop: taskDimensions['dyTop']!,
                   dyBottom: taskDimensions['dyBottom']!,

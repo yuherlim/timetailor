@@ -156,6 +156,45 @@ class TimeIndicatorText extends StatelessWidget {
   }
 }
 
+class OverlappingIndicatorText extends ConsumerWidget {
+  final String text;
+
+  const OverlappingIndicatorText(this.text, {super.key});
+
+  Size getTextSize(BuildContext context, [bool isSmallScreen = false]) {
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontSize: isSmallScreen ? 8 : 11,
+              height: isSmallScreen ? 1.75 : null,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
+            ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout(); // Layout the text to calculate its size
+
+    return textPainter.size; // Returns width and height of the text
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isSmallScreen = ref.watch(smallScreenTimeSlotHeightProvider) == ref.watch(defaultTimeSlotHeightProvider);
+
+    return Text(
+      // text.toUpperCase(),
+      text,
+      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            fontSize: isSmallScreen ? 8 : 11,
+            height: isSmallScreen ? 1.75 : null,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+          ),
+    );
+  }
+}
+
 class BottomSheetDurationText extends StatelessWidget {
   final String text;
 
@@ -239,18 +278,20 @@ class SmallTaskNameText extends StatelessWidget {
   }
 }
 
-class SmallTaskTimeText extends StatelessWidget {
+class SmallTaskTimeText extends ConsumerWidget {
   final String text;
 
   const SmallTaskTimeText(this.text, {super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isSmallScreen = ref.watch(smallScreenTimeSlotHeightProvider) == ref.watch(defaultTimeSlotHeightProvider);
+
     return Text(
       // text.toUpperCase(),
       text,
       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            fontSize: 10,
+            fontSize: isSmallScreen ? 8 : 10,
             fontWeight: FontWeight.bold,
             letterSpacing: 1,
           ),

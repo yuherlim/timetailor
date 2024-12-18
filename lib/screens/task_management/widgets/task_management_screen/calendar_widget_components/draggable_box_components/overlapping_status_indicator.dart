@@ -14,8 +14,9 @@ class OverlappingStatusIndicator extends ConsumerWidget {
     final slotWidth = ref.watch(slotWidthProvider);
     final dy = ref.watch(localDyProvider);
     const resizingOutput = "Overlapping...";
+    final isSmallScreen = ref.watch(defaultTimeSlotHeightProvider) == ref.watch(smallScreenTimeSlotHeightProvider);
     final textSize =
-        const TimeIndicatorText(resizingOutput).getTextSize(context);
+        const OverlappingIndicatorText(resizingOutput).getTextSize(context, isSmallScreen);
     final leftPosition = slotStartX + slotWidth / 2 - textSize.width / 2;
     final topPosition = dy - textSize.height;
     final dyBottom = ref.watch(localDyBottomProvider);
@@ -24,12 +25,13 @@ class OverlappingStatusIndicator extends ConsumerWidget {
         .checkAddTaskValidity(dyTop: dy, dyBottom: dyBottom);
     final draggableBoxSizeIsSmall = ref.watch(dragIndicatorHeightProvider) <
         ref.watch(snapIntervalHeightProvider) * 6;
+    
 
     if (!isTaskNotOverlapping) {
       return Positioned(
         left: leftPosition,
         top: !draggableBoxSizeIsSmall ? topPosition : topPosition - 16,
-        child: const TimeIndicatorText(resizingOutput),
+        child: const OverlappingIndicatorText(resizingOutput),
       );
     } else {
       return const SizedBox.shrink();
