@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:timetailor/core/constants/route_path.dart';
-import 'package:timetailor/core/shared/styled_button.dart';
 import 'package:timetailor/core/shared/styled_text.dart';
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
@@ -19,9 +16,41 @@ class TaskCompletionHistoryScreen extends ConsumerStatefulWidget {
 
 class _TaskCompletionHistoryScreenState
     extends ConsumerState<TaskCompletionHistoryScreen> {
+  void showClearHistoryConfirmation(BuildContext context) {
+    final tasksNotifier = ref.read(tasksNotifierProvider.notifier);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Clear History'),
+          content: const Text(
+              'Are you sure you want to remove all completed tasks from task history?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                tasksNotifier
+                    .removeCompletedTasksForCurrentDate(); // Execute the confirmation action
+              },
+              child: Text('Remove',
+                  style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.watch(tasksNotifierProvider);
+    final taskNotifier = ref.read(tasksNotifierProvider.notifier);
     final completedTasks = ref
         .read(tasksNotifierProvider.notifier)
         .getAllCompletedTasksForCurrentDate();
@@ -33,6 +62,26 @@ class _TaskCompletionHistoryScreenState
     return Scaffold(
         appBar: AppBar(
           title: const AppBarText("History"),
+          actions: [
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.more_vert),
+              onSelected: (value) {
+                // Handle menu item selection
+                if (value == 'Clear History') {
+                  // Example action: Clear history logic
+                  showClearHistoryConfirmation(context);
+                }
+              },
+              itemBuilder: (BuildContext context) {
+                return [
+                  const PopupMenuItem<String>(
+                    value: 'Clear History',
+                    child: Text('Clear History'),
+                  ),
+                ];
+              },
+            ),
+          ],
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,21 +100,21 @@ class _TaskCompletionHistoryScreenState
             ),
             completedTasks.isEmpty
                 ? const Expanded(
-                  child: Center(
+                    child: Center(
                       child: TitleTextInHistory(
                         "No completed tasks for today.",
                       ),
                     ),
-                )
+                  )
                 : Expanded(
-                  child: ListView.builder(
+                    child: ListView.builder(
                       itemCount: completedTasks.length,
                       itemBuilder: (context, index) {
                         final task = completedTasks[index];
                         return CompletedTaskListItem(task: task);
                       },
                     ),
-                ),
+                  ),
           ],
         ));
   }

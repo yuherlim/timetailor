@@ -43,6 +43,41 @@ class TasksNotifier extends _$TasksNotifier {
         .toList();
   }
 
+  void undoCompletedTasksRemoval(List<Task> tasksToRestore) {
+    state = [...state, ...tasksToRestore];
+    CustomSnackbars.shortDurationSnackBar(
+        contentString: "Completed task(s) restored!");
+  }
+
+  void removeCompletedTasksForCurrentDate() {
+    final currentDate = ref.read(currentDateNotifierProvider);
+    // Store the list of tasks to be removed for undo functionality
+    final tasksToRemove = state
+        .where(
+          (task) => task.isCompleted && currentDate.isAtSameMomentAs(task.date),
+        )
+        .toList();
+
+    // Update the state by filtering out the tasks to be removed
+    state = state
+        .where(
+          (task) =>
+              !(task.isCompleted && currentDate.isAtSameMomentAs(task.date)),
+        )
+        .toList();
+
+    if (tasksToRemove.isNotEmpty) {
+      CustomSnackbars.longDurationSnackBarWithAction(
+        contentString: "All completed tasks removed successfully!",
+        actionText: "Undo",
+        onPressed: () => undoCompletedTasksRemoval(tasksToRemove),
+      );
+    } else {
+      CustomSnackbars.shortDurationSnackBar(
+        contentString: "No completed task(s) to remove.");
+    }
+  }
+
   void removeTask(Task task) {
     state = state.where((currentTask) => currentTask != task).toList();
     CustomSnackbars.longDurationSnackBarWithAction(
