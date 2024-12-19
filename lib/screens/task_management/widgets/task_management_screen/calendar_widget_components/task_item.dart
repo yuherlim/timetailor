@@ -153,7 +153,7 @@ class _TaskItemState extends ConsumerState<TaskItem> {
     taskNotifier.removeTask(selectedTask);
 
     // show the draggable box and bottom sheet for edit
-      ref.read(showDraggableBoxProvider.notifier).state = true;
+    ref.read(showDraggableBoxProvider.notifier).state = true;
   }
 
   @override
@@ -177,6 +177,9 @@ class _TaskItemState extends ConsumerState<TaskItem> {
     final selectedTask = ref.watch(selectedTaskProvider);
     final isEditingThisTask =
         ref.watch(isEditingTaskProvider) && widget.task == selectedTask;
+    final isCurrentDateTodayOrGreater = ref
+        .read(currentDateNotifierProvider.notifier)
+        .currentDateMoreThanEqualToday();
 
     return Positioned(
       left: slotStartX,
@@ -186,8 +189,9 @@ class _TaskItemState extends ConsumerState<TaskItem> {
           print("task item ontap detected");
         },
         onDoubleTap: () {
-          print("task item on double tap detected");
-          handleOnDoubleTap();
+          if (isCurrentDateTodayOrGreater) {
+            handleOnDoubleTap();
+          }
         },
         child: !isEditingThisTask
             ? Stack(
