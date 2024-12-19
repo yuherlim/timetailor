@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:timetailor/core/shared/styled_text.dart';
+import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/task_completion_history_screen/completed_task_list_item.dart';
@@ -59,62 +60,64 @@ class _TaskCompletionHistoryScreenState
         DateFormat('EEEE, d MMMM yyyy').format(currentDate);
 
     return Scaffold(
-        appBar: AppBar(
-          title: const AppBarText("History"),
-          actions: [
-            PopupMenuButton<String>(
-              icon: const Icon(Icons.more_vert),
-              onSelected: (value) {
-                // Handle menu item selection
-                if (value == 'Clear History') {
-                  // Example action: Clear history logic
-                  showClearHistoryConfirmation(context);
-                }
-              },
-              itemBuilder: (BuildContext context) {
-                return [
-                  const PopupMenuItem<String>(
-                    value: 'Clear History',
-                    child: Text('Clear History'),
-                  ),
-                ];
-              },
+      appBar: AppBar(
+        backgroundColor: AppColors.appBarColor,
+        title: const AppBarText("History"),
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert),
+            onSelected: (value) {
+              // Handle menu item selection
+              if (value == 'Clear History') {
+                // Example action: Clear history logic
+                showClearHistoryConfirmation(context);
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                const PopupMenuItem<String>(
+                  value: 'Clear History',
+                  child: Text('Clear History'),
+                ),
+              ];
+            },
+          ),
+        ],
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0, top: 16.0),
+            child: TitleTextInHistory(formattedDate),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(top: 16.0),
+            child: Divider(
+              color: Colors.white, // Line color
+              thickness: 1, // Line thickness
+              height: 0,
             ),
-          ],
-        ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: TitleTextInHistory(formattedDate),
-            ),
-            const Padding(
-              padding: EdgeInsets.only(top: 16.0),
-              child: Divider(
-                color: Colors.white, // Line color
-                thickness: 1, // Line thickness
-                height: 0,
-              ),
-            ),
-            completedTasks.isEmpty
-                ? const Expanded(
-                    child: Center(
-                      child: TitleTextInHistory(
-                        "No completed tasks for today.",
-                      ),
-                    ),
-                  )
-                : Expanded(
-                    child: ListView.builder(
-                      itemCount: completedTasks.length,
-                      itemBuilder: (context, index) {
-                        final task = completedTasks[index];
-                        return CompletedTaskListItem(task: task);
-                      },
+          ),
+          completedTasks.isEmpty
+              ? const Expanded(
+                  child: Center(
+                    child: TitleTextInHistory(
+                      "No completed tasks for today.",
                     ),
                   ),
-          ],
-        ));
+                )
+              : Expanded(
+                  child: ListView.builder(
+                    itemCount: completedTasks.length,
+                    itemBuilder: (context, index) {
+                      final task = completedTasks[index];
+                      return CompletedTaskListItem(task: task);
+                    },
+                  ),
+                ),
+        ],
+      ),
+    );
   }
 }

@@ -59,6 +59,26 @@ class StyledTitle extends StatelessWidget {
   }
 }
 
+class ButtonText extends StatelessWidget {
+  final String text;
+
+  const ButtonText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: GoogleFonts.kanit(
+        textStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+              letterSpacing: 1,
+            ),
+      ),
+    );
+  }
+}
+
 class AppBarText extends StatelessWidget {
   final String text;
 

@@ -9,7 +9,7 @@ class Task {
   final int duration; // Duration in minutes
   final DateTime endTime;
   final bool isCompleted;
-  final List<String?> linkedNote; // Linked Note ID (nullable)
+  final List<String> linkedNote; // Linked Note ID (nullable)
 
   Task({
     required this.id,
@@ -32,7 +32,7 @@ class Task {
     int? duration,
     DateTime? endTime,
     bool? isCompleted,
-    List<String?>? linkedNote,
+    List<String>? linkedNote,
   }) {
     return Task(
       id: id ?? this.id,
