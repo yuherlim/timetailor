@@ -20,14 +20,19 @@ class TaskDescriptionField extends HookConsumerWidget {
 
     // Keep Riverpod state in sync with the controller
     useEffect(() {
-      Future.microtask(() => descriptionController.text = formState.description);
-      
+      Future.microtask(() {
+        if (descriptionController.text != formState.description) {
+          descriptionController.text = formState.description;
+        }
+      });
+
       void listener() {
         formNotifier.updateDescription(descriptionController.text);
       }
 
       descriptionController.addListener(listener);
-      return () => descriptionController.removeListener(listener); // Cleanup listener
+      return () =>
+          descriptionController.removeListener(listener); // Cleanup listener
     }, [formState.description]);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),

@@ -10,15 +10,61 @@ import 'package:uuid/uuid.dart';
 
 var uuid = const Uuid();
 
-class TaskCreationHeader extends ConsumerWidget {
+class TaskCreationHeader extends ConsumerStatefulWidget {
   const TaskCreationHeader({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TaskCreationHeader> createState() => _TaskCreationHeaderState();
+}
+
+class _TaskCreationHeaderState extends ConsumerState<TaskCreationHeader> {
+  void addTask(Task taskToAdd) {
+    final taskNotifier = ref.read(tasksNotifierProvider.notifier);
+
+    taskNotifier.addTask(taskToAdd);
+
+    CustomSnackbars.longDurationSnackBarWithAction(
+      contentString: "Task created.",
+      actionText: "Undo",
+      onPressed: () => taskNotifier.undoTaskCreation(taskToAdd),
+    );
+  }
+
+  void updateTask(Task taskToUpdate) {
+    final taskNotifier = ref.read(tasksNotifierProvider.notifier);
+    final taskToUndo = ref.read(selectedTaskProvider)!;
+    final selectedTaskNotifier = ref.read(selectedTaskProvider.notifier);
+    final editTaskSuccessNotifier =
+        ref.read(isEditingTaskSuccessProvider.notifier);
+
+    print("task to undo name: ${taskToUndo.name}");
+
+    editTaskSuccessNotifier.state = true;
+    // add the newly edited task
+    taskNotifier.addTask(taskToUpdate);
+
+    // reset current selected task to null
+    selectedTaskNotifier.state = null;
+
+    CustomSnackbars.longDurationSnackBarWithAction(
+      contentString: "Task updated.",
+      actionText: "Undo",
+      onPressed: () => taskNotifier.undoTaskEdit(taskToUndo),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+final dyTop = ref.watch(localDyProvider);
+    final dyBottom = ref.watch(localDyBottomProvider);
+    final isEditingTask = ref.watch(isEditingTaskProvider);
+    final selectedTask = ref.watch(selectedTaskProvider);
+
     final taskNotifier = ref.read(tasksNotifierProvider.notifier);
     final formNotifier = ref.read(taskFormNotifierProvider.notifier);
     final taskFormState = ref.watch(taskFormNotifierProvider);
     final startTimeEndTime = taskNotifier.getStartTimeEndTimeInDateTime();
+    final id = isEditingTask && selectedTask != null ? selectedTask.id : uuid.v4();
     final name = taskFormState.name;
     final description = taskFormState.description;
     final date = ref.watch(currentDateNotifierProvider);
@@ -28,8 +74,7 @@ class TaskCreationHeader extends ConsumerWidget {
     const isCompleted = false;
     final List<String> linkedNote = [];
 
-    final dyTop = ref.watch(localDyProvider);
-    final dyBottom = ref.watch(localDyBottomProvider);
+    
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -40,7 +85,7 @@ class TaskCreationHeader extends ConsumerWidget {
             icon: const Icon(Icons.close),
             onPressed: () {
               // Close bottom sheet
-              ref.read(tasksNotifierProvider.notifier).cancelTaskCreation();
+              ref.read(tasksNotifierProvider.notifier).endTaskCreation();
             },
           ),
           FilledButton.tonal(
@@ -52,7 +97,7 @@ class TaskCreationHeader extends ConsumerWidget {
                 return;
               }
               final taskToSave = Task(
-                id: uuid.v4(),
+                id: id,
                 name: name,
                 description: description,
                 date: date,
@@ -67,13 +112,17 @@ class TaskCreationHeader extends ConsumerWidget {
                   dyTop: dyTop, dyBottom: dyBottom)) {
                 CustomSnackbars.shortDurationSnackBar(
                     contentString: "Task overlap detected. Task not created.");
-                taskNotifier.cancelTaskCreation();
+                taskNotifier.endTaskCreation();
                 return;
               }
 
-              taskNotifier.addTask(taskToSave);
-              CustomSnackbars.shortDurationSnackBar(contentString: "Task created.");
-              taskNotifier.cancelTaskCreation();
+              if (isEditingTask) {
+                updateTask(taskToSave);
+              } else {
+                addTask(taskToSave);
+              }
+
+              taskNotifier.endTaskCreation();
             },
             child: const Text(
               'Save',

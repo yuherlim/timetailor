@@ -28,7 +28,7 @@ class _CalendarWidgetBackgroundState
 
     // if draggable box already created, reset state
     if (ref.read(showDraggableBoxProvider)) {
-      ref.read(tasksNotifierProvider.notifier).cancelTaskCreation();
+      ref.read(tasksNotifierProvider.notifier).endTaskCreation();
       localDyNotifier.state = 0;
       localCurrentTimeSlotHeightNotifier.state = 0;
       return;

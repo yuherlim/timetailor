@@ -121,7 +121,7 @@ class _TaskItemState extends ConsumerState<TaskItem> {
     final taskNotifier = ref.read(tasksNotifierProvider.notifier);
 
     // reset any previous task editing
-    taskNotifier.cancelTaskCreation();
+    taskNotifier.endTaskCreation();
 
     // update edit status and selectedTask
     ref.read(isEditingTaskProvider.notifier).state = true;
@@ -149,13 +149,11 @@ class _TaskItemState extends ConsumerState<TaskItem> {
     print(
         "formState name after update: ${ref.read(taskFormNotifierProvider).name}");
 
-    // remove task temporarily, for when edit task is cancelled.
+    // remove task temporarily, for when editing task.
     taskNotifier.removeTask(selectedTask);
 
     // show the draggable box and bottom sheet for edit
-    Future.microtask(() {
       ref.read(showDraggableBoxProvider.notifier).state = true;
-    });
   }
 
   @override
@@ -189,9 +187,7 @@ class _TaskItemState extends ConsumerState<TaskItem> {
         },
         onDoubleTap: () {
           print("task item on double tap detected");
-          ref.read(isEditingTaskProvider.notifier).state = true;
           handleOnDoubleTap();
-          ref.read(selectedTaskProvider.notifier).state = widget.task;
         },
         child: !isEditingThisTask
             ? Stack(

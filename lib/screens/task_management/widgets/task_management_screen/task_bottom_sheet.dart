@@ -70,7 +70,7 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
 
             // Detect if swiped to the minimum extent, if yes, cancel task creation.
             if (notificationExtent == minBottomSheetExtent) {
-              ref.read(tasksNotifierProvider.notifier).cancelTaskCreation();
+              ref.read(tasksNotifierProvider.notifier).endTaskCreation();
               return true;
             }
 

@@ -104,7 +104,7 @@ class CalendarHeader extends ConsumerWidget {
                 ref
                     .read(currentDateNotifierProvider.notifier)
                     .updateDate(date: date);
-                ref.read(tasksNotifierProvider.notifier).cancelTaskCreation();
+                ref.read(tasksNotifierProvider.notifier).endTaskCreation();
               },
               borderRadius: BorderRadius.circular(8),
               splashColor: Colors.blue.withOpacity(0.2), // Ripple color

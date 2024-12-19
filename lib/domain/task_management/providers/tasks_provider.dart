@@ -46,6 +46,21 @@ class TasksNotifier extends _$TasksNotifier {
         .toList();
   }
 
+  void removeTask(Task task) {
+    state = state.where((currentTask) => currentTask != task).toList();
+  }
+
+  void undoTaskCreation(Task taskToUndo) {
+    removeTask(taskToUndo);
+    CustomSnackbars.shortDurationSnackBar(contentString: "Task removed.");
+  }
+
+  void undoTaskEdit(Task taskToUndo) {
+    updateTask(taskToUndo);
+    CustomSnackbars.shortDurationSnackBar(
+        contentString: "Task changes reverted!");
+  }
+
   void undoCompletedTasksRemoval(List<Task> tasksToRestore) {
     state = [...state, ...tasksToRestore];
     CustomSnackbars.shortDurationSnackBar(
@@ -92,9 +107,6 @@ class TasksNotifier extends _$TasksNotifier {
     );
   }
 
-  void removeTask(Task task) {
-    state = state.where((currentTask) => currentTask != task).toList();
-  }
   // these methods are to be converted to use firestore later.
 
   //fetchTasksOnce
@@ -363,7 +375,7 @@ class TasksNotifier extends _$TasksNotifier {
     return outputStr;
   }
 
-  void cancelTaskCreation() {
+  void endTaskCreation() {
     final taskFormNotifier = ref.read(taskFormNotifierProvider.notifier);
     ref.read(showDraggableBoxProvider.notifier).state = false;
     taskFormNotifier.resetState();
@@ -382,24 +394,19 @@ class TasksNotifier extends _$TasksNotifier {
   }
 
   void resetEditState() {
-    final isEditTaskSucccess = ref.read(isEditingTaskSuccessProvider);
     final taskNotifier = ref.read(tasksNotifierProvider.notifier);
     final selectedTask = ref.read(selectedTaskProvider);
-
-    if (selectedTask == null) {
-      debugPrint("currently no selected task, means no task edited yet.");
-      return;
-    }
 
     // turn off edit mode
     ref.read(isEditingTaskProvider.notifier).state = false;
 
-    // Add back task if edit fail.
-    if (!isEditTaskSucccess) {
-      taskNotifier.addTask(selectedTask);
+    // if task edit was successful, selectedTask should be null
+    if (selectedTask == null) {
+      debugPrint("currently no selected task, means no task currently editing");
+      return;
     } else {
-      // reset edit task success state
-      ref.read(isEditingTaskSuccessProvider.notifier).state = false;
+      // Add back task if edit fail.
+      taskNotifier.addTask(selectedTask);
     }
   }
 }

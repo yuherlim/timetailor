@@ -36,7 +36,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
       ref
           .read(currentDateNotifierProvider.notifier)
           .updateDate(date: selectedDate);
-      ref.read(tasksNotifierProvider.notifier).cancelTaskCreation();
+      ref.read(tasksNotifierProvider.notifier).endTaskCreation();
     }
   }
 
@@ -99,7 +99,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
     // only intercept back gesture when the current nav branch is task management
     if (location == RoutePath.taskManagementPath &&
         ref.read(showDraggableBoxProvider)) {
-      ref.read(tasksNotifierProvider.notifier).cancelTaskCreation();
+      ref.read(tasksNotifierProvider.notifier).endTaskCreation();
 
       return true; // Prevents the default back button behavior
     }
@@ -141,7 +141,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                     onPressed: () {
                       ref
                           .read(tasksNotifierProvider.notifier)
-                          .cancelTaskCreation();
+                          .endTaskCreation();
                     },
                   )
                 : IconButton(
@@ -164,13 +164,13 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                         .updateToToday();
                     ref
                         .read(tasksNotifierProvider.notifier)
-                        .cancelTaskCreation();
+                        .endTaskCreation();
                   },
                 ),
               IconButton(
                 icon: const Icon(Icons.history),
                 onPressed: () {
-                  ref.read(tasksNotifierProvider.notifier).cancelTaskCreation();
+                  ref.read(tasksNotifierProvider.notifier).endTaskCreation();
                   context.go(
                       RoutePath.taskHistoryPath); // Navigate to task creation
                 },
