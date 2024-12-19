@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:timetailor/data/task_management/models/task.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 
 part 'calendar_state_provider.g.dart';
@@ -31,9 +32,10 @@ final startTimeProvider = StateProvider<String>((ref) => "N/A");
 final endTimeProvider = StateProvider<String>((ref) => "N/A");
 final durationProvider = StateProvider<String>((ref) => "N/A");
 
-final dragIndicatorWidthProvider = StateProvider<double>((ref) => ref.watch(slotWidthProvider));
-final dragIndicatorHeightProvider = StateProvider<double>((ref) => ref.watch(localCurrentTimeSlotHeightProvider));
-
+final dragIndicatorWidthProvider =
+    StateProvider<double>((ref) => ref.watch(slotWidthProvider));
+final dragIndicatorHeightProvider = StateProvider<double>(
+    (ref) => ref.watch(localCurrentTimeSlotHeightProvider));
 
 @riverpod
 class SheetExtent extends _$SheetExtent {
@@ -57,3 +59,8 @@ class SheetExtent extends _$SheetExtent {
 }
 
 final showBottomSheetProvider = StateProvider<bool>((ref) => true);
+
+final selectedTaskProvider = StateProvider<Task?>((ref) => null);
+
+final isEditingTaskProvider = StateProvider<bool>((ref) => false);
+final isEditingTaskSuccessProvider = StateProvider<bool>((ref) => false);

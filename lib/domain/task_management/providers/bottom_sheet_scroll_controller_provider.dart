@@ -8,7 +8,6 @@ part 'bottom_sheet_scroll_controller_provider.g.dart'; // Generated file
 @riverpod
 class BottomSheetScrollControllerNotifier
     extends _$BottomSheetScrollControllerNotifier {
-
   @override
   DraggableScrollableController build() {
     // Register cleanup logic
@@ -41,5 +40,9 @@ class BottomSheetScrollControllerNotifier
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
+  }
+
+  void scrollToInitialExtentWithoutAnimation() {
+    state.jumpTo(ref.read(initialBottomSheetExtentProvider));
   }
 }

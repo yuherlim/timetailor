@@ -10,6 +10,10 @@ class TaskFormNotifier extends _$TaskFormNotifier {
     return TaskFormState(name: '', description: '');
   }
 
+  void resetState() {
+    state = TaskFormState(name: '', description: '');
+  }
+
   void clearName() {
     state = state.copyWith(name: '');
   }

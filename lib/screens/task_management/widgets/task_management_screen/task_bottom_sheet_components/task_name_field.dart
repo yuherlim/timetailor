@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:timetailor/core/shared/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
+import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/task_form_provider.dart';
 
 class TaskNameField extends HookConsumerWidget {
@@ -18,10 +19,16 @@ class TaskNameField extends HookConsumerWidget {
     // Persist TextEditingController using flutter_hooks
     final titleController = useTextEditingController();
 
+    print("TaskNameField rebuilt with formState.name: ${formState.name}");
+
     // Keep Riverpod state in sync with the controller
     useEffect(() {
-      Future.microtask(() => titleController.text = formState.name);
-      
+      Future.microtask(() {
+        print(
+          "useEffect triggered. Updating controller.text to: ${formState.name}");
+        titleController.text = formState.name;
+      });
+
       void listener() {
         formNotifier.updateName(titleController.text);
       }

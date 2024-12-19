@@ -55,8 +55,6 @@ class TaskDescriptionField extends HookConsumerWidget {
                   color: descriptionController.text.length == 500
                       ? AppColors.highlightColor
                       : AppColors.textColor),
-              errorText: formState.nameError,
-              errorStyle: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
             cursorErrorColor: Theme.of(context).colorScheme.error,
             onFieldSubmitted: (value) {

@@ -189,7 +189,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
             ],
           ),
         ),
-        if (ref.watch(showDraggableBoxProvider)) const TaskBottomSheet()
+        const TaskBottomSheet()
       ],
     );
   }

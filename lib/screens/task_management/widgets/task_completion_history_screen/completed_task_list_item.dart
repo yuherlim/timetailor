@@ -39,7 +39,7 @@ class _CompletedTaskListItemState extends ConsumerState<CompletedTaskListItem> {
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
                 tasksNotifier
-                    .removeTask(widget.task); // Execute the confirmation action
+                    .removeTaskFromHistory(widget.task); // Execute the confirmation action
               },
               child: Text('Delete', style: TextStyle(color: Theme.of(context).colorScheme.error)),
             ),

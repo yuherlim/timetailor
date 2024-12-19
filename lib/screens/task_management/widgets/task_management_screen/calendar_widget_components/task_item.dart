@@ -6,6 +6,7 @@ import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/data/task_management/models/task.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
+import 'package:timetailor/domain/task_management/providers/task_form_provider.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 
 class TaskItem extends ConsumerStatefulWidget {
@@ -116,8 +117,50 @@ class _TaskItemState extends ConsumerState<TaskItem> {
     }
   }
 
+  void handleOnDoubleTap() {
+    final taskNotifier = ref.read(tasksNotifierProvider.notifier);
+
+    // reset any previous task editing
+    taskNotifier.cancelTaskCreation();
+
+    // update edit status and selectedTask
+    ref.read(isEditingTaskProvider.notifier).state = true;
+    ref.read(selectedTaskProvider.notifier).state = widget.task;
+
+    final selectedTask = ref.read(selectedTaskProvider)!;
+    final taskDimensions = taskNotifier.calculateTimeSlotFromTaskTime(
+        startTime: selectedTask.startTime, endTime: selectedTask.endTime);
+    final selectedTaskDyTop = taskDimensions["dyTop"]!;
+    final selectedTaskTimeSlotHeight = taskDimensions["currentTimeSlotHeight"]!;
+    final formNotifier = ref.read(taskFormNotifierProvider.notifier);
+
+    print("selected Task: ${selectedTask.name}");
+
+    //update draggable box and bottom sheet to reflect selected task
+    ref.read(localDyProvider.notifier).state = selectedTaskDyTop;
+    ref.read(localCurrentTimeSlotHeightProvider.notifier).state =
+        selectedTaskTimeSlotHeight;
+    taskNotifier.updateTaskTimeStateFromDraggableBox(
+        dy: selectedTaskDyTop,
+        currentTimeSlotHeight: selectedTaskTimeSlotHeight);
+    formNotifier.updateName(selectedTask.name);
+    formNotifier.updateDescription(selectedTask.description);
+
+    print(
+        "formState name after update: ${ref.read(taskFormNotifierProvider).name}");
+
+    // remove task temporarily, for when edit task is cancelled.
+    taskNotifier.removeTask(selectedTask);
+
+    // show the draggable box and bottom sheet for edit
+    Future.microtask(() {
+      ref.read(showDraggableBoxProvider.notifier).state = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    ref.watch(selectedTaskProvider);
     final Map<String, double> taskDimensions =
         ref.read(tasksNotifierProvider.notifier).calculateTimeSlotFromTaskTime(
               startTime: widget.task.startTime,
@@ -133,35 +176,51 @@ class _TaskItemState extends ConsumerState<TaskItem> {
         widget.task.startTime.hour, widget.task.startTime.minute);
     final endTime = taskProviderNotifier.formatTime(
         widget.task.endTime.hour, widget.task.endTime.minute);
+    final selectedTask = ref.watch(selectedTaskProvider);
+    final isEditingThisTask =
+        ref.watch(isEditingTaskProvider) && widget.task == selectedTask;
 
     return Positioned(
       left: slotStartX,
       top: topPosition,
-      child: Stack(
-        children: [
-          Container(
-            width: slotWidth, // Fixed width
-            height: slotHeight,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: AppColors.primaryColor,
-              border: Border.all(
-                color: AppColors.secondaryColor, // Border color
-                width: 1.0, // Border thickness
-              ),
-            ),
-          ),
-          SizedBox(
-            width: slotWidth,
-            height: slotHeight,
-            child: buildTaskRow(
-                duration: widget.task.duration,
-                endTime: endTime,
-                startTime: startTime,
-                taskDimensions: taskDimensions,
-                taskName: widget.task.name),
-          ),
-        ],
+      child: GestureDetector(
+        onTap: () {
+          print("task item ontap detected");
+        },
+        onDoubleTap: () {
+          print("task item on double tap detected");
+          ref.read(isEditingTaskProvider.notifier).state = true;
+          handleOnDoubleTap();
+          ref.read(selectedTaskProvider.notifier).state = widget.task;
+        },
+        child: !isEditingThisTask
+            ? Stack(
+                children: [
+                  Container(
+                    width: slotWidth, // Fixed width
+                    height: slotHeight,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.primaryColor,
+                      border: Border.all(
+                        color: AppColors.secondaryColor, // Border color
+                        width: 1.0, // Border thickness
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: slotWidth,
+                    height: slotHeight,
+                    child: buildTaskRow(
+                        duration: widget.task.duration,
+                        endTime: endTime,
+                        startTime: startTime,
+                        taskDimensions: taskDimensions,
+                        taskName: widget.task.name),
+                  ),
+                ],
+              )
+            : const SizedBox.shrink(),
       ),
     );
   }

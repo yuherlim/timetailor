@@ -1,10 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timetailor/core/shared/custom_snackbars.dart';
 import 'package:timetailor/data/task_management/models/task.dart';
+import 'package:timetailor/domain/task_management/providers/bottom_sheet_scroll_controller_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/domain/task_management/providers/task_form_controller_provider.dart';
+import 'package:timetailor/domain/task_management/providers/task_form_provider.dart';
 import 'package:timetailor/main.dart';
 
 part 'tasks_provider.g.dart'; // Generated file
@@ -74,11 +77,11 @@ class TasksNotifier extends _$TasksNotifier {
       );
     } else {
       CustomSnackbars.shortDurationSnackBar(
-        contentString: "No completed task(s) to remove.");
+          contentString: "No completed task(s) to remove.");
     }
   }
 
-  void removeTask(Task task) {
+  void removeTaskFromHistory(Task task) {
     state = state.where((currentTask) => currentTask != task).toList();
     CustomSnackbars.longDurationSnackBarWithAction(
       contentString: "Task deletion successful!",
@@ -89,6 +92,9 @@ class TasksNotifier extends _$TasksNotifier {
     );
   }
 
+  void removeTask(Task task) {
+    state = state.where((currentTask) => currentTask != task).toList();
+  }
   // these methods are to be converted to use firestore later.
 
   //fetchTasksOnce
@@ -358,7 +364,42 @@ class TasksNotifier extends _$TasksNotifier {
   }
 
   void cancelTaskCreation() {
-    // reset draggableBox show state
+    final taskFormNotifier = ref.read(taskFormNotifierProvider.notifier);
     ref.read(showDraggableBoxProvider.notifier).state = false;
+    taskFormNotifier.resetState();
+    resetBottomSheetState();
+    resetEditState();
+    // reset draggableBox show state
+  }
+
+  void resetBottomSheetState() {
+    final initialExtent = ref.read(initialBottomSheetExtentProvider);
+    final sheetExtentNotifier = ref.read(sheetExtentProvider.notifier);
+    final bottomSheetControllerNotifier =
+        ref.read(bottomSheetScrollControllerNotifierProvider.notifier);
+    sheetExtentNotifier.update(initialExtent);
+    bottomSheetControllerNotifier.scrollToInitialExtentWithoutAnimation();
+  }
+
+  void resetEditState() {
+    final isEditTaskSucccess = ref.read(isEditingTaskSuccessProvider);
+    final taskNotifier = ref.read(tasksNotifierProvider.notifier);
+    final selectedTask = ref.read(selectedTaskProvider);
+
+    if (selectedTask == null) {
+      debugPrint("currently no selected task, means no task edited yet.");
+      return;
+    }
+
+    // turn off edit mode
+    ref.read(isEditingTaskProvider.notifier).state = false;
+
+    // Add back task if edit fail.
+    if (!isEditTaskSucccess) {
+      taskNotifier.addTask(selectedTask);
+    } else {
+      // reset edit task success state
+      ref.read(isEditingTaskSuccessProvider.notifier).state = false;
+    }
   }
 }

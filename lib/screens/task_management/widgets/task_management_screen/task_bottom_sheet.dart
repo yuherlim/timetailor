@@ -38,6 +38,8 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
       return const CircularProgressIndicator(); // Show loading indicator
     }
 
+    print("bottom sheet is rebuilt.");
+
     final double currentExtent = ref.watch(sheetExtentProvider);
     final double initialBottomSheetExtent =
         ref.watch(initialBottomSheetExtentProvider);
@@ -50,13 +52,15 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
         ref.watch(bottomSheetScrollControllerNotifierProvider);
     final dyTop = ref.read(localDyProvider);
     final dyBottom = ref.read(localDyBottomProvider);
+    final showDraggableBox = ref.watch(showDraggableBoxProvider);
+    final showBottomSheet = ref.watch(showBottomSheetProvider);
     final isTaskNotOverlapping = ref
         .read(tasksNotifierProvider.notifier)
         .checkAddTaskValidity(dyTop: dyTop, dyBottom: dyBottom);
 
     return Positioned.fill(
       child: Offstage(
-        offstage: !ref.watch(showBottomSheetProvider) || !isTaskNotOverlapping,
+        offstage: !(showDraggableBox && showBottomSheet && isTaskNotOverlapping),
         child: NotificationListener<DraggableScrollableNotification>(
           onNotification: (notification) {
             FocusScope.of(context).unfocus();
