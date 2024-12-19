@@ -25,7 +25,9 @@ class _MaxExtentContentState extends ConsumerState<MaxExtentContent> {
         SizedBox(height: 8),
         TitleDateDisplay(),
         TaskNameField(),
+        SizedBox(height: 16),
         TaskDescriptionField(),
+        SizedBox(height: 16),
       ],
     );
   }

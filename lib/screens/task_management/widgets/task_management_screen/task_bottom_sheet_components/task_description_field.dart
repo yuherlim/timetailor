@@ -36,41 +36,83 @@ class TaskDescriptionField extends HookConsumerWidget {
     }, [formState.description]);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Column(
+      child: Stack(
         children: [
-          TextFormField(
-            controller: descriptionController,
-            style: Theme.of(context).textTheme.bodyMedium,
-            cursorColor: AppColors.textColor,
-            maxLines: 10, // Set maximum lines for a larger field
-            minLines: 5, // Set minimum lines to ensure it starts bigger
-            decoration: InputDecoration(
-              prefixIcon: const Icon(Icons.description),
-              suffixIcon: descriptionController.text.isNotEmpty
-                  ? IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        formNotifier.clearDescription();
-                        descriptionController.clear();
-                      },
-                    )
-                  : null,
-              label: const StyledText("Description"),
-              helperText:
-                  '${descriptionController.text.length}/500', // Show character count
-              helperStyle: TextStyle(
-                  color: descriptionController.text.length == 500
-                      ? AppColors.highlightColor
-                      : AppColors.textColor),
-            ),
-            cursorErrorColor: Theme.of(context).colorScheme.error,
-            onFieldSubmitted: (value) {
-              FocusScope.of(context).unfocus();
-            },
-            inputFormatters: [
-              LengthLimitingTextInputFormatter(500), // Enforce character limit
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: descriptionController,
+                style: Theme.of(context).textTheme.bodyMedium,
+                cursorColor: AppColors.textColor,
+                maxLines: 20, // Set maximum lines for a larger field
+                minLines: 10, // Set minimum lines to ensure it starts bigger
+                decoration: const InputDecoration(
+                  contentPadding: EdgeInsets.fromLTRB(48, 12, 36, 12),
+                  // suffixIcon: descriptionController.text.isNotEmpty
+                  //     ? IconButton(
+                  //         icon: const Icon(Icons.clear),
+                  //         onPressed: () {
+                  //           formNotifier.clearDescription();
+                  //           descriptionController.clear();
+                  //         },
+                  //       )
+                  //     : null,
+                  label: StyledText("Description"),
+                  // helperText:
+                  //     '${descriptionController.text.length}/500', // Show character count
+                  // helperStyle: TextStyle(
+                  //     color: descriptionController.text.length == 500
+                  //         ? AppColors.highlightColor
+                  //         : AppColors.textColor),
+                  border: OutlineInputBorder(),
+                  alignLabelWithHint: true,
+                ),
+                cursorErrorColor: Theme.of(context).colorScheme.error,
+                onFieldSubmitted: (value) {
+                  FocusScope.of(context).unfocus();
+                },
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(
+                      500), // Enforce character limit
+                ],
+              ),
+              // Place the helper text below the TextFormField explicitly
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 4.0), // Add spacing between input and helper text
+                child: Text(
+                  '${descriptionController.text.length}/500',
+                  style: TextStyle(
+                    fontSize: 12.0,
+                    color: descriptionController.text.length == 500
+                        ? AppColors.highlightColor
+                        : AppColors.textColor,
+                  ),
+                ),
+              ),
             ],
           ),
+          Positioned(
+            top: 10,
+            left: 12,
+            child: Icon(
+              Icons.description,
+              color: Theme.of(context).iconTheme.color?.withOpacity(0.7),
+            ),
+          ),
+          if (descriptionController.text.isNotEmpty)
+            Positioned(
+              top: 0,
+              right: 0,
+              child: IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () {
+                  formNotifier.clearDescription();
+                  descriptionController.clear();
+                },
+              ),
+            ),
         ],
       ),
     );
