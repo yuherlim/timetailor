@@ -118,6 +118,7 @@ class _TaskItemState extends ConsumerState<TaskItem> {
   }
 
   void handleOnDoubleTap() {
+    CustomSnackbars.clearSnackBars();
     final taskNotifier = ref.read(tasksNotifierProvider.notifier);
 
     // reset any previous task editing

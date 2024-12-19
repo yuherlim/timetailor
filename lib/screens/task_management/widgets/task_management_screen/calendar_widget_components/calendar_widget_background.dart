@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:timetailor/core/shared/custom_snackbars.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
@@ -22,6 +23,8 @@ class _CalendarWidgetBackgroundState
   void _handleCalendarOnTapUp({
     required TapUpDetails details,
   }) {
+    CustomSnackbars.clearSnackBars();
+
     final localDyNotifier = ref.read(localDyProvider.notifier);
     final localCurrentTimeSlotHeightNotifier =
         ref.read(localCurrentTimeSlotHeightProvider.notifier);

@@ -4,12 +4,16 @@ final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
 
 class CustomSnackbars {
+  static void clearSnackBars() {
+    scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
+  }
+
   static void longDurationSnackBarWithAction({
     required String contentString,
     required String actionText,
     required void Function() onPressed,
   }) {
-    scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
+    clearSnackBars();
     scaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
       content: Text(contentString),
       action: SnackBarAction(
@@ -24,7 +28,7 @@ class CustomSnackbars {
   static void shortDurationSnackBar({
     required String contentString,
   }) {
-    scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
+    clearSnackBars();
     scaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
       content: Text(contentString),
       behavior: SnackBarBehavior.floating,
