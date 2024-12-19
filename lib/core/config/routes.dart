@@ -2,15 +2,17 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/main_layout.dart';
+import 'package:timetailor/data/task_management/models/task.dart';
 import 'package:timetailor/screens/task_management/task_completion_history_screen.dart';
-import 'package:timetailor/screens/task_management/task_creation_screen.dart';
 import 'package:timetailor/screens/task_management/task_management_screen.dart';
 import 'package:timetailor/screens/note_management/note_management_screen.dart';
+import 'package:timetailor/screens/task_management/task_details_screen.dart';
 import 'package:timetailor/screens/user_management/account_management_screen.dart';
 
 final GlobalKey<NavigatorState> _taskNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _noteNavigatorKey = GlobalKey<NavigatorState>();
-final GlobalKey<NavigatorState> _accountNavigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> _accountNavigatorKey =
+    GlobalKey<NavigatorState>();
 
 final GoRouter appRouter = GoRouter(
   initialLocation: RoutePath.taskManagementPath,
@@ -29,11 +31,24 @@ final GoRouter appRouter = GoRouter(
               routes: [
                 GoRoute(
                   path: RoutePath.relativeTaskHistoryPath,
-                  builder: (context, state) => const TaskCompletionHistoryScreen(),
+                  builder: (context, state) =>
+                      const TaskCompletionHistoryScreen(),
+                  routes: [
+                    GoRoute(
+                      path: RoutePath.relativeTaskDetailsPath,
+                      builder: (context, state) {
+                        final task = state.extra as Task;
+                        return TaskDetailsScreen(task: task);
+                      },
+                    ),
+                  ],
                 ),
                 GoRoute(
-                  path: RoutePath.relativeTaskCreationPath,
-                  builder: (context, state) => const TaskCreationScreen(),
+                  path: RoutePath.relativeTaskDetailsPath,
+                  builder: (context, state) {
+                    final task = state.extra as Task;
+                    return TaskDetailsScreen(task: task);
+                  },
                 ),
               ],
             ),

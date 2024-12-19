@@ -173,7 +173,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                 onPressed: () {
                   ref.read(tasksNotifierProvider.notifier).endTaskCreation();
                   context.go(
-                      RoutePath.taskHistoryPath); // Navigate to task creation
+                      RoutePath.taskHistoryPath);
                 },
               ),
             ],

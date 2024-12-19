@@ -45,4 +45,8 @@ class BottomSheetScrollControllerNotifier
   void scrollToInitialExtentWithoutAnimation() {
     state.jumpTo(ref.read(initialBottomSheetExtentProvider));
   }
+
+  void scrollToMaxExtentWithoutAnimation() {
+    state.jumpTo(ref.read(maxBottomSheetExtentProvider));
+  }
 }

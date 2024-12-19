@@ -2,10 +2,11 @@ class RoutePath {
   // task management module
   static const String taskManagementPath = '/tasks';
   static const String taskHistoryPath = '/tasks/history';
-  static const String taskCreationPath = '/tasks/create';
+  static const String taskDetailsFromHistoryPath = '/tasks/history/details';
+  static const String taskDetailsPath = '/tasks/details';
 // relative paths
   static const String relativeTaskHistoryPath = 'history';
-  static const String relativeTaskCreationPath = 'create';
+  static const String relativeTaskDetailsPath = 'details';
 
 // note management module
   static const String noteManagementPath = '/notes';

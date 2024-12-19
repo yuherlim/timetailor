@@ -121,18 +121,33 @@ class TasksNotifier extends _$TasksNotifier {
   }
 
   // for undo completed task and deleted task
-  void undoTaskStatusChange({
+  void undoTaskCompletion({
     required Task taskToUndo,
     required double dyTop,
     required double dyBottom,
-    required String successMessage,
-    required String failureMessage,
   }) {
     if (checkAddTaskValidity(dyTop: dyTop, dyBottom: dyBottom)) {
       updateTask(taskToUndo);
-      CustomSnackbars.shortDurationSnackBar(contentString: successMessage);
+      CustomSnackbars.shortDurationSnackBar(
+          contentString: "Undo task completion successful!");
     } else {
-      CustomSnackbars.shortDurationSnackBar(contentString: failureMessage);
+      CustomSnackbars.shortDurationSnackBar(
+          contentString: "Undo task completion failed! Overlapping tasks.");
+    }
+  }
+
+  void undoTaskDeletion({
+    required Task taskToUndo,
+    required double dyTop,
+    required double dyBottom,
+  }) {
+    if (checkAddTaskValidity(dyTop: dyTop, dyBottom: dyBottom)) {
+      addTask(taskToUndo);
+      CustomSnackbars.shortDurationSnackBar(
+          contentString: "Undo task deletion successful!");
+    } else {
+      CustomSnackbars.shortDurationSnackBar(
+          contentString: "Undo task deletion failed! Overlapping tasks.");
     }
   }
 

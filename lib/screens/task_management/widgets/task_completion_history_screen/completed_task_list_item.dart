@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/data/task_management/models/task.dart';
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
@@ -38,10 +40,11 @@ class _CompletedTaskListItemState extends ConsumerState<CompletedTaskListItem> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
-                tasksNotifier
-                    .removeTaskFromHistory(widget.task); // Execute the confirmation action
+                tasksNotifier.removeTaskFromHistory(
+                    widget.task); // Execute the confirmation action
               },
-              child: Text('Delete', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              child: Text('Delete',
+                  style: TextStyle(color: Theme.of(context).colorScheme.error)),
             ),
           ],
         );
@@ -66,40 +69,39 @@ class _CompletedTaskListItemState extends ConsumerState<CompletedTaskListItem> {
         .read(currentDateNotifierProvider.notifier)
         .currentDateMoreThanEqualToday();
 
-    return Card(
-      child: ListTile(
-        title: Text(
-          widget.task.name,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-            // "Completed at: ${widget.task.completedAt}", // Ensure `completedAt` is formatted if needed.
-            "$startTime - $endTime"),
-        trailing: isCurrentDateOrMore
-            ? Row(
-                mainAxisSize:
-                    MainAxisSize.min, // Ensure Row takes minimal space
-                children: [
-                  IconButton(
-                    icon: const Icon(Symbols.undo_rounded),
-                    onPressed: () => tasksNotifier.undoTaskStatusChange(
-                      dyTop: dyTop,
-                      dyBottom: dyBottom,
-                      taskToUndo: widget.task.copyWith(isCompleted: false),
-                      successMessage: "Undo task completion successful!",
-                      failureMessage: "Undo task completion failed! Overlapping tasks.",
+    return InkWell(
+      onTap: () =>
+          context.go(RoutePath.taskDetailsFromHistoryPath, extra: widget.task),
+      child: Card(
+        child: ListTile(
+          title: Text(
+            widget.task.name,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(
+              // "Completed at: ${widget.task.completedAt}", // Ensure `completedAt` is formatted if needed.
+              "$startTime - $endTime"),
+          trailing: isCurrentDateOrMore
+              ? Row(
+                  mainAxisSize:
+                      MainAxisSize.min, // Ensure Row takes minimal space
+                  children: [
+                    IconButton(
+                      icon: const Icon(Symbols.undo_rounded),
+                      onPressed: () => tasksNotifier.undoTaskCompletion(
+                        dyTop: dyTop,
+                        dyBottom: dyBottom,
+                        taskToUndo: widget.task.copyWith(isCompleted: false),
+                      ),
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.delete_forever_outlined),
-                    onPressed: () => showDeleteConfirmation(context),
-                  ),
-                ],
-              )
-            : IconButton(
-                icon: const Icon(Icons.delete_forever_outlined),
-                onPressed: () => showDeleteConfirmation(context),
-              ),
+                    IconButton(
+                      icon: const Icon(Icons.delete_forever_outlined),
+                      onPressed: () => showDeleteConfirmation(context),
+                    ),
+                  ],
+                )
+              : null,
+        ),
       ),
     );
   }

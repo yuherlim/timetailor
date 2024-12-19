@@ -7,7 +7,7 @@ part of 'bottom_sheet_scroll_controller_provider.dart';
 // **************************************************************************
 
 String _$bottomSheetScrollControllerNotifierHash() =>
-    r'5b5ac80afab9f3ae5dd496de29faae28fa29c5a9';
+    r'7cfd33d7fa2578447ca016d874b93febac0433f7';
 
 /// See also [BottomSheetScrollControllerNotifier].
 @ProviderFor(BottomSheetScrollControllerNotifier)

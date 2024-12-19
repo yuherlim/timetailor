@@ -58,30 +58,34 @@ class _TaskCompletionHistoryScreenState
     // Format DateTime to "Monday, 16 December 2024"
     final String formattedDate =
         DateFormat('EEEE, d MMMM yyyy').format(currentDate);
+    final isCurrentDateTodayOrGreater = ref
+        .read(currentDateNotifierProvider.notifier)
+        .currentDateMoreThanEqualToday();
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.appBarColor,
         title: const AppBarText("History"),
         actions: [
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert),
-            onSelected: (value) {
-              // Handle menu item selection
-              if (value == 'Clear History') {
-                // Example action: Clear history logic
-                showClearHistoryConfirmation(context);
-              }
-            },
-            itemBuilder: (BuildContext context) {
-              return [
-                const PopupMenuItem<String>(
-                  value: 'Clear History',
-                  child: Text('Clear History'),
-                ),
-              ];
-            },
-          ),
+          if (isCurrentDateTodayOrGreater)
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.more_vert),
+              onSelected: (value) {
+                // Handle menu item selection
+                if (value == 'Clear History') {
+                  // Example action: Clear history logic
+                  showClearHistoryConfirmation(context);
+                }
+              },
+              itemBuilder: (BuildContext context) {
+                return [
+                  const PopupMenuItem<String>(
+                    value: 'Clear History',
+                    child: Text('Clear History'),
+                  ),
+                ];
+              },
+            ),
         ],
       ),
       body: Column(

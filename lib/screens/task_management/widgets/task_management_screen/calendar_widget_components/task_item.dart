@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:timetailor/core/config/routes.dart';
+import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/custom_snackbars.dart';
 import 'package:timetailor/core/shared/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
@@ -33,12 +36,10 @@ class _TaskItemState extends ConsumerState<TaskItem> {
     CustomSnackbars.longDurationSnackBarWithAction(
       contentString: "Task completed.",
       actionText: "Undo",
-      onPressed: () => taskNotifier.undoTaskStatusChange(
+      onPressed: () => taskNotifier.undoTaskCompletion(
         taskToUndo: currentTask,
         dyTop: dyTop,
         dyBottom: dyBottom,
-        successMessage: "Undo task completion successful!",
-        failureMessage: "Undo task completion failed! Overlapping tasks.",
       ),
     );
   }
@@ -187,7 +188,7 @@ class _TaskItemState extends ConsumerState<TaskItem> {
       top: topPosition,
       child: GestureDetector(
         onTap: () {
-          print("task item ontap detected");
+          context.go(RoutePath.taskDetailsPath, extra: widget.task);
         },
         onDoubleTap: () {
           if (isCurrentDateTodayOrGreater) {
@@ -197,6 +198,7 @@ class _TaskItemState extends ConsumerState<TaskItem> {
         child: !isEditingThisTask
             ? Stack(
                 children: [
+                  // Task Item container
                   Container(
                     width: slotWidth, // Fixed width
                     height: slotHeight,
@@ -209,6 +211,7 @@ class _TaskItemState extends ConsumerState<TaskItem> {
                       ),
                     ),
                   ),
+                  // Task item content
                   SizedBox(
                     width: slotWidth,
                     height: slotHeight,
