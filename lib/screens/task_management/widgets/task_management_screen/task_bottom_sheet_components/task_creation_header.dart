@@ -55,7 +55,7 @@ class _TaskCreationHeaderState extends ConsumerState<TaskCreationHeader> {
 
   @override
   Widget build(BuildContext context) {
-final dyTop = ref.watch(localDyProvider);
+    final dyTop = ref.watch(localDyProvider);
     final dyBottom = ref.watch(localDyBottomProvider);
     final isEditingTask = ref.watch(isEditingTaskProvider);
     final selectedTask = ref.watch(selectedTaskProvider);
@@ -64,7 +64,8 @@ final dyTop = ref.watch(localDyProvider);
     final formNotifier = ref.read(taskFormNotifierProvider.notifier);
     final taskFormState = ref.watch(taskFormNotifierProvider);
     final startTimeEndTime = taskNotifier.getStartTimeEndTimeInDateTime();
-    final id = isEditingTask && selectedTask != null ? selectedTask.id : uuid.v4();
+    final id =
+        isEditingTask && selectedTask != null ? selectedTask.id : uuid.v4();
     final name = taskFormState.name;
     final description = taskFormState.description;
     final date = ref.watch(currentDateNotifierProvider);
@@ -73,8 +74,6 @@ final dyTop = ref.watch(localDyProvider);
     final endTime = startTimeEndTime["endTime"]!;
     const isCompleted = false;
     final List<String> linkedNote = [];
-
-    
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),

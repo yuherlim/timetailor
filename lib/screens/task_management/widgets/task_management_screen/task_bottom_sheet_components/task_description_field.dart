@@ -42,6 +42,8 @@ class TaskDescriptionField extends HookConsumerWidget {
             controller: descriptionController,
             style: Theme.of(context).textTheme.bodyMedium,
             cursorColor: AppColors.textColor,
+            maxLines: 10, // Set maximum lines for a larger field
+            minLines: 5, // Set minimum lines to ensure it starts bigger
             decoration: InputDecoration(
               prefixIcon: const Icon(Icons.description),
               suffixIcon: descriptionController.text.isNotEmpty
