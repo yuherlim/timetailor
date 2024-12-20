@@ -13,7 +13,7 @@ import 'package:timetailor/domain/task_management/providers/current_time_positio
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
-import 'package:timetailor/domain/task_management/task_manager.dart';
+import 'package:timetailor/domain/task_management/task_utils.dart';
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_header.dart';
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget.dart';
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/task_bottom_sheet.dart';
@@ -52,7 +52,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
     final currentTimePosition = ref.read(currentTimePositionNotifierProvider);
 
     // Binary search to find the correct time slot
-    int slotIndex = TaskManager.binarySearchSlotIndex(
+    int slotIndex = TaskUtils.binarySearchSlotIndex(
         currentTimePosition, ref.read(timeSlotBoundariesProvider));
 
     // debugPrint("currentTimePosition: $currentTimePosition");

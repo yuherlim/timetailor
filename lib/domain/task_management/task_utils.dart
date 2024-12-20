@@ -1,4 +1,4 @@
-class TaskManager {
+class TaskUtils {
   static int binarySearchSlotIndex(
     double tapPosition,
     List<double> timeSlotBoundaries,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:timetailor/core/shared/widgets/content_divider.dart';
 import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
@@ -97,11 +98,7 @@ class _TaskCompletionHistoryScreenState
           ),
           const Padding(
             padding: EdgeInsets.only(top: 16.0),
-            child: Divider(
-              color: Colors.white, // Line color
-              thickness: 1, // Line thickness
-              height: 0,
-            ),
+            child: ContentDivider(),
           ),
           completedTasks.isEmpty
               ? const Expanded(

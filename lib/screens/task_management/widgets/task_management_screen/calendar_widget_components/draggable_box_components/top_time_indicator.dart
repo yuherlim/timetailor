@@ -4,7 +4,7 @@ import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
-import 'package:timetailor/domain/task_management/task_manager.dart';
+import 'package:timetailor/domain/task_management/task_utils.dart';
 
 class TopTimeIndicator extends ConsumerStatefulWidget {
   const TopTimeIndicator({super.key});
@@ -58,7 +58,7 @@ class _TopTimeIndicatorState extends ConsumerState<TopTimeIndicator> {
       return Positioned(
         left: sidePadding,
         top: topPosition,
-        child: TimeIndicatorText(TaskManager.addPaddingToTime(startTimeOutput)),
+        child: TimeIndicatorText(TaskUtils.addPaddingToTime(startTimeOutput)),
       );
     } else {
       return const SizedBox.shrink();

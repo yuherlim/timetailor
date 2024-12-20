@@ -5,7 +5,7 @@ import 'package:timetailor/domain/task_management/providers/calendar_state_provi
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
-import 'package:timetailor/domain/task_management/task_manager.dart';
+import 'package:timetailor/domain/task_management/task_utils.dart';
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget_components/calendar_painter.dart';
 
 class CalendarWidgetBackground extends ConsumerStatefulWidget {
@@ -40,7 +40,7 @@ class _CalendarWidgetBackgroundState
     final tapPosition = details.localPosition.dy;
 
     // Binary search to find the correct time slot
-    int slotIndex = TaskManager.binarySearchSlotIndex(
+    int slotIndex = TaskUtils.binarySearchSlotIndex(
         tapPosition, ref.read(timeSlotBoundariesProvider));
 
     // Handle case where the tap is after the last slot
