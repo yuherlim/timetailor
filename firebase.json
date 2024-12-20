@@ -1,1 +1,25 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"timetailor-dd0aa","appId":"1:934488907844:android:abe0475b04c4e5d95e1c11","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"timetailor-dd0aa","configurations":{"android":"1:934488907844:android:abe0475b04c4e5d95e1c11","ios":"1:934488907844:ios:66eee124e32c83195e1c11","macos":"1:934488907844:ios:66eee124e32c83195e1c11","web":"1:934488907844:web:7a0ec3d91c1363b45e1c11","windows":"1:934488907844:web:bffc89b3036bd7825e1c11"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "timetailor-dd0aa",
+          "appId": "1:934488907844:android:abe0475b04c4e5d95e1c11",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "timetailor-dd0aa",
+          "configurations": {
+            "android": "1:934488907844:android:abe0475b04c4e5d95e1c11",
+            "ios": "1:934488907844:ios:66eee124e32c83195e1c11",
+            "macos": "1:934488907844:ios:66eee124e32c83195e1c11",
+            "web": "1:934488907844:web:7a0ec3d91c1363b45e1c11",
+            "windows": "1:934488907844:web:bffc89b3036bd7825e1c11"
+          }
+        }
+      }
+    }
+  }
+}

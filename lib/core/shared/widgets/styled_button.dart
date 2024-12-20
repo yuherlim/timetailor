@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:timetailor/core/theme/theme.dart';
+import 'package:timetailor/core/theme/custom_theme.dart';
 
 class StyledButton extends StatelessWidget {
   final void Function() onPressed;
@@ -16,7 +16,7 @@ class StyledButton extends StatelessWidget {
     return TextButton(
       onPressed: onPressed,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
@@ -26,7 +26,7 @@ class StyledButton extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
-          borderRadius: const BorderRadius.all(Radius.circular(5))
+          borderRadius: const BorderRadius.all(Radius.circular(15))
         ),
         child: child,
       ),
