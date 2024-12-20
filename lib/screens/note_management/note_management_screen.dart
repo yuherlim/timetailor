@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 
@@ -16,13 +18,15 @@ class _NoteManagementScreenState extends ConsumerState<NoteManagementScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          context.go(RoutePath.noteCreationPath);
+        },
         child: const Icon(Icons.add),
       ),
       appBar: AppBar(
         backgroundColor: AppColors.appBarColor,
         title: const AppBarText("Notes"),
-        centerTitle: true,
+        titleSpacing: 72,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

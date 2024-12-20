@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/main_layout.dart';
 import 'package:timetailor/data/task_management/models/task.dart';
+import 'package:timetailor/screens/note_management/note_creation_screen.dart';
 import 'package:timetailor/screens/task_management/task_completion_history_screen.dart';
 import 'package:timetailor/screens/task_management/task_management_screen.dart';
 import 'package:timetailor/screens/note_management/note_management_screen.dart';
@@ -66,6 +67,12 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: RoutePath.noteManagementPath,
               builder: (context, state) => const NoteManagementScreen(),
+              routes: [
+                GoRoute(
+                  path: RoutePath.relativeNoteCreationPath,
+                  builder: (context, state) => const NoteCreationScreen(),
+                ),
+              ],
             ),
           ],
         ),

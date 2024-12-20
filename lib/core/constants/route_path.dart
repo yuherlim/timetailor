@@ -9,8 +9,14 @@ class RoutePath {
   static const String relativeTaskHistoryPath = 'history';
   static const String relativeTaskDetailsPath = 'details';
 
+
 // note management module
   static const String noteManagementPath = '/notes';
+  static const String noteCreationPath = '/notes/create';
+
+// relative paths
+  static const String relativeNoteCreationPath = 'create';
+
 
 // user management module
   static const String accountManagementPath = '/account';

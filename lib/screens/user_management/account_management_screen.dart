@@ -11,7 +11,7 @@ class AccountManagementScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.appBarColor,
         title: const AppBarText("Account Management"),
-        centerTitle: true,
+        titleSpacing: 72,
       ),
       body: const Placeholder(),
     );
