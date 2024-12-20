@@ -33,7 +33,15 @@ class TasksNotifier extends _$TasksNotifier {
     return state
         .where((task) =>
             currentDate.isAtSameMomentAs(task.date) && task.isCompleted)
-        .toList();
+        .toList()
+      ..sort((a, b) {
+        final startTimeComparison = a.startTime.compareTo(b.startTime);
+        if (startTimeComparison != 0) {
+          return startTimeComparison; // Sort by startTime first
+        }
+        return a.endTime
+            .compareTo(b.endTime); // If startTime is equal, sort by endTime
+      });
   }
 
   void addTask(Task task) {
@@ -56,7 +64,8 @@ class TasksNotifier extends _$TasksNotifier {
     CustomSnackbars.shortDurationSnackBar(contentString: "Task removed.");
   }
 
-  void undoTaskEdit(Task taskToUndo, Function(Task task) navigateToTaskDetails, bool isEditFromTaskDetails) {
+  void undoTaskEdit(Task taskToUndo, Function(Task task) navigateToTaskDetails,
+      bool isEditFromTaskDetails) {
     updateTask(taskToUndo);
     CustomSnackbars.shortDurationSnackBar(
         contentString: "Task changes reverted!");
