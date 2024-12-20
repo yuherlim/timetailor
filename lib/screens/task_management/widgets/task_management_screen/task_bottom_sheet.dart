@@ -19,11 +19,16 @@ class TaskBottomSheet extends ConsumerStatefulWidget {
 class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
   void initializeMaxExtent() {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
-    final double bottomSheetMaxExtent =
-        (MediaQuery.of(context).size.height - statusBarHeight) /
-            MediaQuery.of(context).size.height;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double bottomInset = MediaQuery.of(context).viewPadding.bottom;
 
-    // initialize maxBottomSheetExtent after widget tree finish building
+    // Add a small buffer to ensure no bleeding into the notification bar
+    const double buffer = 8.0; // Adjust as needed
+    final double adjustedHeight =
+        screenHeight - statusBarHeight - bottomInset - buffer;
+    final double bottomSheetMaxExtent = adjustedHeight / screenHeight;
+
+    // Initialize maxBottomSheetExtent after widget tree finishes building
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(maxBottomSheetExtentProvider.notifier).state =
           bottomSheetMaxExtent;
