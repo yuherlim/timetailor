@@ -47,6 +47,7 @@ class TaskNameField extends HookConsumerWidget {
             controller: titleController,
             style: Theme.of(context).textTheme.bodyMedium,
             cursorColor: AppColors.textColor,
+            textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
               prefixIcon: const Icon(Icons.task),
               suffixIcon: titleController.text.isNotEmpty
