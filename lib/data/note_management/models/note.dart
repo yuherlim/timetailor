@@ -4,20 +4,17 @@ class Note {
   Note({
     required this.title,
     required this.content,
-    required this.directoryId,
     required this.id,
   });
 
   final String title;
   final String content;
-  final String directoryId; // Associated NoteDirectory ID
   final String id;
 
   Map<String, dynamic> toFirestore() {
     return {
       "title": title,
       "content": content,
-      "directoryId": directoryId,
     };
   }
 
@@ -28,7 +25,6 @@ class Note {
     return Note(
       title: data["title"],
       content: data["content"],
-      directoryId: data["directoryId"],
       id: snapshot.id,
     );
   }
