@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:timetailor/core/shared/styled_text.dart';
+import 'package:timetailor/core/shared/utils.dart';
+import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/task_form_provider.dart';
 
@@ -34,6 +35,7 @@ class TaskDescriptionField extends HookConsumerWidget {
       return () =>
           descriptionController.removeListener(listener); // Cleanup listener
     }, [formState.description]);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
       child: Stack(
@@ -49,28 +51,13 @@ class TaskDescriptionField extends HookConsumerWidget {
                 minLines: 10, // Set minimum lines to ensure it starts bigger
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.fromLTRB(48, 12, 36, 12),
-                  // suffixIcon: descriptionController.text.isNotEmpty
-                  //     ? IconButton(
-                  //         icon: const Icon(Icons.clear),
-                  //         onPressed: () {
-                  //           formNotifier.clearDescription();
-                  //           descriptionController.clear();
-                  //         },
-                  //       )
-                  //     : null,
                   label: StyledText("Description"),
-                  // helperText:
-                  //     '${descriptionController.text.length}/500', // Show character count
-                  // helperStyle: TextStyle(
-                  //     color: descriptionController.text.length == 500
-                  //         ? AppColors.highlightColor
-                  //         : AppColors.textColor),
                   border: OutlineInputBorder(),
                   alignLabelWithHint: true,
                 ),
                 cursorErrorColor: Theme.of(context).colorScheme.error,
                 onFieldSubmitted: (value) {
-                  FocusScope.of(context).unfocus();
+                  Utils.clearAllFormFieldFocus();
                 },
                 inputFormatters: [
                   LengthLimitingTextInputFormatter(

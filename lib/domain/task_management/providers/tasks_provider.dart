@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timetailor/core/shared/custom_snackbars.dart';
+import 'package:timetailor/core/shared/utils.dart';
 import 'package:timetailor/data/task_management/models/task.dart';
 import 'package:timetailor/domain/task_management/providers/bottom_sheet_scroll_controller_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
@@ -55,10 +56,15 @@ class TasksNotifier extends _$TasksNotifier {
     CustomSnackbars.shortDurationSnackBar(contentString: "Task removed.");
   }
 
-  void undoTaskEdit(Task taskToUndo) {
+  void undoTaskEdit(Task taskToUndo, Function(Task task) navigateToTaskDetails, bool isEditFromTaskDetails) {
     updateTask(taskToUndo);
     CustomSnackbars.shortDurationSnackBar(
         contentString: "Task changes reverted!");
+
+    //; update undo flag for if edit was from task details.
+    if (isEditFromTaskDetails) {
+      navigateToTaskDetails(taskToUndo);
+    }
   }
 
   void undoCompletedTasksRemoval(List<Task> tasksToRestore) {
@@ -391,6 +397,7 @@ class TasksNotifier extends _$TasksNotifier {
   }
 
   void endTaskCreation() {
+    Utils.clearAllFormFieldFocus();
     final taskFormNotifier = ref.read(taskFormNotifierProvider.notifier);
     ref.read(showDraggableBoxProvider.notifier).state = false;
     taskFormNotifier.resetState();
@@ -422,6 +429,8 @@ class TasksNotifier extends _$TasksNotifier {
     } else {
       // Add back task if edit fail.
       taskNotifier.addTask(selectedTask);
+      // reset selectedTask state
+      ref.read(selectedTaskProvider.notifier).state = null;
     }
   }
 }

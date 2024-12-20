@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:timetailor/core/shared/styled_text.dart';
+import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/task_bottom_sheet_components/chevron_up_drag_handle.dart';

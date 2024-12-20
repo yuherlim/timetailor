@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:timetailor/core/shared/utils.dart';
 import 'package:timetailor/domain/task_management/providers/bottom_sheet_scroll_controller_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
@@ -60,10 +61,11 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
 
     return Positioned.fill(
       child: Offstage(
-        offstage: !(showDraggableBox && showBottomSheet && isTaskNotOverlapping),
+        offstage:
+            !(showDraggableBox && showBottomSheet && isTaskNotOverlapping),
         child: NotificationListener<DraggableScrollableNotification>(
           onNotification: (notification) {
-            FocusScope.of(context).unfocus();
+            Utils.clearAllFormFieldFocus();
 
             final notificationExtent = notification.extent;
             final sheetExtentNotifier = ref.read(sheetExtentProvider.notifier);
@@ -88,7 +90,7 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
             return true;
           },
           child: GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
+            onTap: () => Utils.clearAllFormFieldFocus(),
             child: DraggableScrollableSheet(
               controller: bottomSheetScrollController,
               initialChildSize: initialBottomSheetExtent,
@@ -114,13 +116,11 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
                       child: Column(
                         children: <Widget>[
                           Offstage(
-                            offstage:
-                                currentExtent != initialBottomSheetExtent,
+                            offstage: currentExtent != initialBottomSheetExtent,
                             child: const InitialExtentContent(),
                           ),
                           Offstage(
-                            offstage:
-                                currentExtent != middleBottomSheetExtent,
+                            offstage: currentExtent != middleBottomSheetExtent,
                             child: const MiddleExtentContent(),
                           ),
                           Offstage(

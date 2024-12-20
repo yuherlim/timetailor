@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:timetailor/core/config/routes.dart';
 import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/custom_snackbars.dart';
-import 'package:timetailor/core/shared/styled_text.dart';
+import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/data/task_management/models/task.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
@@ -64,7 +64,7 @@ class _TaskItemState extends ConsumerState<TaskItem> {
   }) {
     final currentDateNotifier = ref.read(currentDateNotifierProvider.notifier);
     const double sidePadding = 16;
-    const double topPadding = 8;
+    const double topPadding = 4;
 
     if (getTaskDisplayType(duration) == 'mini') {
       return Row(
@@ -158,6 +158,13 @@ class _TaskItemState extends ConsumerState<TaskItem> {
     ref.read(showDraggableBoxProvider.notifier).state = true;
   }
 
+  void handleOnTap() {
+    CustomSnackbars.clearSnackBars();
+    // reset any creation or editing tasks.
+    ref.read(tasksNotifierProvider.notifier).endTaskCreation();
+    context.go(RoutePath.taskDetailsPath, extra: widget.task);
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.watch(selectedTaskProvider);
@@ -188,7 +195,7 @@ class _TaskItemState extends ConsumerState<TaskItem> {
       top: topPosition,
       child: GestureDetector(
         onTap: () {
-          context.go(RoutePath.taskDetailsPath, extra: widget.task);
+          handleOnTap();
         },
         onDoubleTap: () {
           if (isCurrentDateTodayOrGreater) {

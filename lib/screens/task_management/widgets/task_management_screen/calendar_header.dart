@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:timetailor/domain/task_management/providers/datebox_animation_provider.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
-import 'package:timetailor/core/shared/styled_text.dart';
+import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 

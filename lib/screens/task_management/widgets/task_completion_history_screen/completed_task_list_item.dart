@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:timetailor/core/constants/route_path.dart';
+import 'package:timetailor/core/shared/custom_snackbars.dart';
 import 'package:timetailor/data/task_management/models/task.dart';
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
@@ -70,8 +71,10 @@ class _CompletedTaskListItemState extends ConsumerState<CompletedTaskListItem> {
         .currentDateMoreThanEqualToday();
 
     return InkWell(
-      onTap: () =>
-          context.go(RoutePath.taskDetailsFromHistoryPath, extra: widget.task),
+      onTap: () {
+        CustomSnackbars.clearSnackBars();
+        context.go(RoutePath.taskDetailsFromHistoryPath, extra: widget.task);
+      },
       child: Card(
         child: ListTile(
           title: Text(

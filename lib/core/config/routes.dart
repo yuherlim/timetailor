@@ -38,7 +38,10 @@ final GoRouter appRouter = GoRouter(
                       path: RoutePath.relativeTaskDetailsPath,
                       builder: (context, state) {
                         final task = state.extra as Task;
-                        return TaskDetailsScreen(task: task);
+                        return TaskDetailsScreen(
+                          task: task,
+                          isNavigateFromHistory: true,
+                        );
                       },
                     ),
                   ],
@@ -47,7 +50,10 @@ final GoRouter appRouter = GoRouter(
                   path: RoutePath.relativeTaskDetailsPath,
                   builder: (context, state) {
                     final task = state.extra as Task;
-                    return TaskDetailsScreen(task: task);
+                    return TaskDetailsScreen(
+                      task: task,
+                      isNavigateFromHistory: false,
+                    );
                   },
                 ),
               ],

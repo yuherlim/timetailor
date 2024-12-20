@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:timetailor/core/shared/styled_text.dart';
+import 'package:timetailor/core/shared/widgets/styled_text.dart';
 
 class NoteManagementScreen extends ConsumerStatefulWidget {
   const NoteManagementScreen({super.key});

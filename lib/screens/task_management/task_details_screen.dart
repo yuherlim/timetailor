@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/custom_snackbars.dart';
-import 'package:timetailor/core/shared/styled_button.dart';
-import 'package:timetailor/core/shared/styled_text.dart';
+import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/data/task_management/models/task.dart';
 import 'package:timetailor/domain/task_management/providers/bottom_sheet_scroll_controller_provider.dart';
@@ -13,15 +13,20 @@ import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/domain/task_management/providers/task_form_provider.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/task_details_screen/complete_button.dart';
-import 'package:timetailor/screens/task_management/widgets/task_details_screen/content_divider.dart';
+import 'package:timetailor/core/shared/widgets/content_divider.dart';
 import 'package:timetailor/screens/task_management/widgets/task_details_screen/view_description.dart';
 import 'package:timetailor/screens/task_management/widgets/task_details_screen/view_notes_section.dart';
 import 'package:timetailor/screens/task_management/widgets/task_details_screen/view_title_date.dart';
 
 class TaskDetailsScreen extends StatefulHookConsumerWidget {
   final Task task;
+  final bool isNavigateFromHistory;
 
-  const TaskDetailsScreen({super.key, required this.task});
+  const TaskDetailsScreen({
+    super.key,
+    required this.task,
+    required this.isNavigateFromHistory,
+  });
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -31,8 +36,9 @@ class TaskDetailsScreen extends StatefulHookConsumerWidget {
 class _TaskDetailsScreenState extends ConsumerState<TaskDetailsScreen> {
   void handleEdit() {
     CustomSnackbars.clearSnackBars();
-    // navigate to the task management screen
-    context.go(RoutePath.taskManagementPath);
+
+    // update flag to indicate edit is from task details scsreen
+    ref.read(isEditFromTaskDetailsProvider.notifier).state = true;
 
     final taskNotifier = ref.read(tasksNotifierProvider.notifier);
 
@@ -68,8 +74,10 @@ class _TaskDetailsScreenState extends ConsumerState<TaskDetailsScreen> {
     // remove task temporarily, for when editing task.
     taskNotifier.removeTask(selectedTask);
 
-    // show the draggable box and bottom sheet for edit
+    // navigate to task management screen and show the draggable box and bottom sheet for edit
+    context.go(RoutePath.taskManagementPath);
     ref.read(showDraggableBoxProvider.notifier).state = true;
+
     //scroll to max extent
     ref
         .read(bottomSheetScrollControllerNotifierProvider.notifier)
@@ -77,6 +85,8 @@ class _TaskDetailsScreenState extends ConsumerState<TaskDetailsScreen> {
   }
 
   void handleUndo() {
+    context.go(RoutePath.taskManagementPath);
+
     final tasksNotifier = ref.read(tasksNotifierProvider.notifier);
     final taskDimensions = tasksNotifier.calculateTimeSlotFromTaskTime(
         startTime: widget.task.startTime, endTime: widget.task.endTime);
@@ -87,10 +97,10 @@ class _TaskDetailsScreenState extends ConsumerState<TaskDetailsScreen> {
       dyTop: dyTop,
       dyBottom: dyBottom,
     );
-    context.go(RoutePath.taskManagementPath);
   }
 
   void handleDelete() {
+    final isDeleteFromTaskHistory = widget.isNavigateFromHistory;
     final tasksNotifier = ref.read(tasksNotifierProvider.notifier);
     final taskDimensions = tasksNotifier.calculateTimeSlotFromTaskTime(
         startTime: widget.task.startTime, endTime: widget.task.endTime);
@@ -98,16 +108,28 @@ class _TaskDetailsScreenState extends ConsumerState<TaskDetailsScreen> {
     final dyBottom = taskDimensions['dyBottom']!;
     final taskToRemove = widget.task;
     tasksNotifier.removeTask(taskToRemove);
+
+    if (isDeleteFromTaskHistory) {
+      context.go(RoutePath.taskHistoryPath);
+    } else {
+      context.go(RoutePath.taskManagementPath);
+    }
+
     CustomSnackbars.longDurationSnackBarWithAction(
       contentString: "Task deletion successful!",
       actionText: "undo",
-      onPressed: () => tasksNotifier.undoTaskDeletion(
-        taskToUndo: taskToRemove,
-        dyBottom: dyBottom,
-        dyTop: dyTop,
-      ),
+      onPressed: () {
+        if (isDeleteFromTaskHistory) {
+          tasksNotifier.undoTaskHistoryDeletion(taskToUndo: taskToRemove);
+        } else {
+          tasksNotifier.undoTaskDeletion(
+            taskToUndo: taskToRemove,
+            dyBottom: dyBottom,
+            dyTop: dyTop,
+          );
+        }
+      },
     );
-    context.go(RoutePath.taskManagementPath);
   }
 
   void showDeleteConfirmation(BuildContext context) {
@@ -140,12 +162,10 @@ class _TaskDetailsScreenState extends ConsumerState<TaskDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    CustomSnackbars.clearSnackBars();
     final isCurrentDateTodayOrGreater = ref
         .read(currentDateNotifierProvider.notifier)
         .currentDateMoreThanEqualToday();
-    final isFromTaskHistoryScreen = GoRouter.of(context).state?.fullPath ==
-        RoutePath.taskDetailsFromHistoryPath;
+    final isNavigateFromHistory = widget.isNavigateFromHistory;
 
     return Scaffold(
       appBar: AppBar(
@@ -167,12 +187,12 @@ class _TaskDetailsScreenState extends ConsumerState<TaskDetailsScreen> {
               },
               itemBuilder: (BuildContext context) {
                 return [
-                  if (isCurrentDateTodayOrGreater && !isFromTaskHistoryScreen)
+                  if (!isNavigateFromHistory)
                     const PopupMenuItem<String>(
                       value: 'Edit',
                       child: Text('Edit'),
                     ),
-                  if (isCurrentDateTodayOrGreater && isFromTaskHistoryScreen)
+                  if (isNavigateFromHistory)
                     const PopupMenuItem<String>(
                       value: 'Undo',
                       child: Text('Undo'),
@@ -207,7 +227,7 @@ class _TaskDetailsScreenState extends ConsumerState<TaskDetailsScreen> {
               ),
             ),
           ),
-          if (isCurrentDateTodayOrGreater && !isFromTaskHistoryScreen)
+          if (isCurrentDateTodayOrGreater && !isNavigateFromHistory)
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,

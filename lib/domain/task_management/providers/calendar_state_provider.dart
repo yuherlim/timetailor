@@ -64,3 +64,4 @@ final selectedTaskProvider = StateProvider<Task?>((ref) => null);
 
 final isEditingTaskProvider = StateProvider<bool>((ref) => false);
 final isEditingTaskSuccessProvider = StateProvider<bool>((ref) => false);
+final isEditFromTaskDetailsProvider = StateProvider<bool>((ref) => false);

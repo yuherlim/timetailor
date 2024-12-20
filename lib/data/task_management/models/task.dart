@@ -114,7 +114,7 @@ final List<Task> tasks = [
   ),
   Task(
     id: 'task3',
-    name: 'Workout this is a very long sentence, testing testing,t testing',
+    name: 'Workout this is a very long sentence, very long sentence, very long sentence',
     description: "",
     date: DateTime(
         DateTime.now().year, DateTime.now().month, DateTime.now().day - 1),

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:timetailor/core/shared/styled_text.dart';
+import 'package:timetailor/core/shared/utils.dart';
+import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/task_form_provider.dart';
 
@@ -27,12 +28,17 @@ class TaskNameField extends HookConsumerWidget {
       });
 
       void listener() {
-        formNotifier.updateName(titleController.text);
+        if (titleController.text != formState.name) {
+          formNotifier.updateName(titleController.text);
+        }
       }
 
       titleController.addListener(listener);
-      return () => titleController.removeListener(listener); // Cleanup listener
+      return () {
+        titleController.removeListener(listener);
+      }; // Cleanup listener
     }, [formState.name]);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
       child: Column(
@@ -69,7 +75,7 @@ class TaskNameField extends HookConsumerWidget {
               }
             },
             onFieldSubmitted: (value) {
-              FocusScope.of(context).unfocus();
+              Utils.clearAllFormFieldFocus();
 
               if (formNotifier.validate()) {
                 formNotifier.updateName(value);

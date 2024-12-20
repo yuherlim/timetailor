@@ -200,7 +200,8 @@ class OverlappingIndicatorText extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isSmallScreen = ref.watch(smallScreenTimeSlotHeightProvider) == ref.watch(defaultTimeSlotHeightProvider);
+    final isSmallScreen = ref.watch(smallScreenTimeSlotHeightProvider) ==
+        ref.watch(defaultTimeSlotHeightProvider);
 
     return Text(
       // text.toUpperCase(),
@@ -236,18 +237,21 @@ class BottomSheetDurationText extends StatelessWidget {
   }
 }
 
-class NormalTaskNameText extends StatelessWidget {
+class NormalTaskNameText extends ConsumerWidget {
   final String text;
 
   const NormalTaskNameText(this.text, {super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isSmallScreen = ref.watch(smallScreenTimeSlotHeightProvider) ==
+        ref.watch(defaultTimeSlotHeightProvider);
+
     return Text(
       // text.toUpperCase(),
       text,
       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            fontSize: 14,
+            fontSize: isSmallScreen ? 12 : 14,
             fontWeight: FontWeight.bold,
             letterSpacing: 1,
           ),
@@ -263,7 +267,8 @@ class MiniTaskNameText extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isBigScreen = ref.watch(defaultTimeSlotHeightProvider) == ref.watch(bigScreenTimeSlotHeightProvider);
+    final isBigScreen = ref.watch(defaultTimeSlotHeightProvider) ==
+        ref.watch(bigScreenTimeSlotHeightProvider);
 
     return Text(
       // text.toUpperCase(),
@@ -305,7 +310,8 @@ class SmallTaskTimeText extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isSmallScreen = ref.watch(smallScreenTimeSlotHeightProvider) == ref.watch(defaultTimeSlotHeightProvider);
+    final isSmallScreen = ref.watch(smallScreenTimeSlotHeightProvider) ==
+        ref.watch(defaultTimeSlotHeightProvider);
 
     return Text(
       // text.toUpperCase(),
@@ -331,9 +337,7 @@ class TitleTextInHistory extends StatelessWidget {
       // text.toUpperCase(),
       text,
       style: GoogleFonts.kanit(
-        textStyle: Theme.of(context).textTheme.headlineSmall,
-        fontSize: 20
-      ),
+          textStyle: Theme.of(context).textTheme.headlineSmall, fontSize: 20),
     );
   }
 }

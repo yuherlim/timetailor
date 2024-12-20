@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/custom_snackbars.dart';
 import 'package:timetailor/data/task_management/models/task.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
@@ -36,6 +38,7 @@ class _TaskCreationHeaderState extends ConsumerState<TaskCreationHeader> {
     final selectedTaskNotifier = ref.read(selectedTaskProvider.notifier);
     final editTaskSuccessNotifier =
         ref.read(isEditingTaskSuccessProvider.notifier);
+    final isEditFromTaskDetails = ref.read(isEditFromTaskDetailsProvider);
 
     print("task to undo name: ${taskToUndo.name}");
 
@@ -49,8 +52,27 @@ class _TaskCreationHeaderState extends ConsumerState<TaskCreationHeader> {
     CustomSnackbars.longDurationSnackBarWithAction(
       contentString: "Task updated.",
       actionText: "Undo",
-      onPressed: () => taskNotifier.undoTaskEdit(taskToUndo),
+      onPressed: () =>
+          taskNotifier.undoTaskEdit(taskToUndo, navigateToTaskDetails, isEditFromTaskDetails),
     );
+
+    checkIfEditFromTaskDetails(taskToUpdate: taskToUpdate);
+  }
+
+  void checkIfEditFromTaskDetails({required Task taskToUpdate}) {
+    final isEditFromTaskDetails = ref.read(isEditFromTaskDetailsProvider);
+
+    // navigate back to task details page if the edit initiated from task details page
+    if (isEditFromTaskDetails) {
+      context.go(RoutePath.taskDetailsPath, extra: taskToUpdate);
+    }
+
+    // reset flag used to indicate edit is from task details scsreen
+    ref.read(isEditFromTaskDetailsProvider.notifier).state = false;
+  }
+
+  void navigateToTaskDetails(Task task) {
+    context.go(RoutePath.taskDetailsPath, extra: task);
   }
 
   @override
@@ -73,7 +95,8 @@ class _TaskCreationHeaderState extends ConsumerState<TaskCreationHeader> {
     final startTime = startTimeEndTime["startTime"]!;
     final endTime = startTimeEndTime["endTime"]!;
     const isCompleted = false;
-    final List<String> linkedNote = [];
+    // implemntation needs changing, get it from formState after integration.
+    final List<String> linkedNote = selectedTask?.linkedNote ?? [];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -91,7 +114,6 @@ class _TaskCreationHeaderState extends ConsumerState<TaskCreationHeader> {
             onPressed: () {
               // Save action
               // add validation
-              FocusScope.of(context).unfocus();
               if (!formNotifier.validate()) {
                 return;
               }

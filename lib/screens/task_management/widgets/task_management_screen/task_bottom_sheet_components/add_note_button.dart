@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:timetailor/core/shared/styled_button.dart';
-import 'package:timetailor/core/shared/styled_text.dart';
+import 'package:timetailor/core/shared/widgets/styled_button.dart';
+import 'package:timetailor/core/shared/widgets/styled_text.dart';
 
 class AddNoteButton extends ConsumerStatefulWidget {
   const AddNoteButton({super.key});

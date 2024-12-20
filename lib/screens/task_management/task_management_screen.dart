@@ -1,9 +1,11 @@
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:timetailor/core/constants/route_path.dart';
-import 'package:timetailor/core/shared/styled_text.dart';
+import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
@@ -16,7 +18,7 @@ import 'package:timetailor/screens/task_management/widgets/task_management_scree
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget.dart';
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/task_bottom_sheet.dart';
 
-class TaskManagementScreen extends ConsumerStatefulWidget {
+class TaskManagementScreen extends StatefulHookConsumerWidget {
   const TaskManagementScreen({super.key});
 
   @override
@@ -116,6 +118,11 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(
+        "number of current task items: ${ref.watch(tasksNotifierProvider).map(
+              (e) => e.name,
+            ).toList().length}");
+
     final currentSelectedDate = ref.watch(currentDateNotifierProvider);
     final currentMonth = ref.watch(currentMonthNotifierProvider);
     final isValidDate = ref
@@ -163,17 +170,14 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
                     ref
                         .read(currentDateNotifierProvider.notifier)
                         .updateToToday();
-                    ref
-                        .read(tasksNotifierProvider.notifier)
-                        .endTaskCreation();
+                    ref.read(tasksNotifierProvider.notifier).endTaskCreation();
                   },
                 ),
               IconButton(
                 icon: const Icon(Icons.history),
                 onPressed: () {
                   ref.read(tasksNotifierProvider.notifier).endTaskCreation();
-                  context.go(
-                      RoutePath.taskHistoryPath);
+                  context.go(RoutePath.taskHistoryPath);
                 },
               ),
             ],
