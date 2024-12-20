@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:timetailor/core/shared/widgets/styled_text.dart';
+import 'package:timetailor/core/theme/custom_theme.dart';
 
 class AccountManagementScreen extends StatelessWidget {
   const AccountManagementScreen({super.key});
@@ -8,6 +9,7 @@ class AccountManagementScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppColors.appBarColor,
         title: const AppBarText("Account Management"),
         centerTitle: true,
       ),
