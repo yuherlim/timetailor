@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
+import 'package:timetailor/domain/note_management/providers/notes_provider.dart';
+import 'package:timetailor/screens/note_management/widgets/note_list_item.dart';
 
 class NoteManagementScreen extends ConsumerStatefulWidget {
   const NoteManagementScreen({super.key});
@@ -16,6 +18,8 @@ class NoteManagementScreen extends ConsumerStatefulWidget {
 class _NoteManagementScreenState extends ConsumerState<NoteManagementScreen> {
   @override
   Widget build(BuildContext context) {
+    final allNotes = ref.watch(notesNotifierProvider);
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -31,31 +35,24 @@ class _NoteManagementScreenState extends ConsumerState<NoteManagementScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Expanded(
-            child: Center(
-              child: TitleTextInHistory(
-                "There are currently no notes.",
-              ),
-            ),
-          )
-
-          // completedTasks.isEmpty
-          //     ? const Expanded(
-          //         child: Center(
-          //           child: TitleTextInHistory(
-          //             "There are currently no notes.",
-          //           ),
-          //         ),
-          //       )
-          //     : Expanded(
-          //         child: ListView.builder(
-          //           itemCount: completedTasks.length,
-          //           itemBuilder: (context, index) {
-          //             final task = completedTasks[index];
-          //             return CompletedTaskListItem(task: task);
-          //           },
-          //         ),
-          //       ),
+          allNotes.isEmpty
+              ? const Expanded(
+                  child: Center(
+                    child: TitleTextInHistory(
+                      "There are currently no notes.",
+                    ),
+                  ),
+                )
+              : Expanded(
+                  child: ListView.builder(
+                    itemCount: allNotes.length,
+                    itemBuilder: (context, index) {
+                      final note = allNotes[index];
+                      return NoteListItem(note: note);
+                    },
+                  ),
+                ),
+          const SizedBox(height: 80),
         ],
       ),
     );

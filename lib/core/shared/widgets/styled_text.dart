@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 
 class StyledText extends StatelessWidget {
@@ -338,6 +339,46 @@ class TitleTextInHistory extends StatelessWidget {
       text,
       style: GoogleFonts.kanit(
           textStyle: Theme.of(context).textTheme.headlineSmall, fontSize: 20),
+    );
+  }
+}
+
+class NoteTitleText extends StatelessWidget {
+  final String text;
+
+  const NoteTitleText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16),
+      child: Text(
+        // text.toUpperCase(),
+        text,
+        style: GoogleFonts.kanit(
+          textStyle: CustomTextStyles.noteTitleStyle,
+        ),
+      ),
+    );
+  }
+}
+
+class NoteContentText extends StatelessWidget {
+  final String text;
+
+  const NoteContentText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16),
+      child: Text(
+        // text.toUpperCase(),
+        text,
+        style: GoogleFonts.kanit(
+          textStyle: CustomTextStyles.noteContentStyle,
+        ),
+      ),
     );
   }
 }

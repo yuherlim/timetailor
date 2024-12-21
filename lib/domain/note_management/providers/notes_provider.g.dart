@@ -1,26 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'tasks_provider.dart';
+part of 'notes_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$tasksNotifierHash() => r'7920d9bc490a8bb65c0dc1036aa8b535fa9908ab';
+String _$notesNotifierHash() => r'92629484478bcd582aae339f229fe36d433d44cc';
 
-/// See also [TasksNotifier].
-@ProviderFor(TasksNotifier)
-final tasksNotifierProvider =
-    AutoDisposeNotifierProvider<TasksNotifier, List<Task>>.internal(
-  TasksNotifier.new,
-  name: r'tasksNotifierProvider',
+/// See also [NotesNotifier].
+@ProviderFor(NotesNotifier)
+final notesNotifierProvider =
+    AutoDisposeNotifierProvider<NotesNotifier, List<Note>>.internal(
+  NotesNotifier.new,
+  name: r'notesNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$tasksNotifierHash,
+      : _$notesNotifierHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$TasksNotifier = AutoDisposeNotifier<List<Task>>;
+typedef _$NotesNotifier = AutoDisposeNotifier<List<Note>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
