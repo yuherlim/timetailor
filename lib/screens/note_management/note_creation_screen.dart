@@ -1,3 +1,4 @@
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -31,7 +32,6 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
     final noteNotifier = ref.read(notesNotifierProvider.notifier);
     final isEditingNoteNotifier = ref.read(isEditingNoteProvider.notifier);
     final isCreatingNoteNotifier = ref.read(isCreatingNoteProvider.notifier);
-    final selectedNoteNotifier = ref.read(selectedNoteProvider.notifier);
     final isEditingNote = ref.read(isEditingNoteProvider);
     final isCreatingNote = ref.read(isCreatingNoteProvider);
     final selectedNote = ref.read(selectedNoteProvider);
@@ -47,24 +47,27 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
       formNotifier.updateContent(formState.content.trim());
 
       if (isEditingNote && selectedNote != null) {
+        // update selectedNote with the latest data
         noteNotifier.updateNote(noteToUpdate);
+        loadCurrentSelectedNoteData(noteToUpdate);
         isEditingNoteNotifier.state = false;
         CustomSnackbars.longDurationSnackBarWithAction(
           contentString: "Note successfully edited!",
           actionText: "Undo",
-          onPressed: () =>
-              noteNotifier.undoNoteUpdate(selectedNote, snackBarAfterUndo),
+          onPressed: () => noteNotifier.undoNoteUpdate(
+              selectedNote, showSnackBarWithMessage),
         );
       } else {
-        // so that when edit after adding, there will be data.
-        selectedNoteNotifier.state = noteToUpdate;
+        // update selectedNote with the latest data
         noteNotifier.addNote(noteToUpdate);
+        loadCurrentSelectedNoteData(noteToUpdate);
         isCreatingNoteNotifier.state = false;
         CustomSnackbars.longDurationSnackBarWithAction(
           contentString: "Note successfully saved!",
           actionText: "Undo",
           onPressed: () {
-            noteNotifier.undoNoteAddition(noteToUpdate, snackBarAfterUndo);
+            noteNotifier.undoNoteAddition(
+                noteToUpdate, showSnackBarWithMessage);
             if (mounted) {
               context.go(RoutePath.noteManagementPath);
             }
@@ -74,11 +77,18 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
     }
   }
 
-  void snackBarAfterUndo(String message) {
-    CustomSnackbars.shortDurationSnackBar(contentString: message);
+  void loadCurrentSelectedNoteData(Note selectedNote) {
+    final noteFormNotifier = ref.read(noteFormNotifierProvider.notifier);
+    final selectedNoteNotifier = ref.read(selectedNoteProvider.notifier);
+
+    // populate state with current selected note
+    selectedNoteNotifier.state = selectedNote;
+    noteFormNotifier.updateTitle(selectedNote.title);
+    noteFormNotifier.updateContent(selectedNote.content);
   }
 
   void handleEdit() {
+    showSnackBarWithMessage("Editing note...");
     // update flag
     ref.read(isEditingNoteProvider.notifier).state = true;
 
@@ -89,16 +99,102 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
     context.go(RoutePath.noteCreationPath);
   }
 
+  void handleDelete() {
+    final noteNotifier = ref.read(notesNotifierProvider.notifier);
+    final selectedNote = ref.read(selectedNoteProvider)!;
+    noteNotifier.removeNote(selectedNote);
+    CustomSnackbars.longDurationSnackBarWithAction(
+      contentString: "Note successfully deleted!",
+      actionText: "Undo",
+      onPressed: () {
+        noteNotifier.undoNoteDeletion(selectedNote, showSnackBarWithMessage);
+      },
+    );
+    if (mounted) {
+      context.go(RoutePath.noteManagementPath);
+    }
+  }
+
+  void showDeleteConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Deletion'),
+          content: const Text('Are you sure you want to delete this note?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                handleDelete(); // Execute the confirmation action
+              },
+              child: Text('Delete',
+                  style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showSnackBarWithMessage(String message) {
+    CustomSnackbars.shortDurationSnackBar(contentString: message);
+  }
+
+  void cancelEdit() {
+    final isEditingNoteNotifier = ref.read(isEditingNoteProvider.notifier);
+    final selectedNote = ref.read(selectedNoteProvider);
+
+    isEditingNoteNotifier.state = false;
+    loadCurrentSelectedNoteData(selectedNote!);
+    showSnackBarWithMessage("Note editing cancelled.");
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+      final isEditingNote = ref.read(isEditingNoteProvider);
+      final isEditingNoteNotifier = ref.read(isEditingNoteProvider.notifier);
+      final selectedNote = ref.read(selectedNoteProvider);
+      // only intercept back gesture when the current nav branch is task management
+      if (isEditingNote) {
+        isEditingNoteNotifier.state = false;
+        loadCurrentSelectedNoteData(selectedNote!);
+        showSnackBarWithMessage("Note editing cancelled.");
+        return true; // Prevents the default back button behavior
+      }
+      return false; // Allows the default back button behavior
+    }
+
+    // Effect to handle back button interception
+    useEffect(() {
+      // Register the back button interceptor
+      BackButtonInterceptor.add(backButtonInterceptor);
+      // Cleanup when the widget is disposed
+      return () => BackButtonInterceptor.remove(backButtonInterceptor);
+    }, []);
+
     ref.watch(notesNotifierProvider);
     final noteScrollController = useScrollController();
+
     final isEditingNote = ref.watch(isEditingNoteProvider);
     final isCreatingNote = ref.watch(isCreatingNoteProvider);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.appBarColor,
+        leading: isEditingNote
+            ? IconButton(
+                onPressed: () => cancelEdit(),
+                icon: const Icon(Icons.close),
+              )
+            : null,
         title: AppBarText(isCreatingNote
             ? "Create Note"
             : isEditingNote
@@ -118,7 +214,9 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
                     // Handle menu item selection
                     if (value == 'Edit') {
                       handleEdit();
-                    } else if (value == 'Delete') {}
+                    } else if (value == 'Delete') {
+                      showDeleteConfirmation(context);
+                    }
                   },
                   itemBuilder: (BuildContext context) {
                     return [
@@ -135,14 +233,27 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
                 ),
         ],
       ),
-      body: SingleChildScrollView(
-        controller: noteScrollController,
-        child: const Column(
-          children: [
-            NoteTitleField(),
-            NoteContentField(),
-          ],
-        ),
+      body: GestureDetector(
+        onDoubleTap: isEditingNote ? null : () => handleEdit(),
+        child: LayoutBuilder(builder: (context, constraints) {
+          return SingleChildScrollView(
+            controller: noteScrollController,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight:
+                    constraints.maxHeight, // Ensure it takes the full height
+              ),
+              child: const IntrinsicHeight(
+                child: Column(
+                  children: [
+                    NoteTitleField(),
+                    NoteContentField(),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }),
       ),
     );
   }

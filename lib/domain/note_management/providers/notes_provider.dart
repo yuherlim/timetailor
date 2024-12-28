@@ -21,6 +21,11 @@ class NotesNotifier extends _$NotesNotifier {
     state = [...state, note];
   }
 
+  void undoNoteDeletion(Note note, Function(String) snackBarAfterUndo) {
+    addNote(note);
+    snackBarAfterUndo("Note is restored.");
+  }
+
   void updateNote(Note updatedNote) {
     state = state
         .map((currentNote) =>
@@ -31,8 +36,13 @@ class NotesNotifier extends _$NotesNotifier {
   void undoNoteUpdate(
       Note updatedNote, Function(String) snackBarAfterUndo) {
     final noteFormStateNotifier = ref.read(noteFormNotifierProvider.notifier);
+    final selectedNoteNotifier = ref.read(selectedNoteProvider.notifier);
 
     updateNote(updatedNote);
+
+    // update the current selected note state back to the previous note data.
+    selectedNoteNotifier.state = updatedNote;
+
     // update the note form state with the previous note data.
     noteFormStateNotifier.updateContent(updatedNote.content); 
     noteFormStateNotifier.updateTitle(updatedNote.title);

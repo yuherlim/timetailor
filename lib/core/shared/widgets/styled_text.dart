@@ -383,6 +383,39 @@ class NoteContentText extends StatelessWidget {
   }
 }
 
+class NoteListItemTitleText extends StatelessWidget {
+  final String text;
+
+  const NoteListItemTitleText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: const TextStyle(fontWeight: FontWeight.bold),
+      overflow: TextOverflow.ellipsis,
+      maxLines: 1,
+    );
+  }
+}
+
+class NoteListItemSubtitleText extends StatelessWidget {
+  final String text;
+
+  const NoteListItemSubtitleText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      overflow: TextOverflow.ellipsis,
+      maxLines: 1,
+    );
+  }
+}
+
+
+
 // class TimeperiodTextStyle extends StatelessWidget {
 
 //   const TimeperiodTextStyle({super.key});
