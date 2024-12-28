@@ -1,20 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Note {
+  final String title;
+  final String content;
+  final String id;
+  final String? imageUrl;
+  final String? pdfUrl;
+
   Note({
     required this.title,
     required this.content,
     required this.id,
+    this.imageUrl,
+    this.pdfUrl,
   });
-
-  final String title;
-  final String content;
-  final String id;
 
   // Map<String, dynamic> toFirestore() {
   //   return {
   //     "title": title,
   //     "content": content,
+  //     "imageUrl": imageUrl,
+  //     "pdfUrl": pdfUrl,
   //   };
   // }
 
@@ -26,6 +32,8 @@ class Note {
   //     title: data["title"],
   //     content: data["content"],
   //     id: snapshot.id,
+  //     imageUrl: data["imageUrl"],
+  //     pdfUrl: data["pdfUrl"],
   //   );
   // }
 }

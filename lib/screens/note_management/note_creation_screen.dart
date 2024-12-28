@@ -13,7 +13,9 @@ import 'package:timetailor/data/note_management/models/note.dart';
 import 'package:timetailor/domain/note_management/providers/note_form_provider.dart';
 import 'package:timetailor/domain/note_management/providers/note_state_provider.dart';
 import 'package:timetailor/domain/note_management/providers/notes_provider.dart';
+import 'package:timetailor/screens/note_management/widgets/display_image.dart';
 import 'package:timetailor/screens/note_management/widgets/note_content_field.dart';
+import 'package:timetailor/screens/note_management/widgets/note_pdf_card.dart';
 import 'package:timetailor/screens/note_management/widgets/note_title_field.dart';
 import 'package:uuid/uuid.dart';
 
@@ -246,6 +248,8 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
               child: const IntrinsicHeight(
                 child: Column(
                   children: [
+                    DisplayImage(imagePath: "golden.jpg"),
+                    NotePDFCard(pdfPath: "test.pdf"),
                     NoteTitleField(),
                     NoteContentField(),
                   ],
@@ -254,6 +258,34 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
             ),
           );
         }),
+      ),
+      floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                isEditingNote ? createNote() : handleEdit();
+                
+              },
+              child: isEditingNote ? const Icon(Icons.save) : const Icon(Icons.edit),
+            ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
+      bottomNavigationBar: BottomAppBar(
+        notchMargin: 8.0, // Space around FAB
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.image),
+              onPressed: () {
+                // upload image file
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.picture_as_pdf),
+              onPressed: () {
+                // upload pdf file
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
