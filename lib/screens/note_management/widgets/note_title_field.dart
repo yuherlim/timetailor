@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:timetailor/core/shared/widgets/content_divider.dart';
@@ -25,7 +26,9 @@ class NoteTitleField extends HookConsumerWidget {
 
     // State to track max length notification
     const maxLength = 50;
-    final hasReachedMaxLength = useState(false);
+    bool hasReachedMaxLength = formState.title.length == maxLength;
+
+    print("hasReachedMaxLength: $hasReachedMaxLength");
 
     // Keep Riverpod state in sync with the controller
     useEffect(() {
@@ -70,10 +73,12 @@ class NoteTitleField extends HookConsumerWidget {
               counterText: "",
             ),
             maxLength: maxLength, // Enforce title character limit
+            inputFormatters: [
+              FilteringTextInputFormatter.deny(RegExp(r'\n')),
+            ], // Block newline character
+            textInputAction: TextInputAction.done,
             onChanged: (value) {
               formNotifier.updateTitle(value);
-              // Update the max length state
-              hasReachedMaxLength.value = value.length == maxLength;
             },
             onSubmitted: (value) {
               if (formNotifier.validateTitle()) {
@@ -98,10 +103,7 @@ class NoteTitleField extends HookConsumerWidget {
           ),
 
         // Max Length Notification
-        if ((hasReachedMaxLength.value ||
-                    formState.title.length == maxLength) &&
-                isEditingNote ||
-            isCreatingNote)
+        if (hasReachedMaxLength && (isEditingNote || isCreatingNote))
           Padding(
             padding: const EdgeInsets.only(top: 4.0, left: sidePadding),
             child: Text(

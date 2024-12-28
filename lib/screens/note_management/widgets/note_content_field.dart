@@ -21,7 +21,7 @@ class NoteContentField extends HookConsumerWidget {
 
     // State to track max length notification
     const maxLength = 2000;
-    final hasReachedMaxLength = useState(false);
+    final hasReachedMaxLength = formState.content.length == maxLength;
 
     // Keep Riverpod state in sync with the controller
     useEffect(() {
@@ -68,8 +68,6 @@ class NoteContentField extends HookConsumerWidget {
             maxLength: maxLength, // Enforce title character limit
             onChanged: (value) {
               formNotifier.updateContent(value);
-              // Update the max length state
-              hasReachedMaxLength.value = value.length == maxLength;
             },
             onSubmitted: (value) {
               formNotifier.updateContent(value);
@@ -78,10 +76,7 @@ class NoteContentField extends HookConsumerWidget {
         ),
 
         // Max Length Notification
-        if ((hasReachedMaxLength.value ||
-                    formState.title.length == maxLength) &&
-                isEditingNote ||
-            isCreatingNote)
+        if (hasReachedMaxLength && (isEditingNote || isCreatingNote))
           Padding(
             padding: const EdgeInsets.only(top: 4.0, left: sidePadding),
             child: Text(
