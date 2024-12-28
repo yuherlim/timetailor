@@ -31,6 +31,7 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
     final noteNotifier = ref.read(notesNotifierProvider.notifier);
     final isEditingNoteNotifier = ref.read(isEditingNoteProvider.notifier);
     final isCreatingNoteNotifier = ref.read(isCreatingNoteProvider.notifier);
+    final selectedNoteNotifier = ref.read(selectedNoteProvider.notifier);
     final isEditingNote = ref.read(isEditingNoteProvider);
     final isCreatingNote = ref.read(isCreatingNoteProvider);
     final selectedNote = ref.read(selectedNoteProvider);
@@ -38,9 +39,12 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
     if (formNotifier.validateTitle()) {
       final noteToUpdate = Note(
         id: isCreatingNote ? const Uuid().v4() : selectedNote!.id,
-        title: formState.title,
-        content: formState.content,
+        title: formState.title.trim(),
+        content: formState.content.trim(),
       );
+
+      formNotifier.updateTitle(formState.title.trim());
+      formNotifier.updateContent(formState.content.trim());
 
       if (isEditingNote && selectedNote != null) {
         noteNotifier.updateNote(noteToUpdate);
@@ -52,6 +56,8 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
               noteNotifier.undoNoteUpdate(selectedNote, snackBarAfterUndo),
         );
       } else {
+        // so that when edit after adding, there will be data.
+        selectedNoteNotifier.state = noteToUpdate;
         noteNotifier.addNote(noteToUpdate);
         isCreatingNoteNotifier.state = false;
         CustomSnackbars.longDurationSnackBarWithAction(
