@@ -50,7 +50,7 @@ class NoteListItem extends ConsumerWidget {
             maxLines: 1,
           ),
           subtitle: Text(
-            note.content,
+            note.content.isEmpty ? "(No content)" : note.content,
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
           ),
