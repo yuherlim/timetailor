@@ -28,24 +28,30 @@ class NotesNotifier extends _$NotesNotifier {
         .toList();
   }
 
-  void updateNoteWithUndo(
-      Note updatedNote, Function(String, Note) snackBarWithUndo) {
+  void undoNoteUpdate(
+      Note updatedNote, Function(String) snackBarAfterUndo) {
+    final noteFormStateNotifier = ref.read(noteFormNotifierProvider.notifier);
+
     updateNote(updatedNote);
-    ref.read(isUndoEditingNoteProvider.notifier).state = true;
-    snackBarWithUndo("Note is changes reverted.", updatedNote);
+    // update the note form state with the previous note data.
+    noteFormStateNotifier.updateContent(updatedNote.content); 
+    noteFormStateNotifier.updateTitle(updatedNote.title);
+
+    snackBarAfterUndo("Note changes is reverted.");
   }
 
   void removeNote(Note note) {
     state = state.where((currentNote) => currentNote != note).toList();
   }
 
-  void removeNoteWithUndo(Note note, Function(String) snackBarWithUndo) {
+  void undoNoteAddition(Note note, Function(String) snackBarAfterUndo) {
     removeNote(note);
-    snackBarWithUndo("Note is removed.");
+    snackBarAfterUndo("Note is removed.");
   }
 
-  void endNoteCreation() {
+  void resetAllNoteState() {
     ref.read(noteFormNotifierProvider.notifier).resetState();
+    ref.read(isCreatingNoteProvider.notifier).state = false;
     ref.read(isEditingNoteProvider.notifier).state = false;
     ref.read(isUndoEditingNoteProvider.notifier).state = false;
     ref.read(selectedNoteProvider.notifier).state = null;

@@ -74,15 +74,6 @@ final GoRouter appRouter = GoRouter(
                   path: RoutePath.relativeNoteCreationPath,
                   builder: (context, state) => const NoteCreationScreen(),
                 ),
-                GoRoute(
-                  path: RoutePath.relativeNoteDetailsPath,
-                  builder: (context, state) {
-                    final note = state.extra as Note;
-                    return NoteDetailsScreen(
-                      note: note,
-                    );
-                  },
-                ),
               ],
             ),
           ],

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
+import 'package:timetailor/domain/note_management/providers/note_state_provider.dart';
 import 'package:timetailor/domain/note_management/providers/notes_provider.dart';
 import 'package:timetailor/screens/note_management/widgets/note_list_item.dart';
 
@@ -16,15 +17,20 @@ class NoteManagementScreen extends ConsumerStatefulWidget {
 }
 
 class _NoteManagementScreenState extends ConsumerState<NoteManagementScreen> {
+  void handleAdd() {
+    // reset all previous note state
+    ref.read(notesNotifierProvider.notifier).resetAllNoteState();
+    ref.read(isCreatingNoteProvider.notifier).state = true;
+    context.go(RoutePath.noteCreationPath);
+  }
+
   @override
   Widget build(BuildContext context) {
     final allNotes = ref.watch(notesNotifierProvider);
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.go(RoutePath.noteCreationPath);
-        },
+        onPressed: () => handleAdd(),
         child: const Icon(Icons.add),
       ),
       appBar: AppBar(

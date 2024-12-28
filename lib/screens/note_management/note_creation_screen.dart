@@ -29,69 +29,104 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
     final formState = ref.read(noteFormNotifierProvider);
     final formNotifier = ref.read(noteFormNotifierProvider.notifier);
     final noteNotifier = ref.read(notesNotifierProvider.notifier);
+    final isEditingNoteNotifier = ref.read(isEditingNoteProvider.notifier);
+    final isCreatingNoteNotifier = ref.read(isCreatingNoteProvider.notifier);
     final isEditingNote = ref.read(isEditingNoteProvider);
+    final isCreatingNote = ref.read(isCreatingNoteProvider);
     final selectedNote = ref.read(selectedNoteProvider);
 
     if (formNotifier.validateTitle()) {
       final noteToUpdate = Note(
-        id: isEditingNote ? selectedNote!.id : const Uuid().v4(),
+        id: isCreatingNote ? const Uuid().v4() : selectedNote!.id,
         title: formState.title,
         content: formState.content,
       );
 
       if (isEditingNote && selectedNote != null) {
         noteNotifier.updateNote(noteToUpdate);
+        isEditingNoteNotifier.state = false;
         CustomSnackbars.longDurationSnackBarWithAction(
           contentString: "Note successfully edited!",
           actionText: "Undo",
-          onPressed: () => noteNotifier.updateNoteWithUndo(
-              selectedNote, undoNoteEditSnackBar),
+          onPressed: () =>
+              noteNotifier.undoNoteUpdate(selectedNote, snackBarAfterUndo),
         );
-
-        context.go(RoutePath.noteDetailsPath, extra: noteToUpdate);
       } else {
         noteNotifier.addNote(noteToUpdate);
+        isCreatingNoteNotifier.state = false;
         CustomSnackbars.longDurationSnackBarWithAction(
           contentString: "Note successfully saved!",
           actionText: "Undo",
-          onPressed: () => noteNotifier.removeNoteWithUndo(
-            noteToUpdate,
-            undoNoteCreateSnackBar,
-          ),
+          onPressed: () {
+            noteNotifier.undoNoteAddition(noteToUpdate, snackBarAfterUndo);
+            if (mounted) {
+              context.go(RoutePath.noteManagementPath);
+            }
+          },
         );
-
-        context.go(RoutePath.noteManagementPath);
       }
-
-      noteNotifier.endNoteCreation();
     }
   }
 
-  void undoNoteEditSnackBar(String message, Note noteToUndo) {
+  void snackBarAfterUndo(String message) {
     CustomSnackbars.shortDurationSnackBar(contentString: message);
-    context.go(RoutePath.noteDetailsPath, extra: noteToUndo);
   }
 
-  void undoNoteCreateSnackBar(String message) {
-    CustomSnackbars.shortDurationSnackBar(contentString: message);
+  void handleEdit() {
+    // update flag
+    ref.read(isEditingNoteProvider.notifier).state = true;
+
+    print("note name: ${ref.read(noteFormNotifierProvider).title}");
+    print("note content: ${ref.read(noteFormNotifierProvider).content}");
+
+    // navigate to start edit note.
+    context.go(RoutePath.noteCreationPath);
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(notesNotifierProvider);
     final noteScrollController = useScrollController();
-    final isEditingNote = ref.read(isEditingNoteProvider);
+    final isEditingNote = ref.watch(isEditingNoteProvider);
+    final isCreatingNote = ref.watch(isCreatingNoteProvider);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.appBarColor,
-        title: AppBarText(isEditingNote ? "Edit Note" : "Create Note"),
+        title: AppBarText(isCreatingNote
+            ? "Create Note"
+            : isEditingNote
+                ? "Editing Note"
+                : "Note Details"),
         actions: [
-          IconButton(
-            onPressed: () {
-              createNote();
-            },
-            icon: const Icon(Icons.save),
-          ),
+          isEditingNote || isCreatingNote
+              ? IconButton(
+                  onPressed: () {
+                    createNote();
+                  },
+                  icon: const Icon(Icons.save),
+                )
+              : PopupMenuButton<String>(
+                  icon: const Icon(Icons.more_vert),
+                  onSelected: (value) {
+                    // Handle menu item selection
+                    if (value == 'Edit') {
+                      handleEdit();
+                    } else if (value == 'Delete') {}
+                  },
+                  itemBuilder: (BuildContext context) {
+                    return [
+                      const PopupMenuItem<String>(
+                        value: 'Edit',
+                        child: Text('Edit'),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: 'Delete',
+                        child: Text('Delete'),
+                      ),
+                    ];
+                  },
+                ),
         ],
       ),
       body: SingleChildScrollView(

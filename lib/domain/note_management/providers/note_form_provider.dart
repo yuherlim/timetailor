@@ -3,10 +3,11 @@ import 'package:timetailor/domain/note_management/state/note_form_state.dart';
 
 part 'note_form_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class NoteFormNotifier extends _$NoteFormNotifier {
   @override
   NoteFormState build() {
+    print("note form state is built");
     return NoteFormState(title: "", content: "");
   }
 

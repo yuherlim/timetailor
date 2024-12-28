@@ -13,12 +13,8 @@ class RoutePath {
 // note management module
   static const String noteManagementPath = '/notes';
   static const String noteCreationPath = '/notes/create';
-  static const String noteDetailsPath = '/notes/details';
-
 // relative paths
   static const String relativeNoteCreationPath = 'create';
-  static const String relativeNoteDetailsPath = 'details';
-
 
 // user management module
   static const String accountManagementPath = '/account';
