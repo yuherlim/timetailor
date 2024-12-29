@@ -18,6 +18,7 @@ import 'package:timetailor/screens/note_management/widgets/note_content_field.da
 import 'package:timetailor/screens/note_management/widgets/note_pdf_card.dart';
 import 'package:timetailor/screens/note_management/widgets/note_title_field.dart';
 import 'package:uuid/uuid.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class NoteCreationScreen extends StatefulHookConsumerWidget {
   const NoteCreationScreen({super.key});
@@ -28,6 +29,10 @@ class NoteCreationScreen extends StatefulHookConsumerWidget {
 }
 
 class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
+  final connectivityStream = Connectivity()
+      .onConnectivityChanged
+      .map((connectivityResults) => connectivityResults.first);
+
   void createNote() {
     final formState = ref.read(noteFormNotifierProvider);
     final formNotifier = ref.read(noteFormNotifierProvider.notifier);
@@ -49,7 +54,6 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
       formNotifier.updateContent(formState.content.trim());
 
       if (isEditingNote && selectedNote != null) {
-        // update selectedNote with the latest data
         noteNotifier.updateNote(noteToUpdate);
         loadCurrentSelectedNoteData(noteToUpdate);
         isEditingNoteNotifier.state = false;
@@ -60,7 +64,6 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
               selectedNote, showSnackBarWithMessage),
         );
       } else {
-        // update selectedNote with the latest data
         noteNotifier.addNote(noteToUpdate);
         loadCurrentSelectedNoteData(noteToUpdate);
         isCreatingNoteNotifier.state = false;
@@ -83,7 +86,6 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
     final noteFormNotifier = ref.read(noteFormNotifierProvider.notifier);
     final selectedNoteNotifier = ref.read(selectedNoteProvider.notifier);
 
-    // populate state with current selected note
     selectedNoteNotifier.state = selectedNote;
     noteFormNotifier.updateTitle(selectedNote.title);
     noteFormNotifier.updateContent(selectedNote.content);
@@ -91,13 +93,7 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
 
   void handleEdit() {
     showSnackBarWithMessage("Editing note...");
-    // update flag
     ref.read(isEditingNoteProvider.notifier).state = true;
-
-    print("note name: ${ref.read(noteFormNotifierProvider).title}");
-    print("note content: ${ref.read(noteFormNotifierProvider).content}");
-
-    // navigate to start edit note.
     context.go(RoutePath.noteCreationPath);
   }
 
@@ -127,14 +123,14 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
               child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-                handleDelete(); // Execute the confirmation action
+                Navigator.of(context).pop();
+                handleDelete();
               },
               child: Text('Delete',
                   style: TextStyle(color: Theme.of(context).colorScheme.error)),
@@ -164,21 +160,17 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
       final isEditingNote = ref.read(isEditingNoteProvider);
       final isEditingNoteNotifier = ref.read(isEditingNoteProvider.notifier);
       final selectedNote = ref.read(selectedNoteProvider);
-      // only intercept back gesture when the current nav branch is task management
       if (isEditingNote) {
         isEditingNoteNotifier.state = false;
         loadCurrentSelectedNoteData(selectedNote!);
         showSnackBarWithMessage("Note editing cancelled.");
-        return true; // Prevents the default back button behavior
+        return true;
       }
-      return false; // Allows the default back button behavior
+      return false;
     }
 
-    // Effect to handle back button interception
     useEffect(() {
-      // Register the back button interceptor
       BackButtonInterceptor.add(backButtonInterceptor);
-      // Cleanup when the widget is disposed
       return () => BackButtonInterceptor.remove(backButtonInterceptor);
     }, []);
 
@@ -188,105 +180,115 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
     final isEditingNote = ref.watch(isEditingNoteProvider);
     final isCreatingNote = ref.watch(isCreatingNoteProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.appBarColor,
-        leading: isEditingNote
-            ? IconButton(
-                onPressed: () => cancelEdit(),
-                icon: const Icon(Icons.close),
-              )
-            : null,
-        title: AppBarText(isCreatingNote
-            ? "Create Note"
-            : isEditingNote
-                ? "Editing Note"
-                : "Note Details"),
-        actions: [
-          isEditingNote || isCreatingNote
-              ? IconButton(
-                  onPressed: () {
-                    createNote();
-                  },
-                  icon: const Icon(Icons.save),
+    return StreamBuilder<ConnectivityResult>(
+      stream: connectivityStream,
+      builder: (context, snapshot) {
+        final isOnline =
+            snapshot.hasData && snapshot.data != ConnectivityResult.none;
+
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: AppColors.appBarColor,
+            leading: isEditingNote
+                ? IconButton(
+                    onPressed: () => cancelEdit(),
+                    icon: const Icon(Icons.close),
+                  )
+                : null,
+            title: AppBarText(isCreatingNote
+                ? "Create Note"
+                : isEditingNote
+                    ? "Editing Note"
+                    : "Note Details"),
+            actions: [
+              if (isOnline)
+                isEditingNote || isCreatingNote
+                    ? IconButton(
+                        onPressed: () {
+                          createNote();
+                        },
+                        icon: const Icon(Icons.save),
+                      )
+                    : PopupMenuButton<String>(
+                        icon: const Icon(Icons.more_vert),
+                        onSelected: (value) {
+                          if (value == 'Edit') {
+                            handleEdit();
+                          } else if (value == 'Delete') {
+                            showDeleteConfirmation(context);
+                          }
+                        },
+                        itemBuilder: (BuildContext context) {
+                          return [
+                            const PopupMenuItem<String>(
+                              value: 'Edit',
+                              child: Text('Edit'),
+                            ),
+                            const PopupMenuItem<String>(
+                              value: 'Delete',
+                              child: Text('Delete'),
+                            ),
+                          ];
+                        },
+                      ),
+            ],
+          ),
+          body: GestureDetector(
+            onDoubleTap: isEditingNote ? null : () => handleEdit(),
+            child: LayoutBuilder(builder: (context, constraints) {
+              return SingleChildScrollView(
+                controller: noteScrollController,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
+                  ),
+                  child: const IntrinsicHeight(
+                    child: Column(
+                      children: [
+                        DisplayImage(imagePath: "golden.jpg"),
+                        NotePDFCard(pdfPath: "test.pdf"),
+                        NoteTitleField(),
+                        NoteContentField(),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              isEditingNote ? createNote() : handleEdit();
+            },
+            child:
+                isEditingNote ? const Icon(Icons.save) : const Icon(Icons.edit),
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.endContained,
+          bottomNavigationBar: isOnline
+              ? BottomAppBar(
+                  notchMargin: 8.0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.image),
+                        onPressed: () {
+                          // upload image file
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.picture_as_pdf),
+                        onPressed: () {
+                          // upload pdf file
+                        },
+                      ),
+                    ],
+                  ),
                 )
-              : PopupMenuButton<String>(
-                  icon: const Icon(Icons.more_vert),
-                  onSelected: (value) {
-                    // Handle menu item selection
-                    if (value == 'Edit') {
-                      handleEdit();
-                    } else if (value == 'Delete') {
-                      showDeleteConfirmation(context);
-                    }
-                  },
-                  itemBuilder: (BuildContext context) {
-                    return [
-                      const PopupMenuItem<String>(
-                        value: 'Edit',
-                        child: Text('Edit'),
-                      ),
-                      const PopupMenuItem<String>(
-                        value: 'Delete',
-                        child: Text('Delete'),
-                      ),
-                    ];
-                  },
-                ),
-        ],
-      ),
-      body: GestureDetector(
-        onDoubleTap: isEditingNote ? null : () => handleEdit(),
-        child: LayoutBuilder(builder: (context, constraints) {
-          return SingleChildScrollView(
-            controller: noteScrollController,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight:
-                    constraints.maxHeight, // Ensure it takes the full height
-              ),
-              child: const IntrinsicHeight(
-                child: Column(
-                  children: [
-                    DisplayImage(imagePath: "golden.jpg"),
-                    NotePDFCard(pdfPath: "test.pdf"),
-                    NoteTitleField(),
-                    NoteContentField(),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }),
-      ),
-      floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                isEditingNote ? createNote() : handleEdit();
-                
-              },
-              child: isEditingNote ? const Icon(Icons.save) : const Icon(Icons.edit),
-            ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
-      bottomNavigationBar: BottomAppBar(
-        notchMargin: 8.0, // Space around FAB
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.image),
-              onPressed: () {
-                // upload image file
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.picture_as_pdf),
-              onPressed: () {
-                // upload pdf file
-              },
-            ),
-          ],
-        ),
-      ),
+              : const SizedBox.shrink(),
+        );
+      },
     );
   }
 }

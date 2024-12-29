@@ -21,34 +21,34 @@ final GlobalKey<NavigatorState> _accountNavigatorKey =
 
 final GoRouter appRouter = GoRouter(
   initialLocation: RoutePath.taskManagementPath,
-  redirect: (context, state) async {
-    // final isLoggedIn = await AuthService.checkLoginStatus();
-    final isLoggedIn = false;
-    final isGettingStarted =
-        state.matchedLocation == RoutePath.gettingStartedPath;
-    final isLoggingIn = state.matchedLocation == RoutePath.loginPath;
-    final isRegistering = state.matchedLocation == RoutePath.registerPath;
-    final isAtResetPasswordScreen =
-        state.matchedLocation == RoutePath.resetPasswordPath;
+  // redirect: (context, state) async {
+  //   // final isLoggedIn = await AuthService.checkLoginStatus();
+  //   final isLoggedIn = false;
+  //   final isGettingStarted =
+  //       state.matchedLocation == RoutePath.gettingStartedPath;
+  //   final isLoggingIn = state.matchedLocation == RoutePath.loginPath;
+  //   final isRegistering = state.matchedLocation == RoutePath.registerPath;
+  //   final isAtResetPasswordScreen =
+  //       state.matchedLocation == RoutePath.resetPasswordPath;
 
-    if (!isLoggedIn &&
-        !isLoggingIn &&
-        !isGettingStarted &&
-        !isRegistering &&
-        !isAtResetPasswordScreen) {
-      return RoutePath.gettingStartedPath;
-    }
+  //   if (!isLoggedIn &&
+  //       !isLoggingIn &&
+  //       !isGettingStarted &&
+  //       !isRegistering &&
+  //       !isAtResetPasswordScreen) {
+  //     return RoutePath.gettingStartedPath;
+  //   }
 
-    if (isLoggedIn &&
-        (isLoggingIn ||
-            isGettingStarted ||
-            isRegistering ||
-            isAtResetPasswordScreen)) {
-      return RoutePath.taskManagementPath;
-    }
+  //   if (isLoggedIn &&
+  //       (isLoggingIn ||
+  //           isGettingStarted ||
+  //           isRegistering ||
+  //           isAtResetPasswordScreen)) {
+  //     return RoutePath.taskManagementPath;
+  //   }
 
-    return null;
-  },
+  //   return null;
+  // },
   routes: [
     GoRoute(
       path: RoutePath.gettingStartedPath,
