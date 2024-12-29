@@ -17,5 +17,15 @@ class RoutePath {
   static const String relativeNoteCreationPath = 'create';
 
 // user management module
+  static const String gettingStartedPath = '/getting-started';
+  static const String loginPath = '/getting-started/login';
+  static const String registerPath = '/getting-started/register';
+  static const String resetPasswordPath = '/getting-started/login/reset-password';
+
   static const String accountManagementPath = '/account';
+
+// relative paths
+  static const String relativeLoginPath = "login";
+  static const String relativeRegisterPath = "register";
+  static const String relativeResetPasswordPath = "reset-password";
 }

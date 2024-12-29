@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:timetailor/data/note_management/repositories/note_repository.dart';
+import 'package:timetailor/data/note_management/repositories/firebase_storage_service.dart';
 
 class DisplayImage extends StatelessWidget {
   final String imagePath; // Path in Firebase Storage
@@ -9,7 +9,7 @@ class DisplayImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
-      future: NoteRepository.getDownloadURL(imagePath),
+      future: FirebaseStorageService.getDownloadURL(imagePath),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator(); // Show loading indicator

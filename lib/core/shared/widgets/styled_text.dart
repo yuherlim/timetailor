@@ -414,6 +414,42 @@ class NoteListItemSubtitleText extends StatelessWidget {
   }
 }
 
+class UserOnboardingMessageText extends StatelessWidget {
+  final String text;
+
+  const UserOnboardingMessageText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      textAlign: TextAlign.center,
+      text,
+      softWrap: true,
+      overflow: TextOverflow.visible,
+    );
+  }
+}
+
+class AppNameText extends StatelessWidget {
+  final String text;
+
+  const AppNameText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      // text.toUpperCase(),
+      text,
+      style: GoogleFonts.kanit(
+        textStyle: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2,
+            ),
+      ),
+    );
+  }
+}
+
 
 
 // class TimeperiodTextStyle extends StatelessWidget {
