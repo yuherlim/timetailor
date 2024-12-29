@@ -1,7 +1,9 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:timetailor/core/constants/route_path.dart';
+import 'package:timetailor/core/shared/custom_snackbars.dart';
 import 'package:timetailor/core/shared/widgets/styled_button.dart';
 import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
@@ -183,6 +185,19 @@ class RegisterScreen extends HookWidget {
                 // Submit button
                 StyledButton(
                   onPressed: () async {
+                    // Check internet connectivity
+                    final connectivityResult =
+                        await Connectivity().checkConnectivity();
+
+                    // Handle the emitted list of ConnectivityResult
+                    if (connectivityResult.contains(ConnectivityResult.none)) {
+                      // Show a snackbar for no internet connection
+                      CustomSnackbars.shortDurationSnackBar(
+                          contentString:
+                              "No internet connection. Please try again after reconnecting to the internet.");
+                      return;
+                    }
+
                     if (formKey.currentState!.validate()) {
                       errorFeedback.value = null;
         

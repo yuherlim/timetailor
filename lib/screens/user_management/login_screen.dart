@@ -1,7 +1,9 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:timetailor/core/constants/route_path.dart';
+import 'package:timetailor/core/shared/custom_snackbars.dart';
 import 'package:timetailor/core/shared/widgets/styled_button.dart';
 import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
@@ -42,7 +44,8 @@ class LoginScreen extends HookWidget {
                       'assets/logo/timetailor_logo.png', // Path to your image file in the assets folder
                       width: 200, // Set the desired width
                       height: 200, // Set the desired height
-                      fit: BoxFit.cover, // Control how the image fits within the space
+                      fit: BoxFit
+                          .cover, // Control how the image fits within the space
                     ),
                   ),
                 ),
@@ -62,7 +65,8 @@ class LoginScreen extends HookWidget {
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   style: TextStyle(
-                      color: AppColors.textColor), // Text color for dark background
+                      color: AppColors
+                          .textColor), // Text color for dark background
                   decoration: InputDecoration(
                     labelText: 'Email',
                     labelStyle: TextStyle(color: Colors.grey[400]),
@@ -91,7 +95,8 @@ class LoginScreen extends HookWidget {
                   controller: passwordController,
                   obscureText: true,
                   style: TextStyle(
-                      color: AppColors.textColor), // Text color for dark background
+                      color: AppColors
+                          .textColor), // Text color for dark background
                   decoration: InputDecoration(
                     labelText: 'Password',
                     labelStyle: TextStyle(color: Colors.grey[400]),
@@ -115,13 +120,27 @@ class LoginScreen extends HookWidget {
                 if (errorFeedback.value != null)
                   Text(
                     errorFeedback.value!,
-                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.error),
                   ),
                 const SizedBox(height: 16.0),
 
                 // Submit button
                 StyledButton(
                   onPressed: () async {
+                    // Check internet connectivity
+                    final connectivityResult =
+                        await Connectivity().checkConnectivity();
+
+                    // Handle the emitted list of ConnectivityResult
+                    if (connectivityResult.contains(ConnectivityResult.none)) {
+                      // Show a snackbar for no internet connection
+                      CustomSnackbars.shortDurationSnackBar(
+                          contentString:
+                              "No internet connection. Please try again after reconnecting to the internet.");
+                      return;
+                    }
+
                     if (formKey.currentState!.validate()) {
                       errorFeedback.value = null;
 

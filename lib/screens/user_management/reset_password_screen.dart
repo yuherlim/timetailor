@@ -1,7 +1,9 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:timetailor/core/constants/route_path.dart';
+import 'package:timetailor/core/shared/custom_snackbars.dart';
 import 'package:timetailor/core/shared/widgets/styled_button.dart';
 import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
@@ -21,7 +23,8 @@ class ResetPasswordScreen extends HookWidget {
       backgroundColor: Colors.grey[900], // Monochrome dark background
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const AppBarText('Reset Password'), // StyledHeaderText for consistent styling
+        title: const AppBarText(
+            'Reset Password'), // StyledHeaderText for consistent styling
       ),
       body: SingleChildScrollView(
         controller: resetPasswordScrollController,
@@ -40,7 +43,8 @@ class ResetPasswordScreen extends HookWidget {
                       'assets/logo/timetailor_logo.png', // Path to your image file in the assets folder
                       width: 200, // Set the desired width
                       height: 200, // Set the desired height
-                      fit: BoxFit.cover, // Control how the image fits within the space
+                      fit: BoxFit
+                          .cover, // Control how the image fits within the space
                     ),
                   ),
                 ),
@@ -60,7 +64,8 @@ class ResetPasswordScreen extends HookWidget {
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   style: TextStyle(
-                      color: AppColors.textColor), // Text color for dark background
+                      color: AppColors
+                          .textColor), // Text color for dark background
                   decoration: InputDecoration(
                     labelText: 'Email',
                     labelStyle: TextStyle(color: Colors.grey[400]),
@@ -88,28 +93,43 @@ class ResetPasswordScreen extends HookWidget {
                 if (errorFeedback.value != null)
                   Text(
                     errorFeedback.value!,
-                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.error),
                   ),
                 const SizedBox(height: 16.0),
 
                 // Submit button
                 StyledButton(
                   onPressed: () async {
+                    // Check internet connectivity
+                    final connectivityResult =
+                        await Connectivity().checkConnectivity();
+
+                    // Handle the emitted list of ConnectivityResult
+                    if (connectivityResult.contains(ConnectivityResult.none)) {
+                      // Show a snackbar for no internet connection
+                      CustomSnackbars.shortDurationSnackBar(
+                          contentString:
+                              "No internet connection. Please try again after reconnecting to the internet.");
+                      return;
+                    }
+
                     if (formKey.currentState!.validate()) {
                       errorFeedback.value = null;
 
                       final email = emailController.text.trim();
 
-                      // TODO: Implement password reset logic
+                      // // TODO: Implement password reset logic
                       // final result = await AuthService.sendPasswordResetEmail(email);
-                      final result = null;
+                      // // final result = null;
 
-                      // TODO: update this based on the return value of sendPasswordResetEmail
-                      if (result == null) {
-                        errorFeedback.value = 'Error sending reset email. Please try again.';
-                      } else {
-                        // navigate to gegt started, show snack bar indicating that the request for reset password has been submitted.
-                      }
+                      // // TODO: update this based on the return value of sendPasswordResetEmail
+                      // if (result == null) {
+                      //   errorFeedback.value = 'Error sending reset email. Please try again.';
+                      // } else {
+                      //   // navigate to gegt started, show snack bar indicating that the request for reset password has been submitted.
+                      //   CustomSnackbars.shortDurationSnackBar(contentString: "Reset password request submitted, please check your email.");
+                      // }
                     }
                   },
                   child: const ButtonText('Send Reset Email'),
@@ -121,7 +141,8 @@ class ResetPasswordScreen extends HookWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const UserOnboardingMessageText("Remembered your password?"),
+                    const UserOnboardingMessageText(
+                        "Remembered your password?"),
                     StyledButton(
                       onPressed: () => context.go(RoutePath.loginPath),
                       child: const ButtonText("Login"),
