@@ -2,11 +2,13 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/custom_snackbars.dart';
 import 'package:timetailor/core/shared/widgets/styled_button.dart';
 import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
+import 'package:timetailor/domain/user_management/providers/user_provider.dart';
 
 class LoginScreen extends HookWidget {
   const LoginScreen({super.key});
@@ -126,39 +128,74 @@ class LoginScreen extends HookWidget {
                 const SizedBox(height: 16.0),
 
                 // Submit button
-                StyledButton(
-                  onPressed: () async {
-                    // Check internet connectivity
-                    final connectivityResult =
-                        await Connectivity().checkConnectivity();
+                Consumer(
+                  builder: (childContext, ref, child) {
+                    final isLoadingNotifier =
+                        ref.read(isLoadingProvider.notifier);
+                    final isLoading = ref.watch(isLoadingProvider);
+                    final authService = ref.watch(firebaseAuthServiceProvider);
 
-                    // Handle the emitted list of ConnectivityResult
-                    if (connectivityResult.contains(ConnectivityResult.none)) {
-                      // Show a snackbar for no internet connection
-                      CustomSnackbars.shortDurationSnackBar(
-                          contentString:
-                              "No internet connection. Please try again after reconnecting to the internet.");
-                      return;
-                    }
+                    return StyledButton(
+                      onPressed: isLoading
+                          ? null
+                          : () async {
+                              // Check internet connectivity
+                              final connectivityResult =
+                                  await Connectivity().checkConnectivity();
 
-                    if (formKey.currentState!.validate()) {
-                      errorFeedback.value = null;
+                              if (connectivityResult
+                                  .contains(ConnectivityResult.none)) {
+                                // Show a snackbar for no internet connection
+                                CustomSnackbars.shortDurationSnackBar(
+                                  contentString:
+                                      "No internet connection. Please try again after reconnecting to the internet.",
+                                );
+                                return;
+                              }
 
-                      final email = emailController.text.trim();
-                      final password = passwordController.text.trim();
+                              if (formKey.currentState!.validate()) {
+                                errorFeedback.value = null;
 
-                      // final user = await AuthService.signIn(email, password);
-                      // // final user = null;
+                                final email = emailController.text.trim();
+                                final password = passwordController.text.trim();
 
-                      // if (user == null) {
-                      //   errorFeedback.value = 'Incorrect login credentials.';
-                      // } else {
-                      //   // Navigate to the main app screen
-                      //   Navigator.pushReplacementNamed(context, '/home');
-                      // }
-                    }
+                                isLoadingNotifier.state = true;
+
+                                try {
+                                  final result = await authService.signInUser(
+                                      email, password);
+
+                                  if (result != null) {
+                                    errorFeedback.value = result;
+                                    CustomSnackbars.shortDurationSnackBar(
+                                      contentString: "Login failed: $result",
+                                    );
+                                  } else {
+                                    // check parent context whether is mounted or not.
+                                    if (context.mounted) {
+                                      context.go(RoutePath.taskManagementPath);
+                                    }
+
+                                    CustomSnackbars.shortDurationSnackBar(
+                                      contentString:
+                                          "Login Successful! Redirecting...",
+                                    );
+                                  }
+                                } catch (e) {
+                                  debugPrint("An error occurred: $e");
+                                  CustomSnackbars.shortDurationSnackBar(
+                                    contentString: "An error occurred: $e",
+                                  );
+                                } finally {
+                                  isLoadingNotifier.state = false;
+                                }
+                              }
+                            },
+                      child: isLoading
+                          ? const CircularProgressIndicator()
+                          : const ButtonText('Log In'),
+                    );
                   },
-                  child: const ButtonText('Log In'),
                 ),
 
                 const SizedBox(height: 16.0),
@@ -168,23 +205,34 @@ class LoginScreen extends HookWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const UserOnboardingMessageText("Don\'t have an account?"),
-                    StyledButton(
-                      onPressed: () => context.go(RoutePath.registerPath),
-                      child: const ButtonText("Register"),
-                    ),
+                    Consumer(
+                      builder: (childContext, ref, child) {
+                        final isLoading = ref.watch(isLoadingProvider);
+                        return StyledButton(
+                          onPressed: isLoading
+                              ? null
+                              : () => context.go(RoutePath.registerPath),
+                          child: const ButtonText("Register"),
+                        );
+                      },
+                    )
                   ],
                 ),
 
+                const SizedBox(height: 16.0),
                 // Forgot password prompt
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const UserOnboardingMessageText("Forgot your password?"),
-                    StyledButton(
-                      onPressed: () => context.go(RoutePath.resetPasswordPath),
-                      child: const ButtonText("Reset Password"),
-                    ),
-                  ],
+                const UserOnboardingMessageText("Forgot your password?"),
+                Center(
+                  child: Consumer(
+                    builder: (childContext, ref, child) {
+                      final isLoading = ref.watch(isLoadingProvider);
+                      return StyledButton(
+                        onPressed: isLoading ? null : () =>
+                            context.go(RoutePath.resetPasswordPath),
+                        child: const ButtonText("Reset Password"),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),

@@ -10,7 +10,6 @@ import 'package:timetailor/core/theme/theme.dart';
 import 'package:timetailor/core/theme/util.dart';
 import 'package:timetailor/firebase_options.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

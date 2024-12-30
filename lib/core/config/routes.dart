@@ -1,8 +1,10 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/main_layout.dart';
 import 'package:timetailor/data/task_management/models/task.dart';
+import 'package:timetailor/domain/user_management/providers/user_provider.dart';
 import 'package:timetailor/screens/note_management/note_creation_screen.dart';
 import 'package:timetailor/screens/task_management/task_completion_history_screen.dart';
 import 'package:timetailor/screens/task_management/task_management_screen.dart';
@@ -13,6 +15,7 @@ import 'package:timetailor/screens/user_management/reset_password_screen.dart';
 import 'package:timetailor/screens/user_management/getting_started_screen.dart';
 import 'package:timetailor/screens/user_management/login_screen.dart';
 import 'package:timetailor/screens/user_management/register_screen.dart';
+import 'package:timetailor/screens/user_management/splash_screen.dart';
 
 final GlobalKey<NavigatorState> _taskNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _noteNavigatorKey = GlobalKey<NavigatorState>();
@@ -20,36 +23,12 @@ final GlobalKey<NavigatorState> _accountNavigatorKey =
     GlobalKey<NavigatorState>();
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: RoutePath.taskManagementPath,
-  redirect: (context, state) async {
-    // final isLoggedIn = await AuthService.checkLoginStatus();
-    final isLoggedIn = false;
-    final isGettingStarted =
-        state.matchedLocation == RoutePath.gettingStartedPath;
-    final isLoggingIn = state.matchedLocation == RoutePath.loginPath;
-    final isRegistering = state.matchedLocation == RoutePath.registerPath;
-    final isAtResetPasswordScreen =
-        state.matchedLocation == RoutePath.resetPasswordPath;
-
-    if (!isLoggedIn &&
-        !isLoggingIn &&
-        !isGettingStarted &&
-        !isRegistering &&
-        !isAtResetPasswordScreen) {
-      return RoutePath.gettingStartedPath;
-    }
-
-    if (isLoggedIn &&
-        (isLoggingIn ||
-            isGettingStarted ||
-            isRegistering ||
-            isAtResetPasswordScreen)) {
-      return RoutePath.taskManagementPath;
-    }
-
-    return null;
-  },
+  initialLocation: RoutePath.splashPath,
   routes: [
+    GoRoute(
+      path: RoutePath.splashPath,
+      builder: (context, state) => const SplashScreen(),
+    ),
     GoRoute(
       path: RoutePath.gettingStartedPath,
       builder: (context, state) => const GettingStartedScreen(),
