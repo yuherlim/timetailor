@@ -1,12 +1,15 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/custom_snackbars.dart';
 import 'package:timetailor/core/shared/widgets/styled_button.dart';
 import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
+import 'package:timetailor/data/user_management/repositories/firebase_auth_service.dart';
+import 'package:timetailor/domain/user_management/providers/user_provider.dart';
 
 class ResetPasswordScreen extends HookWidget {
   const ResetPasswordScreen({super.key});
@@ -99,40 +102,70 @@ class ResetPasswordScreen extends HookWidget {
                 const SizedBox(height: 16.0),
 
                 // Submit button
-                StyledButton(
-                  onPressed: () async {
-                    // Check internet connectivity
-                    final connectivityResult =
-                        await Connectivity().checkConnectivity();
+                Consumer(
+                  builder: (childContext, ref, child) {
+                    final isLoadingNotifier =
+                        ref.read(isLoadingProvider.notifier);
+                    final isLoading = ref.watch(isLoadingProvider);
+                    final authService = ref.watch(firebaseAuthServiceProvider);
 
-                    // Handle the emitted list of ConnectivityResult
-                    if (connectivityResult.contains(ConnectivityResult.none)) {
-                      // Show a snackbar for no internet connection
-                      CustomSnackbars.shortDurationSnackBar(
-                          contentString:
-                              "No internet connection. Please try again after reconnecting to the internet.");
-                      return;
-                    }
+                    return StyledButton(
+                      onPressed: () async {
+                        // Check internet connectivity
+                        final connectivityResult =
+                            await Connectivity().checkConnectivity();
 
-                    if (formKey.currentState!.validate()) {
-                      errorFeedback.value = null;
+                        if (connectivityResult == ConnectivityResult.none) {
+                          // Show a snackbar for no internet connection
+                          CustomSnackbars.shortDurationSnackBar(
+                              contentString:
+                                  "No internet connection. Please try again after reconnecting to the internet.");
+                          return;
+                        }
 
-                      final email = emailController.text.trim();
+                        if (formKey.currentState!.validate()) {
+                          errorFeedback.value = null;
 
-                      // // TODO: Implement password reset logic
-                      // final result = await AuthService.sendPasswordResetEmail(email);
-                      // // final result = null;
+                          final email = emailController.text.trim();
 
-                      // // TODO: update this based on the return value of sendPasswordResetEmail
-                      // if (result == null) {
-                      //   errorFeedback.value = 'Error sending reset email. Please try again.';
-                      // } else {
-                      //   // navigate to gegt started, show snack bar indicating that the request for reset password has been submitted.
-                      //   CustomSnackbars.shortDurationSnackBar(contentString: "Reset password request submitted, please check your email.");
-                      // }
-                    }
+                          isLoadingNotifier.state = true;
+
+                          try {
+                            // Call the sendPasswordResetEmail method
+                            final result =
+                                await authService.sendPasswordResetEmail(email);
+
+                            if (result != null) {
+                              errorFeedback.value = result;
+                              CustomSnackbars.shortDurationSnackBar(
+                                contentString:
+                                    "Send reset password email failed: $result",
+                              );
+                            } else {
+                              if (context.mounted) {
+                                context.go(RoutePath.loginPath);
+                              }
+                              // Show success message and navigate to login screen
+                              CustomSnackbars.shortDurationSnackBar(
+                                contentString:
+                                    "Reset password email sent successfully. Please check your email.",
+                              );
+                            }
+                          } catch (e) {
+                            debugPrint("An error occurred: $e");
+                            CustomSnackbars.shortDurationSnackBar(
+                              contentString: "An error occurred: $e",
+                            );
+                          } finally {
+                            isLoadingNotifier.state = false;
+                          }
+                        }
+                      },
+                      child: isLoading
+                          ? const CircularProgressIndicator()
+                          : const ButtonText('Send Reset Email'),
+                    );
                   },
-                  child: const ButtonText('Send Reset Email'),
                 ),
 
                 const SizedBox(height: 16.0),
@@ -143,10 +176,17 @@ class ResetPasswordScreen extends HookWidget {
                   children: [
                     const UserOnboardingMessageText(
                         "Remembered your password?"),
-                    StyledButton(
-                      onPressed: () => context.go(RoutePath.loginPath),
-                      child: const ButtonText("Login"),
-                    ),
+                    Consumer(
+                      builder: (childContext, ref, child) {
+                        final isLoading = ref.watch(isLoadingProvider);
+                        return StyledButton(
+                          onPressed: isLoading
+                              ? null
+                              : () => context.go(RoutePath.loginPath),
+                          child: const ButtonText("Login"),
+                        );
+                      },
+                    )
                   ],
                 ),
               ],

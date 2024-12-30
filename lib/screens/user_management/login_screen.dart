@@ -220,6 +220,7 @@ class LoginScreen extends HookWidget {
                 ),
 
                 const SizedBox(height: 16.0),
+                
                 // Forgot password prompt
                 const UserOnboardingMessageText("Forgot your password?"),
                 Center(

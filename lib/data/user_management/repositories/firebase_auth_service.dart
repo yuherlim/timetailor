@@ -75,4 +75,22 @@ class FirebaseAuthService {
     }
     return null;
   }
+
+  // Send a password reset email
+  Future<String?> sendPasswordResetEmail(String email) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+      return null; // Indicates success
+    } on auth.FirebaseAuthException catch (e) {
+      if (e.code == 'invalid-email') {
+        return 'The email address is not valid.';
+      } else if (e.code == 'user-not-found') {
+        return 'There is no user corresponding to this email address.';
+      }
+      return 'An unknown error occurred: ${e.message}';
+    } catch (e) {
+      print('Error sending password reset email: $e');
+      return 'An error occurred. Please try again.';
+    }
+  }
 }
