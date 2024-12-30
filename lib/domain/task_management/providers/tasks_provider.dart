@@ -68,32 +68,47 @@ class TasksNotifier extends _$TasksNotifier {
   }
 
   Future<void> addTask(Task task) async {
+    // Optimistically update local state
+    final previousState = state;
+    state = [...state, task];
+
     try {
       await _taskRepository.addTask(task); // Sync to Firestore
-      state = [...state, task]; // Update local state
     } catch (e) {
+      // Roll back local state if Firebase operation fails
+      state = previousState;
       CustomSnackbars.shortDurationSnackBar(
           contentString: "Failed to add task: $e");
     }
   }
 
   Future<void> updateTask(Task updatedTask) async {
+    // Optimistically update local state
+    final previousState = state;
+    state = state
+        .map((task) => task.id == updatedTask.id ? updatedTask : task)
+        .toList();
+
     try {
-      await _taskRepository.updateTask(updatedTask);
-      state = state
-          .map((task) => task.id == updatedTask.id ? updatedTask : task)
-          .toList();
+      await _taskRepository.updateTask(updatedTask); // Sync to Firestore
     } catch (e) {
+      // Roll back local state if Firebase operation fails
+      state = previousState;
       CustomSnackbars.shortDurationSnackBar(
           contentString: "Failed to update task: $e");
     }
   }
 
   Future<void> removeTask(Task task) async {
+    // Optimistically update local state
+    final previousState = state;
+    state = state.where((currentTask) => currentTask.id != task.id).toList();
+
     try {
-      await _taskRepository.deleteTask(task.id);
-      state = state.where((currentTask) => currentTask.id != task.id).toList();
+      await _taskRepository.deleteTask(task.id); // Sync to Firestore
     } catch (e) {
+      // Roll back local state if Firebase operation fails
+      state = previousState;
       CustomSnackbars.shortDurationSnackBar(
           contentString: "Failed to remove task: $e");
     }
@@ -119,12 +134,16 @@ class TasksNotifier extends _$TasksNotifier {
   }
 
   Future<void> undoCompletedTasksRemoval(List<Task> tasksToRestore) async {
-    for (var task in tasksToRestore) {
-      await addTask(task);
+    try {
+      // Add tasks to Firestore in parallel
+      await Future.wait(tasksToRestore.map((task) => addTask(task)));
+
+      CustomSnackbars.shortDurationSnackBar(
+          contentString: "Completed task(s) restored!");
+    } catch (e) {
+      CustomSnackbars.shortDurationSnackBar(
+          contentString: "Failed to restore completed tasks: $e");
     }
-    state = [...state, ...tasksToRestore];
-    CustomSnackbars.shortDurationSnackBar(
-        contentString: "Completed task(s) restored!");
   }
 
   Future<void> removeCompletedTasksForCurrentDate() async {
@@ -142,9 +161,6 @@ class TasksNotifier extends _$TasksNotifier {
     }
 
     try {
-      // Remove tasks concurrently from Firestore
-      await Future.wait(tasksToRemove.map((task) => removeTask(task)));
-
       // Update the state by filtering out the removed tasks
       state = state
           .where(
@@ -152,6 +168,9 @@ class TasksNotifier extends _$TasksNotifier {
                 !(task.isCompleted && currentDate.isAtSameMomentAs(task.date)),
           )
           .toList();
+
+      // Remove tasks concurrently from Firestore
+      await Future.wait(tasksToRemove.map((task) => removeTask(task)));
 
       CustomSnackbars.longDurationSnackBarWithAction(
         contentString: "All completed tasks removed successfully!",
@@ -190,7 +209,7 @@ class TasksNotifier extends _$TasksNotifier {
   //fetchTasksOnce
 
   // for undo deleted task in the history screen
-  Future<void> undoTaskHistoryDeletion ({
+  Future<void> undoTaskHistoryDeletion({
     required Task taskToUndo,
   }) async {
     await addTask(taskToUndo);

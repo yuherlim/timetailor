@@ -55,30 +55,29 @@ class Task {
     return {
       "name": name,
       "description": description,
-      "date": Timestamp.fromDate(date),
-      "startTime": Timestamp.fromDate(startTime),
+      "date": Timestamp.fromDate(date.toUtc()),
+      "startTime": Timestamp.fromDate(startTime.toUtc()),
       "duration": duration,
-      "endTime": Timestamp.fromDate(endTime),
+      "endTime": Timestamp.fromDate(endTime.toUtc()),
       "isCompleted": isCompleted,
       "linkedNote": linkedNote,
       "userId": userId,
     };
   }
 
-  factory Task.fromFirestore(
-      DocumentSnapshot<Map<String, dynamic>> snapshot,
+  factory Task.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot,
       SnapshotOptions? options) {
     final data = snapshot.data()!;
     return Task(
+      id: snapshot.id,
       name: data["name"],
       description: data["description"],
-      date: data["date"],
-      startTime: data["startTime"],
+      date: (data["date"] as Timestamp).toDate().toLocal(),
+      startTime: (data["startTime"] as Timestamp).toDate().toLocal(),
       duration: data["duration"],
-      endTime: data["endTime"],
+      endTime: (data["endTime"] as Timestamp).toDate().toLocal(),
       isCompleted: data["isCompleted"],
-      linkedNote: data["linkedNote"],
-      id: snapshot.id,
+      linkedNote: List<String>.from(data["linkedNote"]),
       userId: data["userId"],
     );
   }
@@ -122,7 +121,8 @@ final List<Task> tasks = [
   ),
   Task(
     id: 'task3',
-    name: 'Workout this is a very long sentence, very long sentence, very long sentence',
+    name:
+        'Workout this is a very long sentence, very long sentence, very long sentence',
     description: "",
     date: DateTime(
         DateTime.now().year, DateTime.now().month, DateTime.now().day - 1),
