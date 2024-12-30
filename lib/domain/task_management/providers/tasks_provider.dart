@@ -1,21 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:riverpod/src/framework.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timetailor/core/shared/custom_snackbars.dart';
 import 'package:timetailor/core/shared/utils.dart';
 import 'package:timetailor/data/task_management/models/task.dart';
+import 'package:timetailor/data/task_management/repositories/task_repository.dart';
 import 'package:timetailor/domain/task_management/providers/bottom_sheet_scroll_controller_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/domain/task_management/providers/task_form_provider.dart';
+import 'package:timetailor/domain/user_management/providers/user_provider.dart';
 
 part 'tasks_provider.g.dart'; // Generated file
 
+final taskRepositoryProvider = Provider<TaskRepository>((ref) {
+  return TaskRepository();
+});
+
 @riverpod
 class TasksNotifier extends _$TasksNotifier {
+  TaskRepository get _taskRepository => ref.read(taskRepositoryProvider);
+  String get _currentUserId => ref.read(currentUserProvider)!.id;
+
+  bool isLoading = false; // Add loading state
+
   @override
   List<Task> build() {
-    return tasks;
+    return [];
+  }
+
+  Future<void> fetchTasksFromFirestore() async {
+    isLoading = true; // Start loading
+    try {
+      final tasks = await _taskRepository.getTasksByUserId(_currentUserId);
+      state = tasks;
+    } catch (e) {
+      CustomSnackbars.shortDurationSnackBar(
+          contentString: "Failed to fetch tasks: $e");
+    } finally {
+      isLoading = false; // End loading
+    }
   }
 
   List<Task>? getAllTasksForCurrentDate() {
@@ -42,29 +67,48 @@ class TasksNotifier extends _$TasksNotifier {
       });
   }
 
-  void addTask(Task task) {
-    state = [...state, task];
+  Future<void> addTask(Task task) async {
+    try {
+      await _taskRepository.addTask(task); // Sync to Firestore
+      state = [...state, task]; // Update local state
+    } catch (e) {
+      CustomSnackbars.shortDurationSnackBar(
+          contentString: "Failed to add task: $e");
+    }
   }
 
-  void updateTask(Task updatedTask) {
-    state = state
-        .map((currentTask) =>
-            currentTask.id == updatedTask.id ? updatedTask : currentTask)
-        .toList();
+  Future<void> updateTask(Task updatedTask) async {
+    try {
+      await _taskRepository.updateTask(updatedTask);
+      state = state
+          .map((task) => task.id == updatedTask.id ? updatedTask : task)
+          .toList();
+    } catch (e) {
+      CustomSnackbars.shortDurationSnackBar(
+          contentString: "Failed to update task: $e");
+    }
   }
 
-  void removeTask(Task task) {
-    state = state.where((currentTask) => currentTask != task).toList();
+  Future<void> removeTask(Task task) async {
+    try {
+      await _taskRepository.deleteTask(task.id);
+      state = state.where((currentTask) => currentTask.id != task.id).toList();
+    } catch (e) {
+      CustomSnackbars.shortDurationSnackBar(
+          contentString: "Failed to remove task: $e");
+    }
   }
 
-  void undoTaskCreation(Task taskToUndo) {
-    removeTask(taskToUndo);
+  Future<void> undoTaskCreation(Task taskToUndo) async {
+    await removeTask(taskToUndo);
     CustomSnackbars.shortDurationSnackBar(contentString: "Task removed.");
   }
 
-  void undoTaskEdit(Task taskToUndo, Function(Task task) navigateToTaskDetails,
-      bool isEditFromTaskDetails) {
-    updateTask(taskToUndo);
+  Future<void> undoTaskEdit(
+      Task taskToUndo,
+      Function(Task task) navigateToTaskDetails,
+      bool isEditFromTaskDetails) async {
+    await updateTask(taskToUndo);
     CustomSnackbars.shortDurationSnackBar(
         contentString: "Task changes reverted!");
 
@@ -74,50 +118,71 @@ class TasksNotifier extends _$TasksNotifier {
     }
   }
 
-  void undoCompletedTasksRemoval(List<Task> tasksToRestore) {
+  Future<void> undoCompletedTasksRemoval(List<Task> tasksToRestore) async {
+    for (var task in tasksToRestore) {
+      await addTask(task);
+    }
     state = [...state, ...tasksToRestore];
     CustomSnackbars.shortDurationSnackBar(
         contentString: "Completed task(s) restored!");
   }
 
-  void removeCompletedTasksForCurrentDate() {
+  Future<void> removeCompletedTasksForCurrentDate() async {
     final currentDate = ref.read(currentDateNotifierProvider);
-    // Store the list of tasks to be removed for undo functionality
     final tasksToRemove = state
         .where(
           (task) => task.isCompleted && currentDate.isAtSameMomentAs(task.date),
         )
         .toList();
 
-    // Update the state by filtering out the tasks to be removed
-    state = state
-        .where(
-          (task) =>
-              !(task.isCompleted && currentDate.isAtSameMomentAs(task.date)),
-        )
-        .toList();
+    if (tasksToRemove.isEmpty) {
+      CustomSnackbars.shortDurationSnackBar(
+          contentString: "No completed task(s) to remove.");
+      return;
+    }
 
-    if (tasksToRemove.isNotEmpty) {
+    try {
+      // Remove tasks concurrently from Firestore
+      await Future.wait(tasksToRemove.map((task) => removeTask(task)));
+
+      // Update the state by filtering out the removed tasks
+      state = state
+          .where(
+            (task) =>
+                !(task.isCompleted && currentDate.isAtSameMomentAs(task.date)),
+          )
+          .toList();
+
       CustomSnackbars.longDurationSnackBarWithAction(
         contentString: "All completed tasks removed successfully!",
         actionText: "Undo",
         onPressed: () => undoCompletedTasksRemoval(tasksToRemove),
       );
-    } else {
+    } catch (e) {
       CustomSnackbars.shortDurationSnackBar(
-          contentString: "No completed task(s) to remove.");
+          contentString: "Failed to remove completed tasks: $e");
     }
   }
 
-  void removeTaskFromHistory(Task task) {
-    state = state.where((currentTask) => currentTask != task).toList();
-    CustomSnackbars.longDurationSnackBarWithAction(
-      contentString: "Task deletion successful!",
-      actionText: "Undo",
-      onPressed: () => undoTaskHistoryDeletion(
-        taskToUndo: task,
-      ),
-    );
+  Future<void> removeTaskFromHistory(Task task) async {
+    try {
+      // Remove task from local state
+      state = state.where((currentTask) => currentTask != task).toList();
+
+      // Delete the task from Firestore
+      await _taskRepository.deleteTask(task.id);
+
+      // Show snackbar with undo option
+      CustomSnackbars.longDurationSnackBarWithAction(
+        contentString: "Task deletion successful!",
+        actionText: "Undo",
+        onPressed: () => undoTaskHistoryDeletion(taskToUndo: task),
+      );
+    } catch (e) {
+      // Handle errors (e.g., network issues, Firestore failures)
+      CustomSnackbars.shortDurationSnackBar(
+          contentString: "Failed to delete task: $e");
+    }
   }
 
   // these methods are to be converted to use firestore later.
@@ -125,22 +190,22 @@ class TasksNotifier extends _$TasksNotifier {
   //fetchTasksOnce
 
   // for undo deleted task in the history screen
-  void undoTaskHistoryDeletion({
+  Future<void> undoTaskHistoryDeletion ({
     required Task taskToUndo,
-  }) {
-    addTask(taskToUndo);
+  }) async {
+    await addTask(taskToUndo);
     CustomSnackbars.shortDurationSnackBar(
         contentString: "Undo task deletion successful!");
   }
 
   // for undo completed task and deleted task
-  void undoTaskCompletion({
+  Future<void> undoTaskCompletion({
     required Task taskToUndo,
     required double dyTop,
     required double dyBottom,
-  }) {
+  }) async {
     if (checkAddTaskValidity(dyTop: dyTop, dyBottom: dyBottom)) {
-      updateTask(taskToUndo);
+      await updateTask(taskToUndo);
       CustomSnackbars.shortDurationSnackBar(
           contentString: "Undo task completion successful!");
     } else {
@@ -149,13 +214,13 @@ class TasksNotifier extends _$TasksNotifier {
     }
   }
 
-  void undoTaskDeletion({
+  Future<void> undoTaskDeletion({
     required Task taskToUndo,
     required double dyTop,
     required double dyBottom,
-  }) {
+  }) async {
     if (checkAddTaskValidity(dyTop: dyTop, dyBottom: dyBottom)) {
-      addTask(taskToUndo);
+      await addTask(taskToUndo);
       CustomSnackbars.shortDurationSnackBar(
           contentString: "Undo task deletion successful!");
     } else {

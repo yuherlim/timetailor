@@ -120,8 +120,33 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(
-        "Current logged in user: ${ref.read(currentUserProvider)?.name}");
+    // Fetch tasks when the screen is first rendered
+    useEffect(() {
+      Future.microtask(() async {
+        await ref
+            .read(tasksNotifierProvider.notifier)
+            .fetchTasksFromFirestore();
+      });
+
+      // Cleanup logic if needed
+      return null;
+    }, []); // Empty dependency array ensures this runs only once
+
+    final tasksNotifier = ref.read(tasksNotifierProvider.notifier);
+    final tasks = ref.watch(tasksNotifierProvider);
+
+    print("tasks length: ${tasks.length}");
+
+    if (tasksNotifier.isLoading) {
+      // Show CircularProgressIndicator while loading
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    print("Current logged in user: ${ref.read(currentUserProvider)?.name}");
 
     debugPrint(
         "number of current task items: ${ref.watch(tasksNotifierProvider).map(

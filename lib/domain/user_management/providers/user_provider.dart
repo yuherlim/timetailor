@@ -37,4 +37,5 @@ class CurrentUserFetcher extends _$CurrentUserFetcher {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() => _authService.getCurrentUser());
   }
+  
 }

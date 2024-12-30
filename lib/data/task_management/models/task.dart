@@ -10,6 +10,7 @@ class Task {
   final DateTime endTime;
   final bool isCompleted;
   final List<String> linkedNote; // Linked Note ID (nullable)
+  final String userId;
 
   Task({
     required this.id,
@@ -21,6 +22,7 @@ class Task {
     required this.endTime,
     required this.isCompleted,
     required this.linkedNote,
+    required this.userId,
   });
 
   Task copyWith({
@@ -33,6 +35,7 @@ class Task {
     DateTime? endTime,
     bool? isCompleted,
     List<String>? linkedNote,
+    String? userId,
   }) {
     return Task(
       id: id ?? this.id,
@@ -44,38 +47,41 @@ class Task {
       endTime: endTime ?? this.endTime,
       isCompleted: isCompleted ?? this.isCompleted,
       linkedNote: linkedNote ?? this.linkedNote,
+      userId: userId ?? this.userId,
     );
   }
 
-  // Map<String, dynamic> toFirestore() {
-  //   return {
-  //     "name": name,
-  //     "description": description,
-  //     "date": Timestamp.fromDate(date),
-  //     "startTime": Timestamp.fromDate(startTime),
-  //     "duration": duration,
-  //     "endTime": Timestamp.fromDate(endTime),
-  //     "isCompleted": isCompleted,
-  //     "linkedNote": linkedNote,
-  //   };
-  // }
+  Map<String, dynamic> toFirestore() {
+    return {
+      "name": name,
+      "description": description,
+      "date": Timestamp.fromDate(date),
+      "startTime": Timestamp.fromDate(startTime),
+      "duration": duration,
+      "endTime": Timestamp.fromDate(endTime),
+      "isCompleted": isCompleted,
+      "linkedNote": linkedNote,
+      "userId": userId,
+    };
+  }
 
-  // factory Task.fromFirestore(
-  //     DocumentSnapshot<Map<String, dynamic>> snapshot,
-  //     SnapshotOptions? options) {
-  //   final data = snapshot.data()!;
-  //   return Task(
-  //     name: data["name"],
-  //     description: data["description"],
-  //     date: data["date"],
-  //     startTime: data["startTime"],
-  //     duration: data["duration"],
-  //     endTime: data["endTime"],
-  //     isCompleted: data["isCompleted"],
-  //     linkedNote: data["linkedNote"],
-  //     id: snapshot.id,
-  //   );
-  // }
+  factory Task.fromFirestore(
+      DocumentSnapshot<Map<String, dynamic>> snapshot,
+      SnapshotOptions? options) {
+    final data = snapshot.data()!;
+    return Task(
+      name: data["name"],
+      description: data["description"],
+      date: data["date"],
+      startTime: data["startTime"],
+      duration: data["duration"],
+      endTime: data["endTime"],
+      isCompleted: data["isCompleted"],
+      linkedNote: data["linkedNote"],
+      id: snapshot.id,
+      userId: data["userId"],
+    );
+  }
 }
 
 // Helper function to round DateTime to the nearest 5-minute interval
@@ -97,6 +103,7 @@ final List<Task> tasks = [
         DateTime.now().add(const Duration(minutes: 60))),
     isCompleted: false,
     linkedNote: ['note1', 'note2'],
+    userId: "test",
   ),
   Task(
     id: 'task2',
@@ -111,6 +118,7 @@ final List<Task> tasks = [
         DateTime.now().add(const Duration(hours: 1, minutes: 30))),
     isCompleted: false,
     linkedNote: ['note3'],
+    userId: "test",
   ),
   Task(
     id: 'task3',
@@ -125,6 +133,7 @@ final List<Task> tasks = [
         DateTime.now().add(const Duration(hours: 3, minutes: 45))),
     isCompleted: true,
     linkedNote: [],
+    userId: "test",
   ),
   Task(
     id: 'task4',
@@ -139,6 +148,7 @@ final List<Task> tasks = [
         DateTime.now().add(const Duration(hours: 5, minutes: 30))),
     isCompleted: false,
     linkedNote: ['note4'],
+    userId: "test",
   ),
   Task(
     id: 'task5',
@@ -153,6 +163,7 @@ final List<Task> tasks = [
         DateTime.now().add(const Duration(hours: 2, minutes: 5))),
     isCompleted: false,
     linkedNote: ['note4'],
+    userId: "test",
   ),
   Task(
     id: 'task6',
@@ -167,5 +178,6 @@ final List<Task> tasks = [
         DateTime.now().add(const Duration(hours: 2, minutes: 15))),
     isCompleted: false,
     linkedNote: ['note4'],
+    userId: "test",
   ),
 ];

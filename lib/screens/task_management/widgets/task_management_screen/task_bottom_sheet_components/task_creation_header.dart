@@ -8,6 +8,7 @@ import 'package:timetailor/domain/task_management/providers/calendar_state_provi
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/domain/task_management/providers/task_form_provider.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
+import 'package:timetailor/domain/user_management/providers/user_provider.dart';
 import 'package:uuid/uuid.dart';
 
 var uuid = const Uuid();
@@ -77,6 +78,7 @@ class _TaskCreationHeaderState extends ConsumerState<TaskCreationHeader> {
 
   @override
   Widget build(BuildContext context) {
+    final currentLoggedInUser = ref.read(currentUserProvider);
     final dyTop = ref.watch(localDyProvider);
     final dyBottom = ref.watch(localDyBottomProvider);
     final isEditingTask = ref.watch(isEditingTaskProvider);
@@ -97,6 +99,7 @@ class _TaskCreationHeaderState extends ConsumerState<TaskCreationHeader> {
     const isCompleted = false;
     // implemntation needs changing, get it from formState after integration.
     final List<String> linkedNote = selectedTask?.linkedNote ?? [];
+    final userId = currentLoggedInUser!.id;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -127,6 +130,7 @@ class _TaskCreationHeaderState extends ConsumerState<TaskCreationHeader> {
                 endTime: endTime,
                 isCompleted: isCompleted,
                 linkedNote: linkedNote,
+                userId: userId,
               );
 
               if (!taskNotifier.checkAddTaskValidity(
