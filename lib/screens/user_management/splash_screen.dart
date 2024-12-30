@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,43 +14,56 @@ class SplashScreen extends ConsumerStatefulWidget {
 
 class _SplashScreenState extends ConsumerState<SplashScreen> {
   // A guard variable to ensure we only navigate once
-  bool _didNavigate = false;
+
+  Future<void> _handleNavigation(
+      User? firebaseUser, BuildContext context) async {
+    final userRepository = ref.read(appUserRepositoryProvider);
+    final currentSignedInUserNotifier = ref.read(currentUserProvider.notifier);
+
+    if (firebaseUser == null) {
+      // Not logged in => navigate to Getting Started
+      context.go(RoutePath.gettingStartedPath);
+    } else {
+      // Logged in => fetch user data and navigate to Task Management
+      try {
+        final appUser = await userRepository.getUserById(firebaseUser.uid);
+        currentSignedInUserNotifier.state = appUser; // Cache the user
+        if (context.mounted) {
+          context.go(RoutePath.taskManagementPath);
+        }
+      } catch (e) {
+        debugPrint('Error fetching user data: $e');
+        // Optionally, show an error page or retry mechanism here
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final userAsyncValue = ref.watch(authStateProvider);
 
     userAsyncValue.when(
-      data: (user) {
-        // If we've not yet navigated, do it now in a post-frame callback
-        if (!_didNavigate) {
-          print("splash screen is run");
-          _didNavigate = true;
+      data: (firebaseUser) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (!mounted) return;
-
-            if (user == null) {
-              // Not logged in => go to Getting Started
-              context.go(RoutePath.gettingStartedPath);
-            } else {
-              // Logged in => go to Task Management
-              context.go(RoutePath.taskManagementPath);
-            }
+            _handleNavigation(firebaseUser, context);
           });
-        }
-      },
+        },
       loading: () {
-        // Show a progress indicator while Firebase initializes
+        // Optionally show a loading spinner
       },
       error: (error, stackTrace) {
-        // Optionally navigate to an error page or show a message
-        debugPrint('Splash authState error: $error');
+        debugPrint('Error during auth state fetch: $error');
+        // Optionally show an error screen
       },
     );
 
-    // The splash UI
+    // Splash screen UI
     return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
+      body: Center(
+        child:
+            CircularProgressIndicator(), // Show loading spinner while waiting
+      ),
     );
   }
 }

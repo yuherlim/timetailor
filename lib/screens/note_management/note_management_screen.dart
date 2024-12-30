@@ -63,7 +63,7 @@ class _NoteManagementScreenState extends ConsumerState<NoteManagementScreen> {
           allNotes.isEmpty
               ? const Expanded(
                   child: Center(
-                    child: TitleTextInHistory(
+                    child: NoListItemTitle(
                       "There are currently no notes.",
                     ),
                   ),

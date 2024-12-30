@@ -327,10 +327,10 @@ class SmallTaskTimeText extends ConsumerWidget {
   }
 }
 
-class TitleTextInHistory extends StatelessWidget {
+class NoListItemTitle extends StatelessWidget {
   final String text;
 
-  const TitleTextInHistory(this.text, {super.key});
+  const NoListItemTitle(this.text, {super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -173,7 +173,7 @@ class LoginScreen extends HookWidget {
                                   } else {
                                     // check parent context whether is mounted or not.
                                     if (context.mounted) {
-                                      context.go(RoutePath.taskManagementPath);
+                                      context.go(RoutePath.splashPath);
                                     }
 
                                     CustomSnackbars.shortDurationSnackBar(

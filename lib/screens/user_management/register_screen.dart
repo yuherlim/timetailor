@@ -238,7 +238,7 @@ class RegisterScreen extends HookConsumerWidget {
                                     );
                                   } else {
                                     if (context.mounted) {
-                                      context.go(RoutePath.taskManagementPath);
+                                      context.go(RoutePath.splashPath);
                                     }
                                     CustomSnackbars.shortDurationSnackBar(
                                       contentString:

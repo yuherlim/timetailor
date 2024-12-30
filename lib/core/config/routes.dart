@@ -11,6 +11,7 @@ import 'package:timetailor/screens/task_management/task_management_screen.dart';
 import 'package:timetailor/screens/note_management/note_management_screen.dart';
 import 'package:timetailor/screens/task_management/task_details_screen.dart';
 import 'package:timetailor/screens/user_management/account_management_screen.dart';
+import 'package:timetailor/screens/user_management/loading_user_data_screen.dart';
 import 'package:timetailor/screens/user_management/reset_password_screen.dart';
 import 'package:timetailor/screens/user_management/getting_started_screen.dart';
 import 'package:timetailor/screens/user_management/login_screen.dart';
@@ -29,6 +30,10 @@ final GoRouter appRouter = GoRouter(
       path: RoutePath.splashPath,
       builder: (context, state) => const SplashScreen(),
     ),
+    // GoRoute(
+    //   path: RoutePath.loadingUserDataPath,
+    //   builder: (context, state) => const LoadingUserDataScreen(),
+    // ),
     GoRoute(
       path: RoutePath.gettingStartedPath,
       builder: (context, state) => const GettingStartedScreen(),

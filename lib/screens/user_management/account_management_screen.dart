@@ -43,6 +43,7 @@ class _AccountManagementScreenState
 
   void disposeKeepAliveProviders() {
     ref.invalidate(noteFormNotifierProvider);
+    ref.invalidate(currentUserFetcherProvider);
   }
 
   @override

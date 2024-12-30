@@ -1,9 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart' as auth;
-import 'package:timetailor/data/user_management/models/user.dart';
-import 'user_repository.dart';
+import 'package:flutter/material.dart';
+import 'package:timetailor/data/user_management/models/app_user.dart';
+import 'app_user_repository.dart';
 
 class FirebaseAuthService {
   final auth.FirebaseAuth _firebaseAuth = auth.FirebaseAuth.instance;
+  final AppUserRepository _appUserRepository;
+
+  FirebaseAuthService({required AppUserRepository appUserRepository})
+      : _appUserRepository = appUserRepository;
 
   // Register a user with Firebase Authentication and store user data in Firestore
   Future<String?> registerUser(
@@ -16,12 +21,12 @@ class FirebaseAuthService {
       );
 
       // Save user details to Firestore via UserRepository
-      final user = User(
+      final user = AppUser(
         id: userCredential.user!.uid,
         name: name,
         email: email,
       );
-      await UserRepository.addUser(user);
+      await _appUserRepository.addUser(user);
 
       return null; // Indicates success
     } on auth.FirebaseAuthException catch (e) {
@@ -68,10 +73,15 @@ class FirebaseAuthService {
   }
 
   // Get the currently signed-in user
-  Future<User?> getCurrentUser() async {
+  Future<AppUser?> getCurrentUser() async {
     final currentUser = _firebaseAuth.currentUser;
     if (currentUser != null) {
-      return await UserRepository.getUserById(currentUser.uid);
+      try {
+        return await _appUserRepository.getUserById(currentUser.uid);
+      } catch (e) {
+        debugPrint("Error fetching user: $e");
+        return null; // Handle Firestore errors gracefully
+      }
     }
     return null;
   }

@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
+import 'package:timetailor/data/user_management/models/app_user.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/current_time_position_provider.dart';
@@ -14,6 +15,7 @@ import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 import 'package:timetailor/domain/task_management/task_utils.dart';
+import 'package:timetailor/domain/user_management/providers/user_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_header.dart';
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget.dart';
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/task_bottom_sheet.dart';
@@ -118,6 +120,9 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(
+        "Current logged in user: ${ref.read(currentUserProvider)?.name}");
+
     debugPrint(
         "number of current task items: ${ref.watch(tasksNotifierProvider).map(
               (e) => e.name,

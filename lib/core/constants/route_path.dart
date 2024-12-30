@@ -18,12 +18,14 @@ class RoutePath {
 
 // user management module
   static const String splashPath = "/splash";
+  // static const String loadingUserDataPath = '/loading-user-data';
   static const String gettingStartedPath = '/getting-started';
   static const String loginPath = '/getting-started/login';
   static const String registerPath = '/getting-started/register';
   static const String resetPasswordPath = '/getting-started/login/reset-password';
 
   static const String accountManagementPath = '/account';
+  
 
 // relative paths
   static const String relativeLoginPath = "login";
