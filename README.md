@@ -50,6 +50,7 @@ flutter pub get
 2. Ensure the Firebase Authentication module is enabled for your project in the Firebase Console.
 
 ### 4. Run the Project
+- Development was done on Android, so make sure to enable an Android emulator or use a physical Android device before test running the project.
 - **For Android**:
   ```bash
   flutter run
