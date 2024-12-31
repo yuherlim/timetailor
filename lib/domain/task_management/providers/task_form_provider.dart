@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timetailor/domain/task_management/state/task_form_state.dart';
 
@@ -43,10 +44,11 @@ class TaskFormNotifier extends _$TaskFormNotifier {
 
   bool validateTaskName() {
     if (state.name.trim().isEmpty) {
-      print("validate task name ran.");
       state = state.copyWith(nameError: 'Title cannot be empty');
       return false;
     }
     return true;
   }
 }
+
+final linkedNotesProvider = StateProvider<List<String>>((ref) => []);

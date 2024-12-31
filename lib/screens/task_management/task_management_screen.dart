@@ -1,12 +1,11 @@
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/widgets/styled_text.dart';
-import 'package:timetailor/core/theme/custom_theme.dart';
+import 'package:timetailor/domain/note_management/providers/notes_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/current_time_position_provider.dart';
@@ -14,6 +13,7 @@ import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/domain/task_management/providers/scroll_controller_provider.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 import 'package:timetailor/domain/task_management/task_utils.dart';
+import 'package:timetailor/domain/user_management/providers/user_provider.dart';
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_header.dart';
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/calendar_widget.dart';
 import 'package:timetailor/screens/task_management/widgets/task_management_screen/task_bottom_sheet.dart';
@@ -118,6 +118,33 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Fetch data from firestore when the screen is first rendered
+    useEffect(() {
+      Future.microtask(() async {
+        await Future.wait([
+          ref.read(tasksNotifierProvider.notifier).fetchTasksFromFirestore(),
+          ref.read(notesNotifierProvider.notifier).fetchNotesFromFirestore(),
+        ]);
+      });
+
+      // Cleanup logic if needed
+      return null;
+    }, []); // Empty dependency array ensures this runs only once
+
+    final tasksNotifier = ref.read(tasksNotifierProvider.notifier);
+    final notesNotifier = ref.read(notesNotifierProvider.notifier);
+
+    if (tasksNotifier.isLoading || notesNotifier.isLoading) {
+      // Show CircularProgressIndicator while loading
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    debugPrint("Current logged in user: ${ref.read(currentUserProvider)?.name}");
+
     debugPrint(
         "number of current task items: ${ref.watch(tasksNotifierProvider).map(
               (e) => e.name,

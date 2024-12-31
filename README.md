@@ -1,16 +1,110 @@
-# timetailor
+# TimeTailor
 
-A new Flutter project.
+TimeTailor is a daily scheduling and note-taking mobile application designed to enhance productivity and streamline time management. Built using Flutter, the app leverages direct manipulation for intuitive task scheduling and includes advanced features such as Optical Character Recognition (OCR) and AI-powered note management.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## Features
 
-A few resources to get you started if this is your first Flutter project:
+- **Direct Manipulation for Scheduling**: Drag-and-drop interface for task creation and management.
+- **Integrated Note-Taking System**: Link notes to tasks for seamless organization.
+- **Quick Scheduling**: Create and adjust tasks with minimal effort.
+- **Completion History and Undo**: Manage task history and revert completed tasks.
+- **OCR Integration**: Convert images into text directly.
+- **AI-Powered Note Management**: Summarize, translate, and improve notes with AI.
+- **Monochrome UI Theme**: Clean and modern user interface.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Prerequisites
+
+Before running the project, ensure you have the following installed:
+
+1. **Flutter**: Version `3.24.5` (Stable channel)
+   - [Install Flutter](https://docs.flutter.dev/get-started/install) if you haven't already.
+2. **Dart**: Included with the Flutter SDK.
+3. **Android Studio** or **Visual Studio Code**:
+   - Install the Flutter and Dart plugins.
+4. **Android Emulator** or a physical Android device for testing.
+5. **Firebase Setup**:
+   - Configure Firebase for authentication (details below).
+
+---
+
+## Setup Instructions
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/your-repo/timetailor.git
+cd timetailor
+```
+
+### 2. Install Dependencies
+Run the following command to fetch the required dependencies:
+```bash
+flutter pub get
+```
+
+### 3. Configure Firebase
+1. Add your `google-services.json` file to the `android/app` directory for Firebase configuration.
+2. Ensure the Firebase Authentication module is enabled for your project in the Firebase Console.
+
+### 4. Run the Project
+- **For Android**:
+  ```bash
+  flutter run
+  ```
+- **For Debugging**:
+  Use the `--debug` flag:
+  ```bash
+  flutter run --debug
+  ```
+
+---
+
+## Build APK
+
+To build the APK for the app:
+
+- Debug APK:
+  ```bash
+  flutter build apk --debug
+  ```
+
+- Release APK:
+  ```bash
+  flutter build apk --release
+  ```
+
+The APK will be located in the `build/app/outputs/flutter-apk/` directory.
+
+---
+
+## Troubleshooting
+
+- If you encounter any issues with dependencies, ensure you have the correct version of Flutter (`3.24.5`) installed.
+- Clear the build cache if needed:
+  ```bash
+  flutter clean
+  flutter pub get
+  ```
+
+---
+
+## Contribution
+
+This is a final-year project and not open for contributions at the moment.
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## Author
+
+**Yu Her**  
+Degree in Software Engineering (Honours)  
+Tunku Abdul Rahman University of Management and Technology (TARUMT)

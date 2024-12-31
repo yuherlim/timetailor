@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 
 class StyledText extends StatelessWidget {
@@ -18,6 +19,7 @@ class StyledText extends StatelessWidget {
               letterSpacing: 1,
             ),
       ),
+      overflow: TextOverflow.ellipsis,
     );
   }
 }
@@ -326,10 +328,10 @@ class SmallTaskTimeText extends ConsumerWidget {
   }
 }
 
-class TitleTextInHistory extends StatelessWidget {
+class NoListItemTitle extends StatelessWidget {
   final String text;
 
-  const TitleTextInHistory(this.text, {super.key});
+  const NoListItemTitle(this.text, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -341,6 +343,115 @@ class TitleTextInHistory extends StatelessWidget {
     );
   }
 }
+
+class NoteTitleText extends StatelessWidget {
+  final String text;
+
+  const NoteTitleText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16),
+      child: Text(
+        // text.toUpperCase(),
+        text,
+        style: GoogleFonts.kanit(
+          textStyle: CustomTextStyles.noteTitleStyle,
+        ),
+      ),
+    );
+  }
+}
+
+class NoteContentText extends StatelessWidget {
+  final String text;
+
+  const NoteContentText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16),
+      child: Text(
+        // text.toUpperCase(),
+        text,
+        style: GoogleFonts.kanit(
+          textStyle: CustomTextStyles.noteContentStyle,
+        ),
+      ),
+    );
+  }
+}
+
+class NoteListItemTitleText extends StatelessWidget {
+  final String text;
+
+  const NoteListItemTitleText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: const TextStyle(fontWeight: FontWeight.bold),
+      overflow: TextOverflow.ellipsis,
+      maxLines: 1,
+    );
+  }
+}
+
+class NoteListItemSubtitleText extends StatelessWidget {
+  final String text;
+
+  const NoteListItemSubtitleText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      overflow: TextOverflow.ellipsis,
+      maxLines: 1,
+    );
+  }
+}
+
+class UserOnboardingMessageText extends StatelessWidget {
+  final String text;
+
+  const UserOnboardingMessageText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      textAlign: TextAlign.center,
+      text,
+      softWrap: true,
+      overflow: TextOverflow.visible,
+    );
+  }
+}
+
+class AppNameText extends StatelessWidget {
+  final String text;
+
+  const AppNameText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      // text.toUpperCase(),
+      text,
+      style: GoogleFonts.kanit(
+        textStyle: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2,
+            ),
+      ),
+    );
+  }
+}
+
+
 
 // class TimeperiodTextStyle extends StatelessWidget {
 

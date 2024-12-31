@@ -94,7 +94,7 @@ class _TaskCompletionHistoryScreenState
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 16.0, top: 16.0),
-            child: TitleTextInHistory(formattedDate),
+            child: NoListItemTitle(formattedDate),
           ),
           const Padding(
             padding: EdgeInsets.only(top: 16.0),
@@ -103,7 +103,7 @@ class _TaskCompletionHistoryScreenState
           completedTasks.isEmpty
               ? const Expanded(
                   child: Center(
-                    child: TitleTextInHistory(
+                    child: NoListItemTitle(
                       "No completed tasks for today.",
                     ),
                   ),

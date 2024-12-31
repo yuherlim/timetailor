@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:timetailor/core/config/routes.dart';
 import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/custom_snackbars.dart';
 import 'package:timetailor/core/shared/widgets/styled_text.dart';
@@ -125,9 +124,10 @@ class _TaskItemState extends ConsumerState<TaskItem> {
     // reset any previous task editing
     taskNotifier.endTaskCreation();
 
-    // update edit status and selectedTask
+    // update edit status, selectedTask, and linkedNotes
     ref.read(isEditingTaskProvider.notifier).state = true;
     ref.read(selectedTaskProvider.notifier).state = widget.task;
+    ref.read(linkedNotesProvider.notifier).state = widget.task.linkedNotes;
 
     final selectedTask = ref.read(selectedTaskProvider)!;
     final taskDimensions = taskNotifier.calculateTimeSlotFromTaskTime(
@@ -136,7 +136,6 @@ class _TaskItemState extends ConsumerState<TaskItem> {
     final selectedTaskTimeSlotHeight = taskDimensions["currentTimeSlotHeight"]!;
     final formNotifier = ref.read(taskFormNotifierProvider.notifier);
 
-    print("selected Task: ${selectedTask.name}");
 
     //update draggable box and bottom sheet to reflect selected task
     ref.read(localDyProvider.notifier).state = selectedTaskDyTop;
@@ -148,8 +147,6 @@ class _TaskItemState extends ConsumerState<TaskItem> {
     formNotifier.updateName(selectedTask.name);
     formNotifier.updateDescription(selectedTask.description);
 
-    print(
-        "formState name after update: ${ref.read(taskFormNotifierProvider).name}");
 
     // remove task temporarily, for when editing task.
     taskNotifier.removeTask(selectedTask);

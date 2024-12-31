@@ -8,6 +8,7 @@ import 'package:timetailor/domain/task_management/providers/calendar_state_provi
 import 'package:timetailor/domain/task_management/providers/date_provider.dart';
 import 'package:timetailor/domain/task_management/providers/task_form_provider.dart';
 import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
+import 'package:timetailor/domain/user_management/providers/user_provider.dart';
 import 'package:uuid/uuid.dart';
 
 var uuid = const Uuid();
@@ -40,7 +41,7 @@ class _TaskCreationHeaderState extends ConsumerState<TaskCreationHeader> {
         ref.read(isEditingTaskSuccessProvider.notifier);
     final isEditFromTaskDetails = ref.read(isEditFromTaskDetailsProvider);
 
-    print("task to undo name: ${taskToUndo.name}");
+    debugPrint("task to undo name: ${taskToUndo.name}");
 
     editTaskSuccessNotifier.state = true;
     // add the newly edited task
@@ -77,6 +78,7 @@ class _TaskCreationHeaderState extends ConsumerState<TaskCreationHeader> {
 
   @override
   Widget build(BuildContext context) {
+    final currentLoggedInUser = ref.read(currentUserProvider);
     final dyTop = ref.watch(localDyProvider);
     final dyBottom = ref.watch(localDyBottomProvider);
     final isEditingTask = ref.watch(isEditingTaskProvider);
@@ -96,7 +98,8 @@ class _TaskCreationHeaderState extends ConsumerState<TaskCreationHeader> {
     final endTime = startTimeEndTime["endTime"]!;
     const isCompleted = false;
     // implemntation needs changing, get it from formState after integration.
-    final List<String> linkedNote = selectedTask?.linkedNote ?? [];
+    final List<String> linkedNotes = ref.watch(linkedNotesProvider);
+    final userId = currentLoggedInUser!.id;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -126,7 +129,8 @@ class _TaskCreationHeaderState extends ConsumerState<TaskCreationHeader> {
                 duration: duration,
                 endTime: endTime,
                 isCompleted: isCompleted,
-                linkedNote: linkedNote,
+                linkedNotes: linkedNotes,
+                userId: userId,
               );
 
               if (!taskNotifier.checkAddTaskValidity(

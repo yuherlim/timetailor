@@ -44,7 +44,6 @@ class _TaskBottomSheetState extends ConsumerState<TaskBottomSheet> {
       return const CircularProgressIndicator(); // Show loading indicator
     }
 
-    print("bottom sheet is rebuilt.");
 
     final double currentExtent = ref.watch(sheetExtentProvider);
     final double initialBottomSheetExtent =
