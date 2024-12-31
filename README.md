@@ -35,7 +35,7 @@ Before running the project, ensure you have the following installed:
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yuherlim/timetailor.git
+git clone https://github.com/your-repo/timetailor.git
 cd timetailor
 ```
 
@@ -71,12 +71,31 @@ To build the APK for the app:
   flutter build apk --debug
   ```
 
+- Profile APK:
+  ```bash
+  flutter build apk --profile
+  ```
+
 - Release APK:
   ```bash
   flutter build apk --release
   ```
 
 The APK will be located in the `build/app/outputs/flutter-apk/` directory.
+
+### Navigate to the APK
+- For the profile APK, navigate to:
+  ```
+  build/app/outputs/flutter-apk/app-profile.apk
+  ```
+
+### Install the APK on Your Device
+1. Connect your Android device to your computer via USB.
+2. Ensure USB debugging is enabled on your device.
+3. Use the following command to install the APK:
+   ```bash
+   adb install build/app/outputs/flutter-apk/app-profile.apk
+   ```
 
 ---
 
@@ -105,6 +124,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Author
 
-**Yu Her**  
+**Yu**  
 Degree in Software Engineering (Honours)  
 Tunku Abdul Rahman University of Management and Technology (TARUMT)
