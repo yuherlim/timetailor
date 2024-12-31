@@ -1,13 +1,11 @@
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/widgets/styled_text.dart';
-import 'package:timetailor/core/theme/custom_theme.dart';
-import 'package:timetailor/data/user_management/models/app_user.dart';
+import 'package:timetailor/domain/note_management/providers/notes_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
 import 'package:timetailor/domain/task_management/providers/current_time_position_provider.dart';
@@ -120,12 +118,13 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Fetch tasks when the screen is first rendered
+    // Fetch data from firestore when the screen is first rendered
     useEffect(() {
       Future.microtask(() async {
-        await ref
-            .read(tasksNotifierProvider.notifier)
-            .fetchTasksFromFirestore();
+        await Future.wait([
+          ref.read(tasksNotifierProvider.notifier).fetchTasksFromFirestore(),
+          ref.read(notesNotifierProvider.notifier).fetchNotesFromFirestore(),
+        ]);
       });
 
       // Cleanup logic if needed
@@ -133,11 +132,12 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
     }, []); // Empty dependency array ensures this runs only once
 
     final tasksNotifier = ref.read(tasksNotifierProvider.notifier);
-    final tasks = ref.watch(tasksNotifierProvider);
+    final notesNotifier = ref.read(notesNotifierProvider.notifier);
 
-    print("tasks length: ${tasks.length}");
+    print("tasks length: ${ref.watch(tasksNotifierProvider).length}");
+    print("notes length: ${ref.watch(notesNotifierProvider).length}");
 
-    if (tasksNotifier.isLoading) {
+    if (tasksNotifier.isLoading || notesNotifier.isLoading) {
       // Show CircularProgressIndicator while loading
       return const Scaffold(
         body: Center(

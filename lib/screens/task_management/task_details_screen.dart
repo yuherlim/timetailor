@@ -48,6 +48,7 @@ class _TaskDetailsScreenState extends ConsumerState<TaskDetailsScreen> {
     // update edit status and selectedTask
     ref.read(isEditingTaskProvider.notifier).state = true;
     ref.read(selectedTaskProvider.notifier).state = widget.task;
+    ref.read(linkedNotesProvider.notifier).state = widget.task.linkedNotes;
 
     final selectedTask = ref.read(selectedTaskProvider)!;
     final taskDimensions = taskNotifier.calculateTimeSlotFromTaskTime(

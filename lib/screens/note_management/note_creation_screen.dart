@@ -3,16 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:timetailor/core/config/routes.dart';
 import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/custom_snackbars.dart';
-import 'package:timetailor/core/shared/utils.dart';
 import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/data/note_management/models/note.dart';
 import 'package:timetailor/domain/note_management/providers/note_form_provider.dart';
 import 'package:timetailor/domain/note_management/providers/note_state_provider.dart';
 import 'package:timetailor/domain/note_management/providers/notes_provider.dart';
+import 'package:timetailor/domain/user_management/providers/user_provider.dart';
 import 'package:timetailor/screens/note_management/widgets/display_image.dart';
 import 'package:timetailor/screens/note_management/widgets/note_content_field.dart';
 import 'package:timetailor/screens/note_management/widgets/note_pdf_card.dart';
@@ -34,6 +33,7 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
       .map((connectivityResults) => connectivityResults.first);
 
   void createNote() {
+    final currentLoggedInUser = ref.read(currentUserProvider);
     final formState = ref.read(noteFormNotifierProvider);
     final formNotifier = ref.read(noteFormNotifierProvider.notifier);
     final noteNotifier = ref.read(notesNotifierProvider.notifier);
@@ -48,6 +48,7 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
         id: isCreatingNote ? const Uuid().v4() : selectedNote!.id,
         title: formState.title.trim(),
         content: formState.content.trim(),
+        userId: currentLoggedInUser!.id,
       );
 
       formNotifier.updateTitle(formState.title.trim());
@@ -94,7 +95,6 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
   void handleEdit() {
     showSnackBarWithMessage("Editing note...");
     ref.read(isEditingNoteProvider.notifier).state = true;
-    context.go(RoutePath.noteCreationPath);
   }
 
   void handleDelete() {
@@ -179,6 +179,7 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
 
     final isEditingNote = ref.watch(isEditingNoteProvider);
     final isCreatingNote = ref.watch(isCreatingNoteProvider);
+    final isViewingNote = ref.watch(isViewingNoteProvider);
 
     return StreamBuilder<ConnectivityResult>(
       stream: connectivityStream,
@@ -201,7 +202,7 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
                     ? "Editing Note"
                     : "Note Details"),
             actions: [
-              if (isOnline)
+              if (isOnline && !isViewingNote)
                 isEditingNote || isCreatingNote
                     ? IconButton(
                         onPressed: () {
@@ -234,7 +235,7 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
             ],
           ),
           body: GestureDetector(
-            onDoubleTap: isEditingNote ? null : () => handleEdit(),
+            onDoubleTap: isEditingNote || isViewingNote ? null : () => handleEdit(),
             child: LayoutBuilder(builder: (context, constraints) {
               return SingleChildScrollView(
                 controller: noteScrollController,
@@ -256,16 +257,16 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
               );
             }),
           ),
-          floatingActionButton: FloatingActionButton(
+          floatingActionButton: !isViewingNote ? FloatingActionButton(
             onPressed: () {
-              isEditingNote ? createNote() : handleEdit();
+              isEditingNote || isCreatingNote ? createNote() : handleEdit();
             },
             child:
-                isEditingNote ? const Icon(Icons.save) : const Icon(Icons.edit),
-          ),
+                isEditingNote || isCreatingNote ? const Icon(Icons.save) : const Icon(Icons.edit),
+          ) : null,
           floatingActionButtonLocation:
               FloatingActionButtonLocation.endContained,
-          bottomNavigationBar: isOnline
+          bottomNavigationBar: isOnline && !isViewingNote
               ? BottomAppBar(
                   notchMargin: 8.0,
                   child: Row(

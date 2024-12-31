@@ -98,7 +98,7 @@ class _TaskCreationHeaderState extends ConsumerState<TaskCreationHeader> {
     final endTime = startTimeEndTime["endTime"]!;
     const isCompleted = false;
     // implemntation needs changing, get it from formState after integration.
-    final List<String> linkedNote = selectedTask?.linkedNote ?? [];
+    final List<String> linkedNotes = ref.watch(linkedNotesProvider);
     final userId = currentLoggedInUser!.id;
 
     return Padding(
@@ -129,7 +129,7 @@ class _TaskCreationHeaderState extends ConsumerState<TaskCreationHeader> {
                 duration: duration,
                 endTime: endTime,
                 isCompleted: isCompleted,
-                linkedNote: linkedNote,
+                linkedNotes: linkedNotes,
                 userId: userId,
               );
 

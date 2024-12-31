@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timetailor/domain/task_management/state/task_form_state.dart';
 
@@ -50,3 +51,5 @@ class TaskFormNotifier extends _$TaskFormNotifier {
     return true;
   }
 }
+
+final linkedNotesProvider = StateProvider<List<String>>((ref) => []);

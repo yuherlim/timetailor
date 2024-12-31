@@ -125,9 +125,10 @@ class _TaskItemState extends ConsumerState<TaskItem> {
     // reset any previous task editing
     taskNotifier.endTaskCreation();
 
-    // update edit status and selectedTask
+    // update edit status, selectedTask, and linkedNotes
     ref.read(isEditingTaskProvider.notifier).state = true;
     ref.read(selectedTaskProvider.notifier).state = widget.task;
+    ref.read(linkedNotesProvider.notifier).state = widget.task.linkedNotes;
 
     final selectedTask = ref.read(selectedTaskProvider)!;
     final taskDimensions = taskNotifier.calculateTimeSlotFromTaskTime(

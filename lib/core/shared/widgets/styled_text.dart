@@ -19,6 +19,7 @@ class StyledText extends StatelessWidget {
               letterSpacing: 1,
             ),
       ),
+      overflow: TextOverflow.ellipsis,
     );
   }
 }

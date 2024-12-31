@@ -40,17 +40,17 @@ class TaskRepository {
       "duration": task.duration,
       "endTime": Timestamp.fromDate(task.endTime),
       "isCompleted": task.isCompleted,
-      "linkedNote": task.linkedNote,
+      "linkedNotes": task.linkedNotes,
       "userId": task.userId,
     });
   }
 
-  // Mark task as completed
-  Future<void> markTaskAsCompleted(String taskId) async {
-    await ref.doc(taskId).update({
-      "isCompleted": true,
-    });
-  }
+  // // Mark task as completed
+  // Future<void> markTaskAsCompleted(String taskId) async {
+  //   await ref.doc(taskId).update({
+  //     "isCompleted": true,
+  //   });
+  // }
 
   // Delete a task
   Future<void> deleteTask(String taskId) async {

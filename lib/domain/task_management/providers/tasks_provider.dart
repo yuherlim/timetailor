@@ -3,8 +3,11 @@ import 'package:riverpod/src/framework.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timetailor/core/shared/custom_snackbars.dart';
 import 'package:timetailor/core/shared/utils.dart';
+import 'package:timetailor/data/note_management/repositories/note_repository.dart';
 import 'package:timetailor/data/task_management/models/task.dart';
 import 'package:timetailor/data/task_management/repositories/task_repository.dart';
+import 'package:timetailor/domain/note_management/providers/note_state_provider.dart';
+import 'package:timetailor/domain/note_management/providers/notes_provider.dart';
 import 'package:timetailor/domain/task_management/providers/bottom_sheet_scroll_controller_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';
@@ -22,6 +25,7 @@ final taskRepositoryProvider = Provider<TaskRepository>((ref) {
 class TasksNotifier extends _$TasksNotifier {
   TaskRepository get _taskRepository => ref.read(taskRepositoryProvider);
   String get _currentUserId => ref.read(currentUserProvider)!.id;
+  // NoteRepository get _noteRepository => ref.read(noteRepositoryProvider);
 
   bool isLoading = false; // Add loading state
 
@@ -42,6 +46,25 @@ class TasksNotifier extends _$TasksNotifier {
       isLoading = false; // End loading
     }
   }
+
+  // Future<void> addNoteToTask(String noteId) async {
+  //   final selectedTask = ref.read(selectedTaskProvider)!;
+  //   // if noteId already in selectedTask linkedNote list
+  //   if (selectedTask.linkedNote.contains(noteId)) {
+  //     CustomSnackbars.shortDurationSnackBar(
+  //         contentString: "This note has already been added to this task.");
+  //     return;
+  //   }
+
+  //   final updatedLinkedNotes = [...selectedTask.linkedNote, noteId];
+  //   final updatedTask = selectedTask.copyWith(linkedNote: updatedLinkedNotes);
+  //   try {
+  //     await updateTask(updatedTask); // Persist the changes
+  //   } catch (e) {
+  //     CustomSnackbars.shortDurationSnackBar(
+  //         contentString: "Failed to add note to the task: $e");
+  //   }
+  // }
 
   List<Task>? getAllTasksForCurrentDate() {
     final currentDate = ref.read(currentDateNotifierProvider);
@@ -509,6 +532,12 @@ class TasksNotifier extends _$TasksNotifier {
   void resetEditState() {
     final taskNotifier = ref.read(tasksNotifierProvider.notifier);
     final selectedTask = ref.read(selectedTaskProvider);
+
+    // reset linked notes state provider to empty list
+    ref.invalidate(linkedNotesProvider);
+    
+    // reser viewing note status 
+    ref.invalidate(isViewingNoteProvider);
 
     // turn off edit mode
     ref.read(isEditingTaskProvider.notifier).state = false;

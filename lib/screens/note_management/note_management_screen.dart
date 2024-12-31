@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/custom_snackbars.dart';
 import 'package:timetailor/core/shared/widgets/styled_text.dart';
@@ -10,7 +11,7 @@ import 'package:timetailor/domain/note_management/providers/notes_provider.dart'
 import 'package:timetailor/screens/note_management/widgets/note_list_item.dart';
 import 'package:timetailor/screens/note_management/widgets/notes_search_delegate.dart';
 
-class NoteManagementScreen extends ConsumerStatefulWidget {
+class NoteManagementScreen extends StatefulHookConsumerWidget {
   const NoteManagementScreen({super.key});
 
   @override
@@ -36,7 +37,8 @@ class _NoteManagementScreenState extends ConsumerState<NoteManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final allNotes = ref.watch(notesNotifierProvider);
+    
+    final notes = ref.watch(notesNotifierProvider);
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -60,7 +62,7 @@ class _NoteManagementScreenState extends ConsumerState<NoteManagementScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          allNotes.isEmpty
+          notes.isEmpty
               ? const Expanded(
                   child: Center(
                     child: NoListItemTitle(
@@ -70,9 +72,9 @@ class _NoteManagementScreenState extends ConsumerState<NoteManagementScreen> {
                 )
               : Expanded(
                   child: ListView.builder(
-                    itemCount: allNotes.length,
+                    itemCount: notes.length,
                     itemBuilder: (context, index) {
-                      final note = allNotes[index];
+                      final note = notes[index];
                       return NoteListItem(note: note);
                     },
                   ),

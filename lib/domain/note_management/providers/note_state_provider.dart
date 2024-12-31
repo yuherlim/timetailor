@@ -5,3 +5,4 @@ final isCreatingNoteProvider= StateProvider<bool>((ref) => false);
 final isEditingNoteProvider = StateProvider<bool>((ref) => false);
 final isUndoEditingNoteProvider = StateProvider<bool>((ref) => false);
 final selectedNoteProvider = StateProvider<Note?>((ref) => null);
+final isViewingNoteProvider = StateProvider<bool>((ref) => false);
