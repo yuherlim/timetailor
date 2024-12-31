@@ -7,8 +7,13 @@ import 'package:path/path.dart' as path;
 
 class NotePDFCard extends StatelessWidget {
   final String pdfPath; // The Firebase Storage path to the PDF file
+  final VoidCallback onDelete; // Callback to handle delete action
 
-  const NotePDFCard({super.key, required this.pdfPath});
+  const NotePDFCard({
+    super.key,
+    required this.pdfPath,
+    required this.onDelete,
+  });
 
   String extractFileName(String filePath) {
     return path.basename(filePath);
@@ -16,61 +21,68 @@ class NotePDFCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Transform the Stream<List<ConnectivityResult>> to Stream<ConnectivityResult>
     final connectivityStream = Connectivity()
         .onConnectivityChanged
         .map((connectivityResults) => connectivityResults.first);
 
-    return StreamBuilder<ConnectivityResult>(
-      stream: connectivityStream,
-      builder: (context, connectivitySnapshot) {
-        if (connectivitySnapshot.hasData &&
-            connectivitySnapshot.data == ConnectivityResult.none) {
-          // Show offline banner
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Card(
-              color: Colors.grey[300],
-              child: ListTile(
-                title: Text(
-                  extractFileName(pdfPath),
-                  style: const TextStyle(color: Colors.grey),
+    return Stack(
+      children: [
+        StreamBuilder<ConnectivityResult>(
+          stream: connectivityStream,
+          builder: (context, connectivitySnapshot) {
+            if (connectivitySnapshot.hasData &&
+                connectivitySnapshot.data == ConnectivityResult.none) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(
+                  color: Colors.grey[300],
+                  child: ListTile(
+                    title: Text(
+                      extractFileName(pdfPath),
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                    trailing: const Icon(Icons.cloud_off, color: Colors.grey),
+                    onTap: () {
+                      CustomSnackbars.shortDurationSnackBar(
+                          contentString:
+                              "You're offline. Please connect to the internet to view this PDF.");
+                    },
+                  ),
                 ),
-                trailing: const Icon(Icons.cloud_off, color: Colors.grey),
-                onTap: () {
-                  CustomSnackbars.shortDurationSnackBar(
-                      contentString:
-                          "You're offline. Please connect to the internet to view this PDF.");
+              );
+            }
+
+            return Card(
+              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              child: ListTile(
+                title: Text(extractFileName(pdfPath)),
+                trailing: const Icon(Icons.picture_as_pdf, color: Colors.red),
+                onTap: () async {
+                  final pdfUrl =
+                      await FirebaseStorageService.getDownloadURL(pdfPath);
+
+                  if (context.mounted) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PDFViewerScreen(pdfUrl: pdfUrl),
+                      ),
+                    );
+                  }
                 },
               ),
-            ),
-          );
-        }
-
-        // Show the PDF card when online
-        return Card(
-          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          child: ListTile(
-            title: Text(extractFileName(pdfPath)),
-            trailing: const Icon(Icons.picture_as_pdf, color: Colors.red),
-            onTap: () async {
-              // Fetch the PDF URL
-              final pdfUrl =
-                  await FirebaseStorageService.getDownloadURL(pdfPath);
-
-              // Navigate to the PDF viewer
-              if (context.mounted) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PDFViewerScreen(pdfUrl: pdfUrl),
-                  ),
-                );
-              }
-            },
+            );
+          },
+        ),
+        Positioned(
+          top: 8,
+          right: 8,
+          child: IconButton(
+            icon: const Icon(Icons.close, color: Colors.red),
+            onPressed: onDelete,
           ),
-        );
-      },
+        ),
+      ],
     );
   }
 }

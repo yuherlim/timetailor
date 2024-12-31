@@ -244,6 +244,12 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
             onDoubleTap:
                 isEditingNote || isViewingNote ? null : () => handleEdit(),
             child: LayoutBuilder(builder: (context, constraints) {
+              final selectedNote = ref.read(selectedNoteProvider);
+
+              if (selectedNote == null) {
+                return const Center(child: Text("No note selected"));
+              }
+
               return SingleChildScrollView(
                 controller: noteScrollController,
                 child: ConstrainedBox(
@@ -253,8 +259,29 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
                   child: const IntrinsicHeight(
                     child: Column(
                       children: [
-                        DisplayImage(imagePath: "golden.jpg"),
-                        NotePDFCard(pdfPath: "test.pdf"),
+                        // DisplayImage(
+                        //   imagePath: selectedNote.imageUrl ??
+                        //       "", // Use empty string if null
+                        //   onDelete: selectedNote.imageUrl != null
+                        //       ? () {
+                        //           ref
+                        //               .read(notesNotifierProvider.notifier)
+                        //               .removeAttachedFile(
+                        //                   'image', selectedNote);
+                        //         }
+                        //       : null,
+                        // ),
+                        // NotePDFCard(
+                        //   pdfPath: selectedNote.pdfUrl ??
+                        //       "", // Use empty string if null
+                        //   onDelete: selectedNote.pdfUrl != null
+                        //       ? () {
+                        //           ref
+                        //               .read(notesNotifierProvider.notifier)
+                        //               .removeAttachedFile('pdf', selectedNote);
+                        //         }
+                        //       : null, // No delete action if no PDF
+                        // ),
                         NoteTitleField(),
                         NoteContentField(),
                       ],
@@ -278,31 +305,54 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
               : null,
           floatingActionButtonLocation:
               FloatingActionButtonLocation.endContained,
-          bottomNavigationBar: isOnline && !isViewingNote && isEditingNote
+          bottomNavigationBar: isOnline &&
+                  !isViewingNote &&
+                  (isEditingNote || isCreatingNote)
               ? BottomAppBar(
                   notchMargin: 8.0,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.image),
-                        onPressed: () {
-                          // upload image file
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.picture_as_pdf),
-                        onPressed: () {
-                          // upload pdf file
-                        },
-                      ),
+                      // IconButton(
+                      //   icon: const Icon(Icons.image),
+                      //   onPressed: () async {
+                      //     final picker = ImagePicker();
+                      //     final pickedFile = await picker.pickImage(
+                      //         source: ImageSource.gallery);
+
+                      //     if (pickedFile != null) {
+                      //       final selectedNote = ref.read(selectedNoteProvider);
+                      //       await ref
+                      //           .read(notesNotifierProvider.notifier)
+                      //           .uploadAndAttachFile(
+                      //               pickedFile.path, 'image', selectedNote!);
+                      //     }
+                      //   },
+                      // ),
+                      // IconButton(
+                      //   icon: const Icon(Icons.picture_as_pdf),
+                      //   onPressed: () async {
+                      //     final picker = ImagePicker();
+                      //     final pickedFile = await picker.pickImage(
+                      //         source: ImageSource.gallery);
+
+                      //     if (pickedFile != null) {
+                      //       final selectedNote = ref.read(selectedNoteProvider);
+                      //       await ref
+                      //           .read(notesNotifierProvider.notifier)
+                      //           .uploadAndAttachFile(
+                      //               pickedFile.path, 'pdf', selectedNote!);
+                      //     }
+                      //   },
+                      // ),
                       PopupMenuButton<String>(
                         icon: const Icon(Symbols.network_intelligence),
                         onSelected: (value) {
                           if (value == 'Summarise' ||
                               value == 'Translate' ||
                               value == 'Improve Content') {
-                                geminiActionHandler.handleGeminiStreamingAction(value.toLowerCase(), ref);
+                            geminiActionHandler.handleGeminiStreamingAction(
+                                value.toLowerCase(), ref);
                           } else if (value == 'OCR') {
                             ocrService.onOCRSelected(context, ref);
                           }

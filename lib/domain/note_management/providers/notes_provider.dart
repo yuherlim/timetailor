@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timetailor/core/shared/custom_snackbars.dart';
@@ -84,8 +83,7 @@ class NotesNotifier extends _$NotesNotifier {
       // Notify the user
       snackBarAfterUndo("Note is restored and linked to relevant tasks.");
     } catch (e) {
-      snackBarAfterUndo(
-          "Failed to fully restore the note: ${e.toString()}");
+      snackBarAfterUndo("Failed to fully restore the note: ${e.toString()}");
     }
   }
 
@@ -183,6 +181,42 @@ class NotesNotifier extends _$NotesNotifier {
     ref.read(isEditingNoteProvider.notifier).state = false;
     ref.read(isUndoEditingNoteProvider.notifier).state = false;
     ref.read(selectedNoteProvider.notifier).state = null;
+  }
+
+  Future<void> uploadAndAttachFile(
+      String filePath, String fileType, Note note) async {
+    try {
+      final fileName = '${note.id}_${DateTime.now().millisecondsSinceEpoch}';
+      final fileUrl = await _noteRepository.uploadFile(filePath, fileName);
+
+      final updatedNote = fileType == 'image'
+          ? note.copyWith(imageUrl: fileUrl)
+          : note.copyWith(pdfUrl: fileUrl);
+
+      await updateNote(updatedNote);
+    } catch (e) {
+      CustomSnackbars.shortDurationSnackBar(
+          contentString: "Failed to upload $fileType: $e");
+    }
+  }
+
+  Future<void> removeAttachedFile(String fileType, Note note) async {
+    try {
+      final fileUrl = fileType == 'image' ? note.imageUrl : note.pdfUrl;
+
+      if (fileUrl != null) {
+        await _noteRepository.deleteFile(fileUrl);
+
+        final updatedNote = fileType == 'image'
+            ? note.copyWith(imageUrl: null)
+            : note.copyWith(pdfUrl: null);
+
+        await updateNote(updatedNote);
+      }
+    } catch (e) {
+      CustomSnackbars.shortDurationSnackBar(
+          contentString: "Failed to remove $fileType: $e");
+    }
   }
 }
 

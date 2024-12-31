@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:timetailor/data/note_management/models/note.dart';
 
 class NoteRepository {
@@ -45,5 +48,27 @@ class NoteRepository {
   // Delete a note
   Future<void> deleteNote(String noteId) async {
     await ref.doc(noteId).delete();
+  }
+
+  final FirebaseStorage storage = FirebaseStorage.instance;
+
+  Future<String> uploadFile(String filePath, String fileName) async {
+    try {
+      final fileRef = storage.ref().child('uploads/$fileName');
+      final uploadTask = fileRef.putFile(File(filePath));
+      final snapshot = await uploadTask;
+      return await snapshot.ref.getDownloadURL();
+    } catch (e) {
+      throw Exception("Failed to upload file: $e");
+    }
+  }
+
+  Future<void> deleteFile(String fileUrl) async {
+    try {
+      final ref = storage.refFromURL(fileUrl);
+      await ref.delete();
+    } catch (e) {
+      throw Exception("Failed to delete file: $e");
+    }
   }
 }

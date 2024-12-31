@@ -103,4 +103,27 @@ class FirebaseAuthService {
       return 'An error occurred. Please try again.';
     }
   }
+
+  // Delete the current user account
+  Future<void> deleteAccount() async {
+    final currentUser = _firebaseAuth.currentUser;
+
+    if (currentUser == null) {
+      throw Exception("No user is currently signed in.");
+    }
+
+    try {
+      // Remove user from Firestore
+      await _appUserRepository.deleteUser(currentUser.uid);
+
+      // Delete user from Firebase Authentication
+      await currentUser.delete();
+    } on auth.FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        throw Exception(
+            "This action requires a recent login. Please log in again to proceed.");
+      }
+      throw Exception("Failed to delete account: ${e.message}");
+    }
+  }
 }

@@ -62,7 +62,7 @@ class OCRService {
       // Append recognized text to the current content
       final formNotifier = ref.read(noteFormNotifierProvider.notifier);
       final currentContent = ref.read(noteFormNotifierProvider).content;
-      final updatedContent = "$currentContent\n$recognizedText";
+      final updatedContent = "$currentContent\n###OCR Result###\n$recognizedText";
       formNotifier.updateContent(updatedContent);
 
       // Provide feedback to the user
