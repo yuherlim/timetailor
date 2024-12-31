@@ -10,6 +10,7 @@ import 'package:timetailor/core/shared/custom_snackbars.dart';
 import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/data/note_management/models/note.dart';
+import 'package:timetailor/domain/ai/providers/gemini_provider.dart';
 import 'package:timetailor/domain/note_management/providers/note_form_provider.dart';
 import 'package:timetailor/domain/note_management/providers/note_state_provider.dart';
 import 'package:timetailor/domain/note_management/providers/notes_provider.dart';
@@ -184,6 +185,7 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
     final isCreatingNote = ref.watch(isCreatingNoteProvider);
     final isViewingNote = ref.watch(isViewingNoteProvider);
     final ocrService = ref.read(ocrServiceProvider);
+    final geminiActionHandler = ref.read(geminiActionHandlerProvider);
 
     return StreamBuilder<ConnectivityResult>(
       stream: connectivityStream,
@@ -276,7 +278,7 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
               : null,
           floatingActionButtonLocation:
               FloatingActionButtonLocation.endContained,
-          bottomNavigationBar: isOnline && !isViewingNote &&isEditingNote
+          bottomNavigationBar: isOnline && !isViewingNote && isEditingNote
               ? BottomAppBar(
                   notchMargin: 8.0,
                   child: Row(
@@ -297,9 +299,10 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
                       PopupMenuButton<String>(
                         icon: const Icon(Symbols.network_intelligence),
                         onSelected: (value) {
-                          if (value == 'Summarise') {
-                          } else if (value == 'Translate') {
-                          } else if (value == 'Improve Content') {
+                          if (value == 'Summarise' ||
+                              value == 'Translate' ||
+                              value == 'Improve Content') {
+                                geminiActionHandler.handleGeminiStreamingAction(value.toLowerCase(), ref);
                           } else if (value == 'OCR') {
                             ocrService.onOCRSelected(context, ref);
                           }
