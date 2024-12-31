@@ -35,7 +35,7 @@ Before running the project, ensure you have the following installed:
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-repo/timetailor.git
+git clone https://github.com/yuherlim/timetailor.git
 cd timetailor
 ```
 
