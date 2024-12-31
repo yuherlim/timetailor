@@ -8,7 +8,6 @@ import 'package:timetailor/data/note_management/models/note.dart';
 import 'package:timetailor/domain/note_management/providers/note_form_provider.dart';
 import 'package:timetailor/domain/note_management/providers/note_state_provider.dart';
 import 'package:timetailor/domain/note_management/providers/notes_provider.dart';
-import 'package:timetailor/domain/note_management/state/note_form_state.dart';
 
 class NoteListItem extends ConsumerWidget {
   final Note note;

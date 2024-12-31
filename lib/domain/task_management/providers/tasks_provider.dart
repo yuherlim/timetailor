@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:riverpod/src/framework.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timetailor/core/shared/custom_snackbars.dart';
 import 'package:timetailor/core/shared/utils.dart';
-import 'package:timetailor/data/note_management/repositories/note_repository.dart';
 import 'package:timetailor/data/task_management/models/task.dart';
 import 'package:timetailor/data/task_management/repositories/task_repository.dart';
 import 'package:timetailor/domain/note_management/providers/note_state_provider.dart';
-import 'package:timetailor/domain/note_management/providers/notes_provider.dart';
 import 'package:timetailor/domain/task_management/providers/bottom_sheet_scroll_controller_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_state_provider.dart';
 import 'package:timetailor/domain/task_management/providers/calendar_read_only_provider.dart';

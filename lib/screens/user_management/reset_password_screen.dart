@@ -8,7 +8,6 @@ import 'package:timetailor/core/shared/custom_snackbars.dart';
 import 'package:timetailor/core/shared/widgets/styled_button.dart';
 import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
-import 'package:timetailor/data/user_management/repositories/firebase_auth_service.dart';
 import 'package:timetailor/domain/user_management/providers/user_provider.dart';
 
 class ResetPasswordScreen extends HookWidget {
@@ -115,6 +114,7 @@ class ResetPasswordScreen extends HookWidget {
                         final connectivityResult =
                             await Connectivity().checkConnectivity();
 
+                        // ignore: unrelated_type_equality_checks
                         if (connectivityResult == ConnectivityResult.none) {
                           // Show a snackbar for no internet connection
                           CustomSnackbars.shortDurationSnackBar(

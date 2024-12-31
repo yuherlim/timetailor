@@ -204,7 +204,7 @@ class LoginScreen extends HookWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const UserOnboardingMessageText("Don\'t have an account?"),
+                    const UserOnboardingMessageText("Don't have an account?"),
                     Consumer(
                       builder: (childContext, ref, child) {
                         final isLoading = ref.watch(isLoadingProvider);

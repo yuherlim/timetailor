@@ -39,17 +39,17 @@ class _PDFViewerScreenState extends State<PDFViewerScreen> {
           setState(() {
             localFilePath = file.path;
           });
-          print("File exists: ${file.path}");
+          debugPrint("File exists: ${file.path}");
         } else {
-          print("File does not exist: ${file.path}");
+          debugPrint("File does not exist: ${file.path}");
         }
 
-        print("PDF downloaded to: $localFilePath");
+        debugPrint("PDF downloaded to: $localFilePath");
       } else {
         throw Exception('Failed to load PDF');
       }
     } catch (e) {
-      print('Error downloading PDF: $e');
+      debugPrint('Error downloading PDF: $e');
     }
   }
 
@@ -65,7 +65,7 @@ class _PDFViewerScreenState extends State<PDFViewerScreen> {
               filePath: localFilePath, // Provide the local file path
               fitPolicy: FitPolicy.BOTH,
               onError: (error) {
-                print('PDF error: $error');
+                debugPrint('PDF error: $error');
               },
             ),
     );

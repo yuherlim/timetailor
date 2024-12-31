@@ -4,10 +4,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:timetailor/core/shared/widgets/content_divider.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
-import 'package:timetailor/data/note_management/models/note.dart';
 import 'package:timetailor/domain/note_management/providers/note_form_provider.dart';
 import 'package:timetailor/domain/note_management/providers/note_state_provider.dart';
-import 'package:timetailor/domain/note_management/providers/notes_provider.dart';
 
 class NoteTitleField extends HookConsumerWidget {
   const NoteTitleField({super.key});
@@ -28,7 +26,6 @@ class NoteTitleField extends HookConsumerWidget {
     const maxLength = 50;
     bool hasReachedMaxLength = formState.title.length == maxLength;
 
-    print("hasReachedMaxLength: $hasReachedMaxLength");
 
     // Keep Riverpod state in sync with the controller
     useEffect(() {

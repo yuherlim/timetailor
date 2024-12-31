@@ -21,7 +21,7 @@ class DraggableBox extends ConsumerWidget {
         .read(tasksNotifierProvider.notifier)
         .checkAddTaskValidity(dyTop: localDy, dyBottom: localDyBottom);
 
-    print("dyTop: $localDy, dyBottom: $localDyBottom, height: $localCurrentTimeSlotHeight");
+    debugPrint("dyTop: $localDy, dyBottom: $localDyBottom, height: $localCurrentTimeSlotHeight");
 
     return Positioned(
       left: slotStartX,

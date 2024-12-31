@@ -134,9 +134,6 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
     final tasksNotifier = ref.read(tasksNotifierProvider.notifier);
     final notesNotifier = ref.read(notesNotifierProvider.notifier);
 
-    print("tasks length: ${ref.watch(tasksNotifierProvider).length}");
-    print("notes length: ${ref.watch(notesNotifierProvider).length}");
-
     if (tasksNotifier.isLoading || notesNotifier.isLoading) {
       // Show CircularProgressIndicator while loading
       return const Scaffold(
@@ -146,7 +143,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
       );
     }
 
-    print("Current logged in user: ${ref.read(currentUserProvider)?.name}");
+    debugPrint("Current logged in user: ${ref.read(currentUserProvider)?.name}");
 
     debugPrint(
         "number of current task items: ${ref.watch(tasksNotifierProvider).map(

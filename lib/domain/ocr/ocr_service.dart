@@ -19,6 +19,7 @@ class OCRService {
           actions: [
             TextButton(
               onPressed: () async {
+                // ignore: use_build_context_synchronously
                 Navigator.pop(context,
                     await imagePickerService.pickImage(fromCamera: true));
               },
@@ -26,6 +27,7 @@ class OCRService {
             ),
             TextButton(
               onPressed: () async {
+                // ignore: use_build_context_synchronously
                 Navigator.pop(context,
                     await imagePickerService.pickImage(fromCamera: false));
               },
@@ -52,12 +54,10 @@ class OCRService {
 
   void performOCR(String imagePath, WidgetRef ref) async {
     try {
-      print("Image path: $imagePath");
 
       final recognizeTextUseCase = ref.read(recognizeTextUseCaseProvider);
       final recognizedText = await recognizeTextUseCase(imagePath);
 
-      print("Recognized text: $recognizedText");
 
       // Append recognized text to the current content
       final formNotifier = ref.read(noteFormNotifierProvider.notifier);
@@ -69,7 +69,7 @@ class OCRService {
       CustomSnackbars.shortDurationSnackBar(
           contentString: 'OCR result appended to the note!');
     } catch (e) {
-      print("OCR Error: $e");
+      debugPrint("OCR Error: $e");
       CustomSnackbars.shortDurationSnackBar(
           contentString: 'Failed to recognize text: $e');
     }

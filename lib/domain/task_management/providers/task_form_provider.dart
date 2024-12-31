@@ -44,7 +44,6 @@ class TaskFormNotifier extends _$TaskFormNotifier {
 
   bool validateTaskName() {
     if (state.name.trim().isEmpty) {
-      print("validate task name ran.");
       state = state.copyWith(nameError: 'Title cannot be empty');
       return false;
     }

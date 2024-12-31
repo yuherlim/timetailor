@@ -7,7 +7,6 @@ part 'note_form_provider.g.dart';
 class NoteFormNotifier extends _$NoteFormNotifier {
   @override
   NoteFormState build() {
-    print("note form state is built");
     return NoteFormState(title: "", content: "");
   }
 

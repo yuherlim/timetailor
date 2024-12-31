@@ -41,7 +41,6 @@ class FirebaseAuthService {
       return 'An unknown error occurred: ${e.message}';
     } catch (e) {
       // Handle other exceptions
-      print('Error during registration: $e');
       return 'An error occurred. Please try again.';
     }
   }
@@ -62,7 +61,6 @@ class FirebaseAuthService {
           return 'An unknown error occurred: ${e.message}';
       }
     } catch (e) {
-      print('Error during sign-in: $e');
       return 'An error occurred. Please try again.';
     }
   }
@@ -99,7 +97,6 @@ class FirebaseAuthService {
       }
       return 'An unknown error occurred: ${e.message}';
     } catch (e) {
-      print('Error sending password reset email: $e');
       return 'An error occurred. Please try again.';
     }
   }

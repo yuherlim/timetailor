@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:timetailor/core/constants/route_path.dart';
 import 'package:timetailor/core/shared/custom_snackbars.dart';
@@ -16,9 +15,7 @@ import 'package:timetailor/domain/note_management/providers/note_state_provider.
 import 'package:timetailor/domain/note_management/providers/notes_provider.dart';
 import 'package:timetailor/domain/ocr/providers/ocr_provider.dart';
 import 'package:timetailor/domain/user_management/providers/user_provider.dart';
-import 'package:timetailor/screens/note_management/widgets/display_image.dart';
 import 'package:timetailor/screens/note_management/widgets/note_content_field.dart';
-import 'package:timetailor/screens/note_management/widgets/note_pdf_card.dart';
 import 'package:timetailor/screens/note_management/widgets/note_title_field.dart';
 import 'package:uuid/uuid.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';

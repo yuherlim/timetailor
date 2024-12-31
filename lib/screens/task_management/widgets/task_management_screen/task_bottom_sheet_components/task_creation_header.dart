@@ -41,7 +41,7 @@ class _TaskCreationHeaderState extends ConsumerState<TaskCreationHeader> {
         ref.read(isEditingTaskSuccessProvider.notifier);
     final isEditFromTaskDetails = ref.read(isEditFromTaskDetailsProvider);
 
-    print("task to undo name: ${taskToUndo.name}");
+    debugPrint("task to undo name: ${taskToUndo.name}");
 
     editTaskSuccessNotifier.state = true;
     // add the newly edited task

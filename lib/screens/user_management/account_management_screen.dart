@@ -56,6 +56,7 @@ class _AccountManagementScreenState
 
     // Show confirmation dialog
     final shouldDelete = await showDialog<bool>(
+      // ignore: use_build_context_synchronously
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -114,6 +115,7 @@ class _AccountManagementScreenState
     try {
       await authService.deleteAccount();
       if (mounted) {
+        // ignore: use_build_context_synchronously
         context.go(RoutePath.gettingStartedPath);
       }
       CustomSnackbars.shortDurationSnackBar(

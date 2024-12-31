@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImagePickerService {
@@ -10,14 +11,14 @@ class ImagePickerService {
       );
 
       if (pickedFile != null) {
-        print("Picked image path: ${pickedFile.path}");
+        debugPrint("Picked image path: ${pickedFile.path}");
       } else {
-        print("No image selected.");
+        debugPrint("No image selected.");
       }
 
       return pickedFile?.path;
     } catch (e) {
-      print("Error picking image: $e");
+      debugPrint("Error picking image: $e");
       return null;
     }
   }

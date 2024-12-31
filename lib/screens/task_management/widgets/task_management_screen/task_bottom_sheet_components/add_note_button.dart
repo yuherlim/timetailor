@@ -54,6 +54,7 @@ class _AddNoteButtonState extends ConsumerState<AddNoteButton> {
           }
 
           showModalBottomSheet(
+            // ignore: use_build_context_synchronously
             context: context,
             builder: (context) {
               return ListView.builder(
