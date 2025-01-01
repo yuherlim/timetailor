@@ -15,35 +15,40 @@ final noteRepositoryProvider = Provider<NoteRepository>((ref) {
   return NoteRepository();
 });
 
-@riverpod
+@Riverpod(keepAlive: true)
 class NotesNotifier extends _$NotesNotifier {
   NoteRepository get _noteRepository => ref.read(noteRepositoryProvider);
   String get _currentUserId => ref.read(currentUserProvider)!.id;
-
-  bool isLoading = false; // Add loading state
 
   @override
   List<Note> build() {
     return [];
   }
 
+  void sortNotes() {
+    state.sort((a, b) {
+      if (a.createdAt == null && b.createdAt == null) return 0;
+      if (a.createdAt == null) return 1; // Nulls go last
+      if (b.createdAt == null) return -1;
+      return b.createdAt!.compareTo(a.createdAt!); // Newest first
+    });
+  }
+
   Future<void> fetchNotesFromFirestore() async {
-    isLoading = true; // Start loading
     try {
       final notes = await _noteRepository.getNotesByUserId(_currentUserId);
       state = notes;
+      sortNotes();
     } catch (e) {
       CustomSnackbars.shortDurationSnackBar(
           contentString: "Failed to fetch notes: $e");
-    } finally {
-      isLoading = false; // End loading
     }
   }
 
   Future<void> addNote(Note note) async {
     // Optimistically update local state
     final previousState = state;
-    state = [...state, note];
+    state = [note, ...state];
 
     try {
       await _noteRepository.addNote(note); // Sync to Firestore
@@ -151,10 +156,6 @@ class NotesNotifier extends _$NotesNotifier {
       // Cache the affected tasks for undo functionality
       ref.read(deletedNoteTasksProvider.notifier).state[note.id] =
           tasksWithNote;
-
-      // Show success message
-      CustomSnackbars.shortDurationSnackBar(
-          contentString: "Note deleted successfully.");
     } catch (e) {
       // Roll back local state if any operation fails
       state = previousState;

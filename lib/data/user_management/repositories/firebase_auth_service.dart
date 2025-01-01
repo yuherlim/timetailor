@@ -1,14 +1,23 @@
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
+import 'package:timetailor/data/note_management/repositories/note_repository.dart';
+import 'package:timetailor/data/task_management/repositories/task_repository.dart';
 import 'package:timetailor/data/user_management/models/app_user.dart';
 import 'app_user_repository.dart';
 
 class FirebaseAuthService {
   final auth.FirebaseAuth _firebaseAuth = auth.FirebaseAuth.instance;
   final AppUserRepository _appUserRepository;
+  final NoteRepository _noteRepository;
+  final TaskRepository _taskRepository;
 
-  FirebaseAuthService({required AppUserRepository appUserRepository})
-      : _appUserRepository = appUserRepository;
+  FirebaseAuthService({
+    required AppUserRepository appUserRepository,
+    required NoteRepository noteRepository,
+    required TaskRepository taskRepository,
+  })  : _appUserRepository = appUserRepository,
+        _noteRepository = noteRepository,
+        _taskRepository = taskRepository;
 
   // Register a user with Firebase Authentication and store user data in Firestore
   Future<String?> registerUser(
@@ -110,6 +119,23 @@ class FirebaseAuthService {
     }
 
     try {
+      // Delete all notes associated with the user
+      final notes = await _noteRepository.getNotesByUserId(currentUser.uid);
+      await Future.wait(notes.map((note) async {
+        if (note.imageUrl != null && note.imageUrl!.isNotEmpty) {
+          await _noteRepository.deleteFile(note.imageUrl!);
+        }
+        if (note.pdfUrl != null && note.pdfUrl!.isNotEmpty) {
+          await _noteRepository.deleteFile(note.pdfUrl!);
+        }
+        await _noteRepository.deleteNote(note.id);
+      }));
+
+      // Delete all tasks associated with the user
+      final tasks = await _taskRepository.getTasksByUserId(currentUser.uid);
+      await Future.wait(
+          tasks.map((task) => _taskRepository.deleteTask(task.id)));
+
       // Remove user from Firestore
       await _appUserRepository.deleteUser(currentUser.uid);
 
