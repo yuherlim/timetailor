@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -7,6 +8,10 @@ import 'package:timetailor/core/shared/widgets/styled_button.dart';
 import 'package:timetailor/core/shared/widgets/styled_text.dart';
 import 'package:timetailor/core/theme/custom_theme.dart';
 import 'package:timetailor/domain/note_management/providers/note_form_provider.dart';
+import 'package:timetailor/domain/note_management/providers/notes_provider.dart';
+import 'package:timetailor/domain/task_management/providers/current_time_position_provider.dart';
+import 'package:timetailor/domain/task_management/providers/date_provider.dart';
+import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 import 'package:timetailor/domain/user_management/providers/user_provider.dart';
 
 class AccountManagementScreen extends ConsumerStatefulWidget {
@@ -19,7 +24,25 @@ class AccountManagementScreen extends ConsumerStatefulWidget {
 
 class _AccountManagementScreenState
     extends ConsumerState<AccountManagementScreen> {
+  Future<bool> checkConnectivityAndShowSnackbar() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+
+    if (connectivityResult.contains(ConnectivityResult.none)) {
+      // Show a snackbar for no internet connection
+      CustomSnackbars.shortDurationSnackBar(
+        contentString:
+            "No internet connection. Please try again after reconnecting to the internet.",
+      );
+      return false;
+    }
+    return true;
+  }
+
   void handleLogout() async {
+    // Use the utility function to check connectivity
+    final hasInternet = await checkConnectivityAndShowSnackbar();
+    if (!hasInternet) return;
+
     final authService = ref.watch(firebaseAuthServiceProvider);
     final isLoadingNotifier = ref.read(isLoadingProvider.notifier);
 
@@ -33,7 +56,8 @@ class _AccountManagementScreenState
       }
       CustomSnackbars.shortDurationSnackBar(
           contentString: "Log out successful.");
-      disposeKeepAliveProviders();
+      // Invalidate providers after navigation
+      Future.microtask(() => disposeKeepAliveProviders());
     } catch (e) {
       CustomSnackbars.shortDurationSnackBar(contentString: "Error: $e");
     } finally {
@@ -41,7 +65,11 @@ class _AccountManagementScreenState
     }
   }
 
-  Future<void> handleDeleteAccount(BuildContext context) async {
+  Future<void> handleDeleteAccount() async {
+    // Use the utility function to check connectivity
+    final hasInternet = await checkConnectivityAndShowSnackbar();
+    if (!hasInternet) return;
+
     final authService = ref.watch(firebaseAuthServiceProvider);
     final currentUser = await authService.getCurrentUser();
 
@@ -124,6 +152,7 @@ class _AccountManagementScreenState
     } catch (e) {
       CustomSnackbars.shortDurationSnackBar(
           contentString: "Error deleting account: $e");
+      debugPrint("Error deleting account: $e");
     } finally {
       isLoadingNotifier.state = false;
     }
@@ -131,7 +160,11 @@ class _AccountManagementScreenState
 
   void disposeKeepAliveProviders() {
     ref.invalidate(noteFormNotifierProvider);
+    ref.invalidate(notesNotifierProvider);
+    ref.invalidate(tasksNotifierProvider);
     ref.invalidate(currentUserFetcherProvider);
+    ref.invalidate(currentUserProvider);
+    ref.invalidate(currentTimePositionNotifierProvider);
   }
 
   @override
@@ -166,8 +199,7 @@ class _AccountManagementScreenState
                     ),
                     const SizedBox(height: 16),
                     StyledButton(
-                      onPressed: () =>
-                          isLoading ? null : handleDeleteAccount(context),
+                      onPressed: () => isLoading ? null : handleDeleteAccount(),
                       child: isLoading
                           ? const CircularProgressIndicator()
                           : const ButtonText("Delete Account"),

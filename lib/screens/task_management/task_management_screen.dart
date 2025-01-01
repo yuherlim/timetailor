@@ -118,38 +118,6 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Fetch data from firestore when the screen is first rendered
-    useEffect(() {
-      Future.microtask(() async {
-        await Future.wait([
-          ref.read(tasksNotifierProvider.notifier).fetchTasksFromFirestore(),
-          ref.read(notesNotifierProvider.notifier).fetchNotesFromFirestore(),
-        ]);
-      });
-
-      // Cleanup logic if needed
-      return null;
-    }, []); // Empty dependency array ensures this runs only once
-
-    final tasksNotifier = ref.read(tasksNotifierProvider.notifier);
-    final notesNotifier = ref.read(notesNotifierProvider.notifier);
-
-    if (tasksNotifier.isLoading || notesNotifier.isLoading) {
-      // Show CircularProgressIndicator while loading
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-
-    debugPrint("Current logged in user: ${ref.read(currentUserProvider)?.name}");
-
-    debugPrint(
-        "number of current task items: ${ref.watch(tasksNotifierProvider).map(
-              (e) => e.name,
-            ).toList().length}");
-
     final currentSelectedDate = ref.watch(currentDateNotifierProvider);
     final currentMonth = ref.watch(currentMonthNotifierProvider);
     final isValidDate = ref
@@ -163,6 +131,7 @@ class _TaskManagementScreenState extends ConsumerState<TaskManagementScreen> {
           floatingActionButton:
               !ref.watch(showDraggableBoxProvider) && isValidDate
                   ? FloatingActionButton(
+                      heroTag: "taskManagementScreenFAB",
                       onPressed: () {
                         _onTaskCreate();
                       },

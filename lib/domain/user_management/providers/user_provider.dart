@@ -4,6 +4,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timetailor/data/user_management/models/app_user.dart';
 import 'package:timetailor/data/user_management/repositories/app_user_repository.dart';
 import 'package:timetailor/data/user_management/repositories/firebase_auth_service.dart';
+import 'package:timetailor/domain/note_management/providers/notes_provider.dart';
+import 'package:timetailor/domain/task_management/providers/tasks_provider.dart';
 
 part 'user_provider.g.dart';
 
@@ -13,7 +15,13 @@ final appUserRepositoryProvider = Provider<AppUserRepository>((ref) {
 
 final firebaseAuthServiceProvider = Provider<FirebaseAuthService>((ref) {
   final appUserRepository = ref.read(appUserRepositoryProvider);
-  return FirebaseAuthService(appUserRepository: appUserRepository);
+  final taskRepository = ref.read(taskRepositoryProvider);
+  final noteRepository = ref.read(noteRepositoryProvider);
+  return FirebaseAuthService(
+    appUserRepository: appUserRepository,
+    noteRepository: noteRepository,
+    taskRepository: taskRepository,
+  );
 });
 
 final authStateProvider = StreamProvider<User?>((ref) {
@@ -37,5 +45,4 @@ class CurrentUserFetcher extends _$CurrentUserFetcher {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() => _authService.getCurrentUser());
   }
-  
 }

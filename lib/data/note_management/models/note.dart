@@ -7,6 +7,7 @@ class Note {
   final String? imageUrl;
   final String? pdfUrl;
   final String userId;
+  final DateTime? createdAt; // Nullable during creation
 
   Note({
     required this.title,
@@ -15,6 +16,7 @@ class Note {
     this.imageUrl,
     this.pdfUrl,
     required this.userId,
+    this.createdAt, // Nullable to allow Firestore to populate it
   });
 
   Note copyWith({
@@ -24,6 +26,7 @@ class Note {
     String? imageUrl,
     String? pdfUrl,
     String? userId,
+    DateTime? createdAt,
   }) {
     return Note(
       title: title ?? this.title,
@@ -32,6 +35,7 @@ class Note {
       imageUrl: imageUrl ?? this.imageUrl,
       pdfUrl: pdfUrl ?? this.pdfUrl,
       userId: userId ?? this.userId,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 
@@ -42,6 +46,7 @@ class Note {
       "imageUrl": imageUrl,
       "pdfUrl": pdfUrl,
       "userId": userId,
+      "createdAt": FieldValue.serverTimestamp(),
     };
   }
 
@@ -55,6 +60,9 @@ class Note {
       imageUrl: data["imageUrl"],
       pdfUrl: data["pdfUrl"],
       userId: data["userId"],
+      createdAt: data["createdAt"] != null
+          ? (data["createdAt"] as Timestamp).toDate()
+          : null, // Handle null gracefully
     );
   }
 }

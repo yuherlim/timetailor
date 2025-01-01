@@ -18,13 +18,12 @@ final taskRepositoryProvider = Provider<TaskRepository>((ref) {
   return TaskRepository();
 });
 
-@riverpod
+@Riverpod(keepAlive: true)
 class TasksNotifier extends _$TasksNotifier {
   TaskRepository get _taskRepository => ref.read(taskRepositoryProvider);
   String get _currentUserId => ref.read(currentUserProvider)!.id;
   // NoteRepository get _noteRepository => ref.read(noteRepositoryProvider);
 
-  bool isLoading = false; // Add loading state
 
   @override
   List<Task> build() {
@@ -32,15 +31,12 @@ class TasksNotifier extends _$TasksNotifier {
   }
 
   Future<void> fetchTasksFromFirestore() async {
-    isLoading = true; // Start loading
     try {
       final tasks = await _taskRepository.getTasksByUserId(_currentUserId);
       state = tasks;
     } catch (e) {
       CustomSnackbars.shortDurationSnackBar(
           contentString: "Failed to fetch tasks: $e");
-    } finally {
-      isLoading = false; // End loading
     }
   }
 
