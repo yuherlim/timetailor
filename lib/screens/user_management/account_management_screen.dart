@@ -52,7 +52,8 @@ class _AccountManagementScreenState
       }
       CustomSnackbars.shortDurationSnackBar(
           contentString: "Log out successful.");
-      disposeKeepAliveProviders();
+      // Invalidate providers after navigation
+      Future.microtask(() => disposeKeepAliveProviders());
     } catch (e) {
       CustomSnackbars.shortDurationSnackBar(contentString: "Error: $e");
     } finally {
@@ -154,7 +155,11 @@ class _AccountManagementScreenState
 
   void disposeKeepAliveProviders() {
     ref.invalidate(noteFormNotifierProvider);
+    ref.invalidate(notesNotifierProvider);
+    ref.invalidate(tasksNotifierProvider);
     ref.invalidate(currentUserFetcherProvider);
+    ref.invalidate(currentUserProvider);
+    ref.invalidate(currentTimePositionNotifierProvider);
   }
 
   @override

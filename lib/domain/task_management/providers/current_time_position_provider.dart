@@ -4,7 +4,7 @@ import 'package:timetailor/domain/task_management/providers/calendar_read_only_p
 
 part 'current_time_position_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class CurrentTimePositionNotifier extends _$CurrentTimePositionNotifier {
   Timer? _timer;
 
