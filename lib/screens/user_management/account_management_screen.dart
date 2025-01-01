@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -19,7 +20,25 @@ class AccountManagementScreen extends ConsumerStatefulWidget {
 
 class _AccountManagementScreenState
     extends ConsumerState<AccountManagementScreen> {
+  Future<bool> checkConnectivityAndShowSnackbar() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+
+    if (connectivityResult.contains(ConnectivityResult.none)) {
+      // Show a snackbar for no internet connection
+      CustomSnackbars.shortDurationSnackBar(
+        contentString:
+            "No internet connection. Please try again after reconnecting to the internet.",
+      );
+      return false;
+    }
+    return true;
+  }
+
   void handleLogout() async {
+    // Use the utility function to check connectivity
+    final hasInternet = await checkConnectivityAndShowSnackbar();
+    if (!hasInternet) return;
+
     final authService = ref.watch(firebaseAuthServiceProvider);
     final isLoadingNotifier = ref.read(isLoadingProvider.notifier);
 
@@ -41,7 +60,11 @@ class _AccountManagementScreenState
     }
   }
 
-  Future<void> handleDeleteAccount(BuildContext context) async {
+  Future<void> handleDeleteAccount() async {
+    // Use the utility function to check connectivity
+    final hasInternet = await checkConnectivityAndShowSnackbar();
+    if (!hasInternet) return;
+
     final authService = ref.watch(firebaseAuthServiceProvider);
     final currentUser = await authService.getCurrentUser();
 

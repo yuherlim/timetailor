@@ -114,12 +114,13 @@ class ResetPasswordScreen extends HookWidget {
                         final connectivityResult =
                             await Connectivity().checkConnectivity();
 
-                        // ignore: unrelated_type_equality_checks
-                        if (connectivityResult == ConnectivityResult.none) {
+                        if (connectivityResult
+                            .contains(ConnectivityResult.none)) {
                           // Show a snackbar for no internet connection
                           CustomSnackbars.shortDurationSnackBar(
-                              contentString:
-                                  "No internet connection. Please try again after reconnecting to the internet.");
+                            contentString:
+                                "No internet connection. Please try again after reconnecting to the internet.",
+                          );
                           return;
                         }
 
