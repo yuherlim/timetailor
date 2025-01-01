@@ -241,12 +241,6 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
             onDoubleTap:
                 isEditingNote || isViewingNote ? null : () => handleEdit(),
             child: LayoutBuilder(builder: (context, constraints) {
-              final selectedNote = ref.read(selectedNoteProvider);
-
-              if (selectedNote == null) {
-                return const Center(child: Text("No note selected"));
-              }
-
               return SingleChildScrollView(
                 controller: noteScrollController,
                 child: ConstrainedBox(
