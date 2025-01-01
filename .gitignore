@@ -43,3 +43,5 @@ app.*.map.json
 /android/app/release
 
 *.env
+credentials_for_sample_user.txt
+github_link.txt
