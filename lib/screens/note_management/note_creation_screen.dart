@@ -238,8 +238,9 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
             ],
           ),
           body: GestureDetector(
-            onDoubleTap:
-                isEditingNote || isViewingNote ? null : () => handleEdit(),
+            onDoubleTap: isEditingNote || isViewingNote || isCreatingNote
+                ? null
+                : () => handleEdit(),
             child: LayoutBuilder(builder: (context, constraints) {
               return SingleChildScrollView(
                 controller: noteScrollController,
@@ -284,6 +285,7 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
           ),
           floatingActionButton: !isViewingNote
               ? FloatingActionButton(
+                  heroTag: "noteCreationScreenFAB",
                   onPressed: () {
                     isEditingNote || isCreatingNote
                         ? createNote()
@@ -296,83 +298,82 @@ class _NoteCreationScreenState extends ConsumerState<NoteCreationScreen> {
               : null,
           floatingActionButtonLocation:
               FloatingActionButtonLocation.endContained,
-          bottomNavigationBar: isOnline &&
-                  !isViewingNote &&
-                  (isEditingNote || isCreatingNote)
-              ? BottomAppBar(
-                  notchMargin: 8.0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      // IconButton(
-                      //   icon: const Icon(Icons.image),
-                      //   onPressed: () async {
-                      //     final picker = ImagePicker();
-                      //     final pickedFile = await picker.pickImage(
-                      //         source: ImageSource.gallery);
+          bottomNavigationBar:
+              isOnline && !isViewingNote && (isEditingNote || isCreatingNote)
+                  ? BottomAppBar(
+                      notchMargin: 8.0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          // IconButton(
+                          //   icon: const Icon(Icons.image),
+                          //   onPressed: () async {
+                          //     final picker = ImagePicker();
+                          //     final pickedFile = await picker.pickImage(
+                          //         source: ImageSource.gallery);
 
-                      //     if (pickedFile != null) {
-                      //       final selectedNote = ref.read(selectedNoteProvider);
-                      //       await ref
-                      //           .read(notesNotifierProvider.notifier)
-                      //           .uploadAndAttachFile(
-                      //               pickedFile.path, 'image', selectedNote!);
-                      //     }
-                      //   },
-                      // ),
-                      // IconButton(
-                      //   icon: const Icon(Icons.picture_as_pdf),
-                      //   onPressed: () async {
-                      //     final picker = ImagePicker();
-                      //     final pickedFile = await picker.pickImage(
-                      //         source: ImageSource.gallery);
+                          //     if (pickedFile != null) {
+                          //       final selectedNote = ref.read(selectedNoteProvider);
+                          //       await ref
+                          //           .read(notesNotifierProvider.notifier)
+                          //           .uploadAndAttachFile(
+                          //               pickedFile.path, 'image', selectedNote!);
+                          //     }
+                          //   },
+                          // ),
+                          // IconButton(
+                          //   icon: const Icon(Icons.picture_as_pdf),
+                          //   onPressed: () async {
+                          //     final picker = ImagePicker();
+                          //     final pickedFile = await picker.pickImage(
+                          //         source: ImageSource.gallery);
 
-                      //     if (pickedFile != null) {
-                      //       final selectedNote = ref.read(selectedNoteProvider);
-                      //       await ref
-                      //           .read(notesNotifierProvider.notifier)
-                      //           .uploadAndAttachFile(
-                      //               pickedFile.path, 'pdf', selectedNote!);
-                      //     }
-                      //   },
-                      // ),
-                      PopupMenuButton<String>(
-                        icon: const Icon(Symbols.network_intelligence),
-                        onSelected: (value) {
-                          if (value == 'Summarise' ||
-                              value == 'Translate' ||
-                              value == 'Improve Content') {
-                            geminiActionHandler.handleGeminiStreamingAction(
-                                value.toLowerCase(), ref);
-                          } else if (value == 'OCR') {
-                            ocrService.onOCRSelected(context, ref);
-                          }
-                        },
-                        itemBuilder: (BuildContext context) {
-                          return [
-                            const PopupMenuItem<String>(
-                              value: 'Summarise',
-                              child: Text('Summarise'),
-                            ),
-                            const PopupMenuItem<String>(
-                              value: 'Translate',
-                              child: Text('Translate'),
-                            ),
-                            const PopupMenuItem<String>(
-                              value: 'Improve Content',
-                              child: Text('Improve Content'),
-                            ),
-                            const PopupMenuItem<String>(
-                              value: 'OCR',
-                              child: Text('OCR'),
-                            ),
-                          ];
-                        },
+                          //     if (pickedFile != null) {
+                          //       final selectedNote = ref.read(selectedNoteProvider);
+                          //       await ref
+                          //           .read(notesNotifierProvider.notifier)
+                          //           .uploadAndAttachFile(
+                          //               pickedFile.path, 'pdf', selectedNote!);
+                          //     }
+                          //   },
+                          // ),
+                          PopupMenuButton<String>(
+                            icon: const Icon(Symbols.network_intelligence),
+                            onSelected: (value) {
+                              if (value == 'Summarise' ||
+                                  value == 'Translate' ||
+                                  value == 'Improve Content') {
+                                geminiActionHandler.handleGeminiStreamingAction(
+                                    value.toLowerCase(), ref);
+                              } else if (value == 'OCR') {
+                                ocrService.onOCRSelected(context, ref);
+                              }
+                            },
+                            itemBuilder: (BuildContext context) {
+                              return [
+                                const PopupMenuItem<String>(
+                                  value: 'Summarise',
+                                  child: Text('Summarise'),
+                                ),
+                                const PopupMenuItem<String>(
+                                  value: 'Translate',
+                                  child: Text('Translate'),
+                                ),
+                                const PopupMenuItem<String>(
+                                  value: 'Improve Content',
+                                  child: Text('Improve Content'),
+                                ),
+                                const PopupMenuItem<String>(
+                                  value: 'OCR',
+                                  child: Text('OCR'),
+                                ),
+                              ];
+                            },
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                )
-              : const SizedBox.shrink(),
+                    )
+                  : const SizedBox.shrink(),
         );
       },
     );

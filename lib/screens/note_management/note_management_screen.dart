@@ -41,6 +41,7 @@ class _NoteManagementScreenState extends ConsumerState<NoteManagementScreen> {
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        heroTag: "noteManagementScreenFAB",
         onPressed: () => handleAdd(),
         child: const Icon(Icons.add),
       ),

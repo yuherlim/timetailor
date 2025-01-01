@@ -51,6 +51,8 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
     final alltasks =
         ref.read(tasksNotifierProvider.notifier).getAllTasksForCurrentDate();
 
+    print("alltasks for current date: ${alltasks?.map((e) => e.date,).toList()}");
+
     return SingleChildScrollView(
       controller: scrollController,
       child: Stack(
