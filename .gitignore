@@ -45,3 +45,4 @@ app.*.map.json
 *.env
 credentials_for_sample_user.txt
 github_link.txt
+lib/firebase_options.dart
